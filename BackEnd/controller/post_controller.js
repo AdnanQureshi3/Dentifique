@@ -6,6 +6,7 @@ import Comments from '../models/comment_Model.js';
 
 // import { populate } from "dotenv";
 export const addNewPost = async (req,res) =>{
+    console.log("yesh its here")
     try{
         const {caption} = req.body;
         const image = req.file;
@@ -13,9 +14,8 @@ export const addNewPost = async (req,res) =>{
 
         if(!image){
             return res.status(400).json({msg:"Image required"});
-
-            
         }
+        
         const optimizedImageBuffer = await sharp(image.buffer)
         .resize({width:800,height:800 , fit:'inside'})
         .toBuffer();
@@ -40,7 +40,7 @@ export const addNewPost = async (req,res) =>{
     }
     catch(err){
         console.log(err);
-        res.status(500).json({ msg: "Something went wrong", success: false });
+        res.status(500).json({ msg: "Something  kh nwent wrong", success: false });
     }
 }
 

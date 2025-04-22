@@ -1,33 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {Heart,Home, LogOut,MessageCircle,PlusSquare, Search,TrendingUp,} from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from 'axios'
-const sidebarItems = [
-    { icon: <Home />, text: "Home" },
-    { icon: <Search />, text: "Search" },
-    { icon: <TrendingUp />, text: "Explore" },
-    { icon: <MessageCircle />, text: "Messages" },
-    { icon: <Heart />, text: "Notifications" },
-    { icon: <PlusSquare />, text: "Create" },
-    {
-        icon: (
-            <Avatar className="w-6 h-6 ">
-                <AvatarImage
-                    className="rounded-full"
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                />
-                <AvatarFallback>Profile pic</AvatarFallback>
-            </Avatar>
-        ),
-        text: "Profile",
-    },
-    { icon: <LogOut />, text: "Logout" },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { setAuthuser } from "@/redux/authSlice";
+import CreatePost from "./CreatePost";
 
 function LeftSidebar() {
+    const [Open , setOpen] = useState(false);
+    const {user} = useSelector(store => store.auth);
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
     const logoutHandler = async () => {
         try {
@@ -35,6 +20,7 @@ function LeftSidebar() {
             const res = await axios.get('http://localhost:8000/api/user/logout' , {withCredentials:true});
             if(res.data.success) {
                 navigate('/login')
+                dispatch(setAuthuser(null));
                 toast.success(res.data.msg);
             }
         } catch (err) {
@@ -47,8 +33,32 @@ function LeftSidebar() {
 const sidebarHandler = (type)=>{
     console.log(type);
     if(type == "Logout") logoutHandler();
+    else if(type == 'Create') setOpen(true);
 
 }
+const sidebarItems = [
+    { icon: <Home />, text: "Home" },
+    { icon: <Search />, text: "Search" },
+    { icon: <TrendingUp />, text: "Explore" },
+    { icon: <MessageCircle />, text: "Messages" },
+    { icon: <Heart />, text: "Notifications" },
+    { icon: <PlusSquare />, text: "Create" },
+    {
+        icon: (
+            <Avatar className="w-6 h-6 ">
+                <AvatarImage
+                    className="rounded-full bg-gray-500"
+                    src={user?.profilePicture}
+                    alt="@shadcn"
+                />
+                <AvatarFallback>Profile pic</AvatarFallback>
+            </Avatar>
+        ),
+        text: "Profile",
+    },
+    { icon: <LogOut />, text: "Logout" },
+];
+
 
     return (
         <div className=" z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen ">
@@ -68,8 +78,10 @@ const sidebarHandler = (type)=>{
                             </div>
                         );
                     })}
+                    <CreatePost Open={Open} setOpen={setOpen} />
                 </div>
             </div>
+            
         </div>
     );
 }

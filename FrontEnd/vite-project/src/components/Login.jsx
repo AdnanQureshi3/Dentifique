@@ -6,6 +6,8 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import { useDispatch } from 'react-redux'
+import { setAuthuser } from '@/redux/authSlice.js'
 
 function Login() {
     const [loading , setloading] = useState(false);
@@ -15,6 +17,7 @@ function Login() {
         password:""
     })
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const ChangeEventHandler = (e)=>{
         // e.target is the DOM element that triggered the event. In your case, it’s the <input> element the user typed in.
@@ -34,7 +37,9 @@ function Login() {
                 withCredentials:true
             });
             if(res.data.success){
+                dispatch(setAuthuser(res.data.user))
                 navigate("/home")
+                
 
                 toast.success(res.data.msg, {
                     className: 'bg-green-500 text-white p-4 rounded-lg shadow-md',

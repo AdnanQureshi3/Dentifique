@@ -37,6 +37,7 @@ function Post() {
           <DialogTrigger asChild>
             <MoreHorizontal className="cursor-pointer" />
           </DialogTrigger>
+          
           <DialogContent className="p-0 text-sm text-center bg-white border-0">
             <Button className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Unfollow</Button>
             <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Add to favorites</Button>
