@@ -49,9 +49,9 @@ const sidebarItems = [
                 <AvatarImage
                     className="rounded-full bg-gray-500"
                     src={user?.profilePicture}
-                    alt="@shadcn"
+                    alt={user?.username}
                 />
-                <AvatarFallback>Profile pic</AvatarFallback>
+                <AvatarFallback>{user?.username}</AvatarFallback>
             </Avatar>
         ),
         text: "Profile",

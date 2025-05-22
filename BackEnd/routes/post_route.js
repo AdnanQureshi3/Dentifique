@@ -8,7 +8,7 @@ router.route("/addpost").post(isAuthenticated , upload.single('image') , addNewP
 router.route("/allpost").get(isAuthenticated , getAllPost);
 router.route("/:id/like_unlike").get(isAuthenticated , LikeUnlikePost);
 router.route("/:id/comment/all").get(isAuthenticated , getPostComment);
-router.route("/:id/deletePost").get(isAuthenticated , deletePost);
+router.route("/:id/deletePost").delete(isAuthenticated , deletePost);
 router.route("/:id/deleteComment").get(isAuthenticated , deleteComment);
 router.route("/:id/save").get(isAuthenticated , saveThePost);
 

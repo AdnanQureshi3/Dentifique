@@ -6,10 +6,21 @@ import { Bookmark, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import { Button } from './ui/button'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import CommentDialog from './CommentDialog'
+import { useSearchParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { toast } from 'sonner'
+import { setPosts } from '@/redux/postSlice'
 
-function Post() {
+function Post({post}) {
   const [text, settext] = useState("");
   const [Open, setOpen] = useState(false);
+  const {user} = useSelector(store=>store.auth);
+  const {posts} = useSelector(store=>store.post);
+  const dispatch = useDispatch();
+  const [Liked , setLiked] = useState(post.likes.includes(user?._id) || false);
+  const [likeCounts, setlikeCounts] = useState(post.likes.length);
+
 
   const textchangeHandler = (e) => {
     const inputText = e.target.value.trim();
@@ -18,6 +29,52 @@ function Post() {
     }
     else settext("");
 
+  }
+  const deletePostHandler = async ()=>{
+    try{
+      const res = await axios.delete(`http://localhost:8000/api/post/${post._id}/deletePost`, { withCredentials: true });
+      console.log("deleted")
+
+      if(res.data.success){
+        const updatedPost = posts.filter((postItem)=>postItem._id != post._id);
+        dispatch(setPosts(updatedPost));
+
+        toast.success(res.data.msg);
+      }
+
+    }
+    catch(error){
+      console.log(error);
+      toast.error(error.response.msg);
+    }
+
+
+  }
+
+  const likeorUnlike = async()=>{
+    try{
+      const res = await axios.get(`http://localhost:8000/api/post/${post._id}/like_unlike`, { withCredentials: true });
+      if(res.data.success){
+        const likes = Liked?likeCounts - 1: likeCounts+1;
+        setlikeCounts(likes)
+        const updatedPostData = posts.map(
+          p=>
+            p._id === post._id?{
+              ...p,
+              likes:Liked?
+               p.likes.filter(id => id !== user._id) : [...p.likes , user._id]
+            }:p
+        )
+        dispatch(setPosts(updatedPostData))
+        setLiked(!Liked);
+        toast.success(res.data.msg)
+      }
+    }
+    catch(err){
+      console.log(err);
+      toast.error(err.response.msg);
+
+    }
   }
 
   return (
@@ -30,7 +87,7 @@ function Post() {
             <AvatarImage src="" alt="user" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span className="font-semibold text-sm">username</span>
+        <span className="font-semibold text-sm">{post.author.username} </span>
         </div>
         <Dialog>
 
@@ -39,16 +96,25 @@ function Post() {
           </DialogTrigger>
           
           <DialogContent className="p-0 text-sm text-center bg-white border-0">
-            <Button className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Unfollow</Button>
+            {
+              user &&  user._id !== post.author._id &&
+              <Button className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Unfollow</Button>
+
+            }
             <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Add to favorites</Button>
-            <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Cancel</Button>
+ 
+          {
+            user &&  user._id === post.author._id &&
+            <Button onClick={deletePostHandler}  className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Delete</Button>
+          }
+          <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Cancel</Button>
           </DialogContent>
         </Dialog>
       </div>
 
       {/* Post Image */}
       <img
-        src="https://images.unsplash.com/photo-1733506903133-9d65b66d299a?w=600&auto=format"
+        src={post.image}
         className="w-full aspect-square object-cover"
         alt="post"
       />
@@ -56,7 +122,13 @@ function Post() {
       {/* Action Bar */}
       <div className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-4">
-          <FaRegHeart className="text-xl cursor-pointer" />
+          {
+            Liked ?
+            <FaHeart onClick={likeorUnlike} size={'24'} className="text-xl  text-[#ed4956] cursor-pointer" />
+            :
+          <FaRegHeart onClick={likeorUnlike} size={'22'} className="text-xl cursor-pointer" />
+          }
+          
           <MessageCircle onClick={() => setOpen(true)} className="text-xl cursor-pointer" />
           <Send className="text-xl cursor-pointer" />
         </div>
@@ -64,16 +136,21 @@ function Post() {
       </div>
 
       {/* Likes */}
-      <div className="px-3 pb-3 text-sm font-medium">1,234 likes</div>
+      <div className="px-3 pb-3 text-sm font-medium">{likeCounts} likes </div>
 
       <p>
-        <span className="px-3 pb-3 text-sm font-medium">username</span>
-        Work hard, that's how you'll get it
+        <span className="px-3 pb-3 text-sm font-medium">{post.author.username}</span>
+       {post.caption} 
       </p>
-      <span onClick={() => setOpen(true)} className=' cursor-pointer text-gray-400 px-3 pb-3'> view all 342 comments</span>
+      {
+        post.comments.length > 0 &&
+        (
+          <span onClick={() => setOpen(true)} className=' cursor-pointer text-gray-400 px-3 pb-3'> view all {post.comments.length} comments</span>
+        )
+      }
 
 
-      <CommentDialog Open={Open} setOpen={setOpen} />
+      <CommentDialog Open={Open} setOpen={setOpen} post ={post} />
 
       <div className=' px-3 pb-3 flex justify-between items-center'>
         <input

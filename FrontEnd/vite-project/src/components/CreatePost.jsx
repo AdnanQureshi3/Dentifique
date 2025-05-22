@@ -7,13 +7,17 @@ import { readFileAsDataUri } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux';
+import { setPosts } from '@/redux/postSlice';
 
 function CreatePost({Open , setOpen}) {
     const ImageRef = useRef();
     const [File , setFile] = useState("");
     const [Caption , setCaption] = useState("");
     const [ImagePreview , setImagePreview] = useState("");
-    const [loading , setloading] = useState(false);
+    const [loading , setloading] = useState(false); 
+    const dispatch = useDispatch();
+    const {posts} = useSelector(store=>store.post)
 
     const createPostHandler = async (e) => {
         e.preventDefault();
@@ -22,8 +26,6 @@ function CreatePost({Open , setOpen}) {
 
         if (ImagePreview) formData.append("image", File);
         // console.log(formData.get("image"));
-
-        
         try {
           setloading(true);
 
@@ -40,6 +42,7 @@ function CreatePost({Open , setOpen}) {
           
           console.log(res)
           if (res.data.success) {
+            dispatch(setPosts([res.data.post ,...posts]));
             toast.success(res.data.msg);
           }
           setCaption("");

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
 import { MoreHorizontal } from 'lucide-react';
 
-function CommentDialog({ Open, setOpen }) {
+function CommentDialog({ Open, setOpen , post }) {
 
     const [text , setText] = useState("");
     const ChangeEventHandler =(e)=>{
@@ -36,7 +36,7 @@ function CommentDialog({ Open, setOpen }) {
                     {/* Image Section */}
                     <div className='w-[45%]  bg-gray-100'>
                         <img
-                            src="https://images.unsplash.com/photo-1733506903133-9d65b66d299a?w=600&auto=format"
+                            src= {post.image}
                             alt="post"
                             className=' absolute w-[45%] top-1/2 -translate-y-1/2 transform  object-cover rounded-lg '
                         />

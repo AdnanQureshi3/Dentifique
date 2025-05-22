@@ -46,9 +46,10 @@ export const addNewPost = async (req,res) =>{
 
 export const getAllPost = async (req, res)=>{
     try{
+        // console.log("get all post calle")
         const posts = await Post.find().sort({createdAt:-1})
         .populate({path:'author' , select:'username , profilePicture'})
-        .populate({path:'comments' , 
+        .populate({path:'comments', 
             sort:{createdAt:-1} , 
             populate:{
                 path:'author',
@@ -60,7 +61,6 @@ export const getAllPost = async (req, res)=>{
             success:true,
             posts
         })
-
     }
     catch(err){
         console.log(err);
@@ -69,17 +69,17 @@ export const getAllPost = async (req, res)=>{
 }
 export const getUserPost = async (req, res)=>{
     try{
-
+        console.log("hihhi")
         const UserId = req.id;
         const posts = await Post.find({author:UserId}).sort({createdAt:-1})
         .populate({path:'author' , select:'username , profilePicture'})
-        .populate({path:'comments' , 
-            sort:{createdAt:-1} , 
-            populate:{
-                path:'author',
-                select:'username , profilePicture'
-            }
-        });
+        // .populate({path:'comments' , 
+        //     sort:{createdAt:-1} , 
+        //     populate:{
+        //         path:'author',
+        //         select:'username , profilePicture'
+        //     }
+        // });
 
         return res.status(200).json({
             success:true,
@@ -112,10 +112,11 @@ export const LikeUnlikePost = async (req, res)=>{
             str = "Liked"
             await Post.updateOne({ _id: postId }, { $addToSet: { likes: UserId } });
         }
+        const user = await User.findById(UserId);
 
 
         return res.status(200).json({
-            msg:`Post ${str} Successfully by ${UserId}`,
+            msg:`Post ${str} Successfully by ${user.username}`,
             success:true
         })
 
@@ -223,8 +224,13 @@ export const deletePost = async (req, res)=>{
 
     }
     catch(err){
-        console.log(err);
-    }
+    console.log(err);
+    return res.status(500).json({
+        msg: "Server Error",
+        success: false
+    });
+}
+
 
 }
 
