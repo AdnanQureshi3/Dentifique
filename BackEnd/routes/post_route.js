@@ -11,6 +11,7 @@ router.route("/:id/comment/all").get(isAuthenticated , getPostComment);
 router.route("/:id/deletePost").delete(isAuthenticated , deletePost);
 router.route("/:id/deleteComment").get(isAuthenticated , deleteComment);
 router.route("/:id/save").get(isAuthenticated , saveThePost);
+router.route("/:id/addComment").post(isAuthenticated , makeComment);
 
 
 export default router;

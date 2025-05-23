@@ -133,7 +133,8 @@ export const makeComment = async (req, res)=>{
         const postId = req.params.id;
         const post = await Post.findById(postId);
 
-        const {content} = req.body;
+        const {text} = req.body;
+        const content = text;
         if(!content){
             return res.status(400).json({
                 msg:"Cannot add empty comment",
@@ -146,7 +147,7 @@ export const makeComment = async (req, res)=>{
             post: postId,
         });
         
-        comment = await comment.populate({ path: 'author', select: 'username ,profilePicture' });
+        comment = await comment.populate({ path: 'author', select: 'username profilePicture' });
         
 
         post.comments.push(comment._id);

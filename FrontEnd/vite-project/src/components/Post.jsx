@@ -10,7 +10,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { setPosts } from '@/redux/postSlice'
+import { setPosts, setSelectedPost } from '@/redux/postSlice'
 
 function Post({post}) {
   const [text, settext] = useState("");
@@ -20,10 +20,13 @@ function Post({post}) {
   const dispatch = useDispatch();
   const [Liked , setLiked] = useState(post.likes.includes(user?._id) || false);
   const [likeCounts, setlikeCounts] = useState(post.likes.length);
+  const [comment , setComment] = useState(post.comments);
+  
 
 
   const textchangeHandler = (e) => {
-    const inputText = e.target.value.trim();
+    const inputText = e.target.value.replace(/^\s+/, "");
+
     if (inputText) {
       settext(inputText);
     }
@@ -49,6 +52,37 @@ function Post({post}) {
     }
 
 
+  }
+  const commentHanlder = async()=>{
+    try{
+      const res = await axios.post(`http://localhost:8000/api/post/${post._id}/addComment`, {text} , { 
+        headers:{
+          'Content-Type':'application/json'
+        },
+        withCredentials: true });
+        console.log("comment added");
+
+        if(res.data.success){
+          const updatedComment = [...comment , res.data.comment];
+          setComment(updatedComment);
+
+          const upadtedPostData = posts.map(p=>
+            p._id === post._id ?{
+              ...p , comments:updatedComment
+            }:p
+          )
+
+          dispatch(setPosts(upadtedPostData));
+          settext("");
+        }
+
+      toast.success(res.data.msg)
+
+    }catch(err){
+      console.log(err);
+      toast.error(res.data.msg);
+
+    }
   }
 
   const likeorUnlike = async()=>{
@@ -76,6 +110,9 @@ function Post({post}) {
 
     }
   }
+  const handleKeyPress = (e) => {
+  if (e.key === 'Enter' && text.trim()) commentHanlder();
+};
 
   return (
     <div className="w-full max-w-md mx-auto my-6  rounded-md">
@@ -129,7 +166,10 @@ function Post({post}) {
           <FaRegHeart onClick={likeorUnlike} size={'22'} className="text-xl cursor-pointer" />
           }
           
-          <MessageCircle onClick={() => setOpen(true)} className="text-xl cursor-pointer" />
+          <MessageCircle onClick={  () =>{
+            dispatch(setSelectedPost(post));
+            setOpen(true)}
+            } className="text-xl cursor-pointer" />
           <Send className="text-xl cursor-pointer" />
         </div>
         <Bookmark className="text-xl cursor-pointer" />
@@ -143,9 +183,12 @@ function Post({post}) {
        {post.caption} 
       </p>
       {
-        post.comments.length > 0 &&
+        comment.length > 0 &&
         (
-          <span onClick={() => setOpen(true)} className=' cursor-pointer text-gray-400 px-3 pb-3'> view all {post.comments.length} comments</span>
+          <span onClick={  () =>{
+            dispatch(setSelectedPost(post));
+            setOpen(true)}
+            }  className=' cursor-pointer text-gray-400 px-3 pb-3'> view all {comment.length} comments</span>
         )
       }
 
@@ -158,11 +201,12 @@ function Post({post}) {
           placeholder='Add a Comment...'
           onChange={textchangeHandler}
           value={text}
+          onKeyDown={handleKeyPress}
           className='  outline-none text-sm w-full'
         />
 
         {text &&
-          <span className='text-[#3BADF8] '> Post </span>
+          <span onClick={commentHanlder} className='text-[#3BADF8] cursor-pointer' > Post </span>
 
         }
       </div>
