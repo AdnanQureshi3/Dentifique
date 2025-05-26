@@ -61,7 +61,7 @@ const sidebarItems = [
 
 
     return (
-        <div className=" z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen ">
+        <div className=" z-10 left-0 px-4 border-r border-gray-300 w-[20%] h-screen ">
             <div className="flex flex-col">
                 <div className="w-full flex justify-center my-5">
                     <img src="src\assets\logo.png" className="w-[70%]" alt="Logo" />

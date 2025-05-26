@@ -1,20 +1,23 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Feed from './Feed'
 import RightSidebar from './RightSidebar'
 import { Outlet } from 'react-router-dom'
-import useGetAllPost from '@/Hooks/getAllPosts'
-
+import useGetAllPost from '../Hooks/getAllPosts.jsx'
+import useSuggestedUser from '../Hooks/getAllSuggestedUser.jsx'
 function Home() {
- 
-    useGetAllPost();
+  useSuggestedUser();
+  useGetAllPost();
   return (
-    <div className='flex'>
-
-      <div className='flex-grow'>
-        <Feed />
-        <Outlet />
+    <div className='flex w-full justify-center px-4'>
+      <div className='flex justify-between  w-full max-w-6xl'>
+        <div className='w-full max-w-2xl'>
+          <Feed />
+          <Outlet />
+        </div>
+        <div className='w-[30%] '>
+          <RightSidebar />
+        </div>
       </div>
-      <RightSidebar />
     </div>
   )
 }

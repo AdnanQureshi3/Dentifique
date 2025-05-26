@@ -214,6 +214,7 @@ export const followorUnfollow = async(req,res)=>{
         }
         const loggedInUser = await User.findById(loggedInUserId);
         const otherUser = await User.findById(otherUserId);
+        console.log(loggedInUser , otherUserId );
 
         if(!loggedInUser || !otherUser){
             return res.status(400).json({
@@ -254,9 +255,14 @@ export const followorUnfollow = async(req,res)=>{
 
 
     }
-    catch(err){
-        console.log(err);
-    }
+   catch(err){
+    console.log(err);
+    return res.status(500).json({
+        msg: "Internal Server Error",
+        success: false,
+    });
+}
+
 }
 // export const logot = async(req,res)=>{
 //     try{

@@ -11,7 +11,7 @@ router.route('/logout').get(logout)
 router.route('/:id/getprofile').get(isAuthenticated , getprofile)
 router.route('/profile/edit').post(isAuthenticated ,upload.single('ProfilePicture') , editProfile)
 router.route('/suggested').get(isAuthenticated , getSuggestedusers)
-router.route('/followUnfollow/:id').post(isAuthenticated , followorUnfollow)
+router.route('/followUnfollow/:id').get(isAuthenticated , followorUnfollow)
 
 
 export default router;

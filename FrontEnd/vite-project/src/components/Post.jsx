@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
 import { DialogContent } from './ui/dialog'
-import { Bookmark, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
+import {  Bookmark, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import { Button } from './ui/button'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import CommentDialog from './CommentDialog'
@@ -10,6 +10,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { toast } from 'sonner'
+import {Badge} from '../components/ui/badge.jsx'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 
 function Post({post}) {
@@ -21,6 +22,10 @@ function Post({post}) {
   const [Liked , setLiked] = useState(post.likes.includes(user?._id) || false);
   const [likeCounts, setlikeCounts] = useState(post.likes.length);
   const [comment , setComment] = useState(post.comments);
+
+  useEffect(() =>{
+    setComment(post.comments);
+  }, [post]);
   
 
 
@@ -125,6 +130,10 @@ function Post({post}) {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         <span className="font-semibold text-sm">{post.author.username} </span>
+         {
+          user?._id === post?.author._id &&
+         <Badge variant='secondary' className={'bg-gray-100'} >Auhtor </Badge>
+         }
         </div>
         <Dialog>
 

@@ -1,0 +1,45 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import axios from 'axios'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+
+import { FollowHandlerFunc } from '../Hooks/useFollownUnfollow.js'
+
+function SuggestedUser() {
+  const { suggestedUser, user } = useSelector(store => store.auth)
+
+  return (
+    <div>
+      <div className='flex justify-between'>
+        <span className='font-semibold text-sm text-gray-500'>Suggested for you</span>
+        <span className='font-semibold text-sm'>See All</span>
+      </div>
+
+      <div className='flex flex-col gap-4 mt-4'>
+        {suggestedUser &&
+          suggestedUser.filter(u => user._id !== u._id)
+            .map(u => (
+
+              <div key={u._id} className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <Link to={`/profile/${u._id}`}>
+                    <Avatar className='h-8 w-8'>
+                      <AvatarImage src={u.profilePicture} alt='user' />
+                      <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+                  </Link>
+                  <div className='flex flex-col'>
+                    <h1 className='font-semibold text-sm'>{u.username}</h1>
+                    <span className='font-light text-xs text-gray-500'>{u.bio || 'I am a dev'}</span>
+                  </div>
+                </div>
+                <button  onClick= {() => FollowHandlerFunc(u?._id)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
+              </div>
+            ))}
+      </div>
+    </div>
+  )
+}
+
+export default SuggestedUser
