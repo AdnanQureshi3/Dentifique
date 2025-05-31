@@ -5,8 +5,10 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 const useSuggestedUser =()=>{
+    
     const dipatch = useDispatch();
     useEffect(()=>{
+
         const fetchAllusers = async()=>{
             try{
                 const res = await axios.get('http://localhost:8000/api/user/suggested' ,{withCredentials:true} );

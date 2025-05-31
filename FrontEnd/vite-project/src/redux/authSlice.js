@@ -5,6 +5,7 @@ const authSlice = createSlice({
     initialState:{
         user:null,
         suggestedUser:[],
+        userprofile:null
     },
     reducers:{
         //actions
@@ -13,11 +14,14 @@ const authSlice = createSlice({
         },
         setSuggestedUser:(state , action)=>{
             state.suggestedUser = action.payload;
+        },
+        setProfileUser:(state , action) =>{
+            state.userprofile = action.payload;
         }
     }
 });
 
-export const {setAuthuser , setSuggestedUser} = authSlice.actions
+export const {setAuthuser , setSuggestedUser , setProfileUser} = authSlice.actions
 export default authSlice.reducer
 /* 
 agr mei AuthSLice ko pura export karunga toh mujhe use karte time

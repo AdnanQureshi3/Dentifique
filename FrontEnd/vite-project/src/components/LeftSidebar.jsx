@@ -34,6 +34,9 @@ const sidebarHandler = (type)=>{
     console.log(type);
     if(type == "Logout") logoutHandler();
     else if(type == 'Create') setOpen(true);
+    else if(type == 'Profile'){
+        navigate(`/profile/${user?._id}`);
+    }
 
 }
 const sidebarItems = [

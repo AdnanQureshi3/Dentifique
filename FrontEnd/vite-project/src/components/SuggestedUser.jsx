@@ -1,13 +1,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import axios from 'axios'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { FollowHandlerFunc } from '../Hooks/useFollownUnfollow.js'
+import useSuggestedUser from '@/Hooks/getAllSuggestedUser.jsx'
+
 
 function SuggestedUser() {
   const { suggestedUser, user } = useSelector(store => store.auth)
+  const dispatch = useDispatch();
 
   return (
     <div>
@@ -17,8 +20,8 @@ function SuggestedUser() {
       </div>
 
       <div className='flex flex-col gap-4 mt-4'>
-        {suggestedUser &&
-          suggestedUser.filter(u => user._id !== u._id)
+        {Array.isArray(suggestedUser) &&
+          suggestedUser?.filter(u => user._id !== u._id)
             .map(u => (
 
               <div key={u._id} className='flex items-center justify-between'>
@@ -34,7 +37,8 @@ function SuggestedUser() {
                     <span className='font-light text-xs text-gray-500'>{u.bio || 'I am a dev'}</span>
                   </div>
                 </div>
-                <button  onClick= {() => FollowHandlerFunc(u?._id)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
+                
+                <button onClick= {() => FollowHandlerFunc(u?._id , dispatch)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
               </div>
             ))}
       </div>

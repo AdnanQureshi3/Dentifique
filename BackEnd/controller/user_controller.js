@@ -155,6 +155,7 @@ export const editProfile = async(req,res)=>{
             return res.status(404).json({
                 msg:"User not found",
                 success: false,
+
             })
         }
         if(bio) user.bio = bio;
@@ -180,9 +181,12 @@ export const editProfile = async(req,res)=>{
 export const getSuggestedusers = async(req,res)=>{
         try{
 
-           const Suggestedusers = await User.find({_id:{$ne:req.id}}).select("-password");
+          const loggedInUser = await User.findById(req.id);
+    const excludeIds = [...loggedInUser.following, req.id];
+    // const excludeIds = [ req.id];
+
+    const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
            
-        //    const Suggestedusers = await User.filter(user => user._id.toString() !== req.id)
             if(!Suggestedusers){
                 return res.status(400).json({
                     msg:"No Suggested users are there",
@@ -237,6 +241,7 @@ export const followorUnfollow = async(req,res)=>{
             return res.status(200).json({
                 msg:"Unfollowed Successfully",
                 success: true,
+                user:loggedInUser
             })
         }
         else{
@@ -250,6 +255,7 @@ export const followorUnfollow = async(req,res)=>{
             return res.status(200).json({
                 msg:"Followed Successfully",
                 success: true,
+                user:loggedInUser
             })
         }
 
