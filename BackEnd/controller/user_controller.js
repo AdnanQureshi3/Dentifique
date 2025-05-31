@@ -5,269 +5,271 @@ import getDataURI from '../utils/datauri.js';
 import cloudinary from '../utils/cloudinary.js';
 import { Post } from '../models/posts_model.js';
 
-export const register = async(req,res) =>{
-    try{
-        const {username , email, password } = req.body;
-        if(!username || !email || !password){
+export const register = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        if (!username || !email || !password) {
             return res.status(401).json({
-                msg:"Something is missing, please check.",
-                success:false,
+                msg: "Something is missing, please check.",
+                success: false,
             });
         }
-        let user = await User.findOne({email});
-        if(user){
+        let user = await User.findOne({ email });
+        if (user) {
             return res.status(401).json({
-                msg:`${email} email already registered, try different one`,
-                success:false,
+                msg: `${email} email already registered, try different one`,
+                success: false,
             });
         }
-        user = await User.findOne({username});
-        if(user){
+        user = await User.findOne({ username });
+        if (user) {
             return res.status(401).json({
-                msg:`${username} username already registered, try different one`,
-                success:false,
+                msg: `${username} username already registered, try different one`,
+                success: false,
             });
         }
-        const hashedpassword = await bcrypt.hash(password , 10);
+        const hashedpassword = await bcrypt.hash(password, 10);
         user = await User.create({
             username,
             email,
-            password:hashedpassword
+            password: hashedpassword
         });
 
         return res.status(201).json({
-            msg:"Account created Successfully.",
-            success:true,
+            msg: "Account created Successfully.",
+            success: true,
             user
         })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
 
-export const login = async(req,res)=>{
-    try{
-        const {email , password} = req.body;
-        if( !email || !password){
+export const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
             return res.status(401).json({
-                msg:"Something is missing, please check",
-                success:false,
+                msg: "Something is missing, please check",
+                success: false,
             });
         }
         // let user = await User.findOne({email});
         let user = await User.findOne({
             $or: [
-              { username: email },
-              { email: email }
+                { username: email },
+                { email: email }
             ]
-          });
-        if(!user){
+        });
+        if (!user) {
             return res.status(401).json({
-                msg:`Incorrect email or password`,
-                success:false,
+                msg: `Incorrect email or password`,
+                success: false,
             });
         }
-        const ispasswordMatched = await bcrypt.compare(password , user.password);
-        if(!ispasswordMatched){
+        const ispasswordMatched = await bcrypt.compare(password, user.password);
+        if (!ispasswordMatched) {
             return res.status(401).json({
-                msg:`Incorrect email or password`,
-                success:false,
+                msg: `Incorrect email or password`,
+                success: false,
             });
         }
 
-        
 
-        const token =  jwt.sign({userId:user._id} , process.env.Secret_key , {expiresIn:'1d'});
+
+        const token = jwt.sign({ userId: user._id }, process.env.Secret_key, { expiresIn: '1d' });
         const populatedPost = await Promise.all(
-            user.posts.map(async(postId) =>{
+            user.posts.map(async (postId) => {
                 const post = await Post.findById(postId);
                 return post;
             })
         )
 
         user = {
-            _id:user._id,
-            username:user.username,
-            email:user.email,
-            profilePicture:user.profilePicture,
-            bio:user.bio,
-            followers:user.followers,
-            following:user.following,
-            posts:populatedPost
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            followers: user.followers,
+            following: user.following,
+            posts: populatedPost
 
         }
-        
-        res.cookie('token' , token , {httpOnly:true , sameSite:'strict' , maxAge:1*24*60*60*1000}).json({
-            msg:`Welcome back ${user.username}`,
-            success:true,
+
+        res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+            msg: `Welcome back ${user.username}`,
+            success: true,
             user,
             token
         });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
 
-export const logout = async(req,res)=>{
-    try{
+export const logout = async (req, res) => {
+    try {
         console.log("logout")
-        return res.cookie('token' , "" , {maxAge:0}).json({
-            msg:"Logout successfully",
-            success:true
+        return res.cookie('token', "", { maxAge: 0 }).json({
+            msg: "Logout successfully",
+            success: true
         })
 
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 };
 
-export const getprofile = async(req,res)=>{
-    try{
+export const getprofile = async (req, res) => {
+    try {
         const userId = req.params.id;
-        let user = await User.findById(userId);
+        const user = await User.findById(userId)
+            .populate({ path: 'posts', options: { sort: { createdAt: -1 } } })
+            .populate('saved');
         return res.status(200).json({
             user,
-            success:true
+            success: true
         })
 
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
-export const editProfile = async(req,res)=>{
-    try{
+export const editProfile = async (req, res) => {
+    try {
         const userId = req.id;
-        const {gender , bio} = req.body;
-        
+        const { gender, bio } = req.body;
+
         const profilepic = req.file || null;
 
         let cloudResponse;
-        if(profilepic){
+        if (profilepic) {
             const fileuri = getDataURI(profilepic);
             cloudResponse = await cloudinary.uploader.upload(fileuri);
         }
         const user = await User.findById(userId);
-        if(!user){
+        if (!user) {
             return res.status(404).json({
-                msg:"User not found",
+                msg: "User not found",
                 success: false,
 
             })
         }
-        if(bio) user.bio = bio;
-        if(gender) user.gender = gender;
-        if(profilepic) {
+        if (bio) user.bio = bio;
+        if (gender) user.gender = gender;
+        if (profilepic) {
             user.profilePicture = cloudResponse.secure_url;
         }
 
         await user.save();
 
         return res.status(200).json({
-            msg:"User updated successfully",
+            msg: "User updated successfully",
             success: true,
             user
         })
 
     }
 
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
-export const getSuggestedusers = async(req,res)=>{
-        try{
+export const getSuggestedusers = async (req, res) => {
+    try {
 
-          const loggedInUser = await User.findById(req.id);
-    const excludeIds = [...loggedInUser.following, req.id];
-    // const excludeIds = [ req.id];
+        const loggedInUser = await User.findById(req.id);
+        const excludeIds = [...loggedInUser.following, req.id];
+        // const excludeIds = [ req.id];
 
-    const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
-           
-            if(!Suggestedusers){
-                return res.status(400).json({
-                    msg:"No Suggested users are there",
-                    success: false,
-                })
+        const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
 
-            }
-            return res.status(200).json({
-                
-                success: true,
-                users:Suggestedusers,
+        if (!Suggestedusers) {
+            return res.status(400).json({
+                msg: "No Suggested users are there",
+                success: false,
             })
 
+        }
+        return res.status(200).json({
+
+            success: true,
+            users: Suggestedusers,
+        })
+
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 
 }
-export const followorUnfollow = async(req,res)=>{
-    try{
+export const followorUnfollow = async (req, res) => {
+    try {
         const loggedInUserId = req.id;
         const otherUserId = req.params.id;
-        if(loggedInUserId === otherUserId){
+        if (loggedInUserId === otherUserId) {
             return res.status(400).json({
-                msg:"You cannot follow Unfollow yourself",
+                msg: "You cannot follow Unfollow yourself",
                 success: false,
             });
         }
         const loggedInUser = await User.findById(loggedInUserId);
         const otherUser = await User.findById(otherUserId);
-        console.log(loggedInUser , otherUserId );
+        console.log(loggedInUser, otherUserId);
 
-        if(!loggedInUser || !otherUser){
+        if (!loggedInUser || !otherUser) {
             return res.status(400).json({
-                msg:"User not found",
+                msg: "User not found",
                 success: false,
             })
         }
         const isfollowing = loggedInUser.following.includes(otherUserId);
-        if(isfollowing){
+        if (isfollowing) {
             //unfollow logic
             // await Promise.all([
             //     User.updateOne({loggedInUserId} , {$pull:{following:otherUserId}}),
             //     User.updateOne({otherUserId} , {$pull:{followers:loggedInUserId}}),
             // ])
             await Promise.all([
-                User.updateOne({_id: loggedInUserId}, { $pull: { following: otherUserId } }),
-                User.updateOne({_id: otherUserId}, { $pull: { followers: loggedInUserId } }),
+                User.updateOne({ _id: loggedInUserId }, { $pull: { following: otherUserId } }),
+                User.updateOne({ _id: otherUserId }, { $pull: { followers: loggedInUserId } }),
             ])
-            
-            return res.status(200).json({
-                msg:"Unfollowed Successfully",
-                success: true,
-                user:loggedInUser
-            })
-        }
-        else{
-            // follow logic
-            await Promise.all([
-                User.updateOne({_id: loggedInUserId} , {$push:{following:otherUserId}}),
-                User.updateOne({_id: otherUserId} , {$push:{followers:loggedInUserId}}),
-            ])
-            
 
             return res.status(200).json({
-                msg:"Followed Successfully",
+                msg: "Unfollowed Successfully",
                 success: true,
-                user:loggedInUser
+                user: loggedInUser
+            })
+        }
+        else {
+            // follow logic
+            await Promise.all([
+                User.updateOne({ _id: loggedInUserId }, { $push: { following: otherUserId } }),
+                User.updateOne({ _id: otherUserId }, { $push: { followers: loggedInUserId } }),
+            ])
+
+
+            return res.status(200).json({
+                msg: "Followed Successfully",
+                success: true,
+                user: loggedInUser
             })
         }
 
 
     }
-   catch(err){
-    console.log(err);
-    return res.status(500).json({
-        msg: "Internal Server Error",
-        success: false,
-    });
-}
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            success: false,
+        });
+    }
 
 }
 // export const logot = async(req,res)=>{

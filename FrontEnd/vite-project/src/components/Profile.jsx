@@ -1,5 +1,6 @@
 import useProfileUser from '@/Hooks/usegetProfileUser'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -12,6 +13,16 @@ function Profile() {
   function btnClass(extra = '') {
   return `${commonBTNCSS} ${extra}`;
 }
+const ActiveTabHandler= (tab)=>{
+  setActiveTab(tab);
+  // console.log(ActiveTab)
+  if(tab === "Posts")
+  setDisplayItem(userprofile?.posts);
+else setDisplayItem(userprofile?.saved);
+
+}
+const [DispaleyItem , setDisplayItem] = useState(userprofile?.posts);
+const [ActiveTab , setActiveTab] = useState("Posts")
   if (!userprofile) return <div className="text-center mt-10">Loading...</div>
 
   return (
@@ -67,18 +78,30 @@ function Profile() {
       <hr className="border-gray-300 mb-6" />
 
       {/* Posts Section */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4">Posts</h2>
+      <div className='items-center'>
+
+        <div className='flex flex-row gap-3'>
+
+        <span onClick={()=> ActiveTabHandler("Posts")} className= {`text-lg font-semibold mb-4 cursor-pointer ${ActiveTab === "Posts" ?'font-bold bg-gray-50 border-b':'' } `}> Posts </span>
+        <span onClick={()=> ActiveTabHandler("Saved")} className= {`text-lg font-semibold mb-4 cursor-pointer ${ActiveTab === "Saved" ?'font-bold bg-gray-50 border-b':'' } `}>Saved</span>
+        </div>
+        
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
           
-          {(userprofile.posts && userprofile.posts.length > 0)
-            ? userprofile.posts.map((postId, i) => (
-                <div
-                  key={i} Post
-                  className="bg-gray-200 h-40 sm:h-60 w-full rounded-md animate-pulse"
-                />
-              ))
-            : <p className="text-gray-500 col-span-3 text-center">No posts yet</p>
+          {(DispaleyItem.length > 0)
+            ? DispaleyItem.map((post, i) =>{
+              return (
+                <div key={post._id || i} 
+                className='relative cursor-pointer group'>
+                   <img src= {post.image} alt="IMG"
+                   className='rounded-sm w-full my-2 aspect-square object-cover' />
+                  
+                </div>
+              
+
+              )
+            } )
+            : <p className="text-gray-500 col-span-3 text-center">No {ActiveTab} yet</p>
           }
         </div>
       </div>

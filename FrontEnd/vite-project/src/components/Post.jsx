@@ -19,9 +19,9 @@ function Post({post}) {
   const {user} = useSelector(store=>store.auth);
   const {posts} = useSelector(store=>store.post);
   const dispatch = useDispatch();
-  const [Liked , setLiked] = useState(post.likes.includes(user?._id) || false);
-  const [likeCounts, setlikeCounts] = useState(post.likes.length);
-  const [comment , setComment] = useState(post.comments);
+  const [Liked , setLiked] = useState(post?.likes?.includes(user?._id) || false);
+  const [likeCounts, setlikeCounts] = useState(post?.likes?.length);
+  const [comment , setComment] = useState(post?.comments);
 
   useEffect(() =>{
     setComment(post.comments);
