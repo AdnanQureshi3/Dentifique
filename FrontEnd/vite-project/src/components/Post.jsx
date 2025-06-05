@@ -26,7 +26,7 @@ function Post({post}) {
   const [saved , setSaved] = useState(user?.saved?.includes(post._id) || false);
 
   useEffect(() =>{
-    setComment(post.comments);
+    setComment(post?.comments);
   }, [post]);
   
 

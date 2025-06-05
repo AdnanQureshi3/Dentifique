@@ -129,8 +129,18 @@ export const getprofile = async (req, res) => {
         const userId = req.params.id;
         
         const user = await User.findById(userId)
-            .populate({ path: 'posts', options: { sort: { createdAt: -1 } } })
-            .populate('saved');
+        .select('-password -email')
+            .populate({ path: 'posts', options: { sort: { createdAt: -1 } } ,
+            populate:[
+                {path:'comments' , options:{sort: {createdAt:-1}} ,
+                populate:[{path:'author' ,model: 'User',  select: '-password -email',}]},
+            {path:'author' } ] })
+
+           .populate({ path: 'saved', options: { sort: { createdAt: -1 } } ,
+            populate:[
+                {path:'comments' , options:{sort: {createdAt:-1}} ,
+                populate:[{path:'author' ,model: 'User',  select: '-password -email',}]},
+            {path:'author' } ] })
         return res.status(200).json({
             user,
             success: true

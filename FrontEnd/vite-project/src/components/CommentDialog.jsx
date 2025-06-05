@@ -20,7 +20,7 @@ function CommentDialog({ Open, setOpen, post }) {
 
     const [text, setText] = useState("");
     const selectedPost = useSelector(store => store.selectedPost)
-    const [Comments, setComment] = useState(post.comments);
+    const [Comments, setComment] = useState(post?.comments);
     const dispatch = useDispatch();
     const {posts} = useSelector(store=>store.post);
     const ChangeEventHandler = (e) => {
@@ -100,14 +100,14 @@ function CommentDialog({ Open, setOpen, post }) {
                     <div className='w-full sm:w-[55%] p-4 flex flex-col justify-between'>
                         <div className='flex items-center justify-between border-b-[1px] pb-2 border-gray-6 00 '>
                             <div className='flex items-center gap-3'>
-                                <Link>
-                                    <Avatar className="w-10 h-10">
-                                        <AvatarImage src="" />
-                                        <AvatarFallback>CN</AvatarFallback>
+                                <Link to={`/profile/${post?.author._id}`} >
+                                    <Avatar className=" w-2 rounded-full">
+                                        <AvatarImage className='w-10 aspect-square border-2 border-green-600 rounded-full' src={post.author.profilePicture} />
+                                        {/* <AvatarFallback></AvatarFallback> */}
                                     </Avatar>
                                 </Link>
                                 <div>
-                                    <Link className='font-semibold text-sm text-gray-800 hover:text-blue-500 transition duration-200 ease-in'>
+                                    <Link to={`/profile/${post?.author._id}`} className='font-semibold text-sm text-gray-800 hover:text-blue-500 transition duration-200 ease-in'>
                                         {post.author.username}
                                     </Link>
                                     <p className='text-xs text-gray-500 mt-1'>Just now</p>
