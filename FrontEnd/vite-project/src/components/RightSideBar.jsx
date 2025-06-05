@@ -12,21 +12,26 @@ function RightSideBar() {
       <div className="">
 
 
-        <div className='flex flex-row border-b-[1px] pt-12 pb-5'>
+        <div className='flex items-center gap-4 border-b pt-12 pb-5 px-4'>
 
-        <Link className='h-10 w-10 bg-amber-400' to = {`/profile/${user?._id}`} >
-          <Avatar>
-            <AvatarImage src={user?.profilePicture} alt="user" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        </Link>
+  <Link className='h-16 w-16' to={`/profile/${user?._id}`}>
+    <Avatar className='h-full w-full'>
+      <AvatarImage
+        className='object-cover h-full w-full rounded-full border-2 border-green-700'
+        src={user.profilePicture}
+        alt='user'
+      />
+      <AvatarFallback>User</AvatarFallback>
+    </Avatar>
+  </Link>
 
-        <div className='flex flex-col items-center'>
-        <h1 className="font-semibold text-sm">{user?.username} </h1>
+  <div className='flex flex-col justify-center'>
+    <h1 className="font-semibold text-base">{user?.username}</h1>
+    <span className="font-light text-sm text-gray-600">{user?.bio || 'I am a dev'}</span>
+  </div>
 
-        <span className="font-light text-sm">{user?.bio} I am a dev </span>
-        </div>
-        </div>
+</div>
+
         <SuggestedUser/>
 
         

@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
 import { DialogContent } from './ui/dialog'
-import {  Bookmark, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
+import {  Bookmark, BookmarkCheck, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import { Button } from './ui/button'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import CommentDialog from './CommentDialog'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
 import { toast } from 'sonner'
 import {Badge} from '../components/ui/badge.jsx'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
+import { setAuthuser } from '@/redux/authSlice'
 
 function Post({post}) {
   const [text, settext] = useState("");
@@ -22,6 +23,7 @@ function Post({post}) {
   const [Liked , setLiked] = useState(post?.likes?.includes(user?._id) || false);
   const [likeCounts, setlikeCounts] = useState(post?.likes?.length);
   const [comment , setComment] = useState(post?.comments);
+  const [saved , setSaved] = useState(user?.saved?.includes(post._id) || false);
 
   useEffect(() =>{
     setComment(post.comments);
@@ -118,23 +120,52 @@ function Post({post}) {
   const handleKeyPress = (e) => {
   if (e.key === 'Enter' && text.trim()) commentHanlder();
 };
+const saveHandler = async()=>{
+  try{
+      const res = await axios.get(`http://localhost:8000/api/post/${post._id}/save`, { withCredentials: true });
+      if(res.data.success){
+        dispatch(setAuthuser(res.data.user))
+        toast.success(res.data.msg)
+        if(res.data.str === "Saved"){
+          setSaved(true);
+        }
+        else{
+          setSaved(false);
+        }
+      }
+    }
+    catch(err){
+    
+      toast.error(err.response.msg);
+
+    }
+}
 
   return (
     <div className="w-full max-w-md mx-auto my-6  rounded-md">
 
       {/* Header */}
       <div className="flex items-center justify-between p-3">
-        <div className="flex items-center gap-3">
-          <Avatar>
-            <AvatarImage src="" alt="user" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        <span className="font-semibold text-sm">{post.author.username} </span>
-         {
-          user?._id === post?.author._id &&
-         <Badge variant='secondary' className={'bg-gray-100'} >Auhtor </Badge>
-         }
-        </div>
+        <div className="flex items-center gap-3 px-2 py-1">
+  <Link to={`/profile/${post.author._id}`} className="flex items-center gap-2">
+    <Avatar className="h-8 w-8">
+      <AvatarImage
+        src={post?.author?.profilePicture}
+        alt="user"
+        className="object-cover"
+      />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+    <span className="font-semibold text-sm text-gray-800">{post.author.username}</span>
+  </Link>
+
+  {user?._id === post?.author._id && (
+    <Badge variant="secondary" className="bg-gray-100 text-gray-700 text-xs px-2 py-0.5">
+      Author
+    </Badge>
+  )}
+</div>
+
         <Dialog>
 
           <DialogTrigger asChild>
@@ -181,7 +212,14 @@ function Post({post}) {
             } className="text-xl cursor-pointer" />
           <Send className="text-xl cursor-pointer" />
         </div>
-        <Bookmark className="text-xl cursor-pointer" />
+        {
+            saved?
+            <BookmarkCheck onClick={saveHandler} size={'24'} className="text-xl  cursor-pointer" />
+            :
+          <Bookmark onClick={saveHandler}  size={'24'} className="text-xl cursor-pointer" />
+          }
+
+        {/* <Bookmark className="text-xl cursor-pointer" /> */}
       </div>
 
       {/* Likes */}

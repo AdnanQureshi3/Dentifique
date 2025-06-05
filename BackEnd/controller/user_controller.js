@@ -127,6 +127,7 @@ export const logout = async (req, res) => {
 export const getprofile = async (req, res) => {
     try {
         const userId = req.params.id;
+        
         const user = await User.findById(userId)
             .populate({ path: 'posts', options: { sort: { createdAt: -1 } } })
             .populate('saved');
@@ -134,11 +135,13 @@ export const getprofile = async (req, res) => {
             user,
             success: true
         })
+        // console.log(user.username)
 
     }
     catch (err) {
         console.log(err);
     }
+    
 }
 export const editProfile = async (req, res) => {
     try {
@@ -167,11 +170,13 @@ export const editProfile = async (req, res) => {
         }
 
         await user.save();
+        const { password, email, ...safeUser } = user.toObject();
+
 
         return res.status(200).json({
             msg: "User updated successfully",
             success: true,
-            user
+            user:safeUser
         })
 
     }
@@ -184,8 +189,8 @@ export const getSuggestedusers = async (req, res) => {
     try {
 
         const loggedInUser = await User.findById(req.id);
-        const excludeIds = [...loggedInUser.following, req.id];
-        // const excludeIds = [ req.id];
+        // const excludeIds = [...loggedInUser.following, req.id];
+        const excludeIds = [ req.id];
 
         const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
 

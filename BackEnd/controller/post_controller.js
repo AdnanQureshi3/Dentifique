@@ -284,6 +284,7 @@ export const saveThePost =async (req,res)=>{
                 success:false,
             })
         }
+
         const user = await User.findById(userId);
         let str = "";
 
@@ -299,9 +300,13 @@ export const saveThePost =async (req,res)=>{
             await user.updateOne({$push:{saved:postId}})
             // await user.save();
         }
+         const { password, email, ...safeUser } = user.toObject();
         return res.status(200).json({
             msg:`Post ${str} Successfully`,
             success:true,
+            user:safeUser,
+            str
+
         })
 
     }

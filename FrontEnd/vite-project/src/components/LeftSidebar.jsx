@@ -37,6 +37,9 @@ const sidebarHandler = (type)=>{
     else if(type == 'Profile'){
         navigate(`/profile/${user?._id}`);
     }
+    else if(type == 'Home'){
+        navigate(`Home`);
+    }
 
 }
 const sidebarItems = [
