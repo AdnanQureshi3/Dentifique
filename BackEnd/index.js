@@ -7,7 +7,7 @@ import connectDB from './utils/db.js';
  import UserRoute from "./routes/user_route.js"
  import PostRoute from "./routes/post_route.js"
  import MessageRoute from "./routes/message_route.js"
-const app = express();
+import {app , server} from './socket/socket.js'
 
 
 const PORT = process.env.PORT || 8000;
@@ -34,7 +34,7 @@ app.use("/api/post" , PostRoute);
 app.use("/api/chats" , MessageRoute);
 
 
-app.listen(PORT , ()=>{
+server.listen(PORT , ()=>{
     connectDB();
     console.log("app is listening at" , PORT);
 })

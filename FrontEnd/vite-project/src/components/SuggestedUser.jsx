@@ -27,9 +27,13 @@ function SuggestedUser() {
               <div key={u._id} className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
                   <Link to={`/profile/${u._id}`}>
-                    <Avatar className='h-8 w-8'>
-                      <AvatarImage src={u.profilePicture} alt='user' />
-                      <AvatarFallback>U</AvatarFallback>
+                    <Avatar className="w-10 h-10 mr-4">
+                      <AvatarImage
+                        className="w-10 h-10 border-2 border-green-600 rounded-full object-cover"
+                        src={u?.profilePicture}
+                      />
+                      <AvatarFallback
+                       className="w-10 border-2 border-green-600 rounded-full aspect-square bg-amber-500">User</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className='flex flex-col'>
@@ -37,8 +41,8 @@ function SuggestedUser() {
                     <span className='font-light text-xs text-gray-500'>{u.bio || 'I am a dev'}</span>
                   </div>
                 </div>
-                
-                <button onClick= {() => FollowHandlerFunc(u?._id , dispatch)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
+
+                <button onClick={() => FollowHandlerFunc(u?._id, dispatch)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
               </div>
             ))}
       </div>

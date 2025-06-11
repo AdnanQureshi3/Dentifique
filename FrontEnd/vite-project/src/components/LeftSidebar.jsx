@@ -40,6 +40,9 @@ const sidebarHandler = (type)=>{
     else if(type == 'Home'){
         navigate(`Home`);
     }
+    else if(type == 'Messages'){
+        navigate(`Chat`);
+    }
 
 }
 const sidebarItems = [
