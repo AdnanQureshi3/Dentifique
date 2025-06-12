@@ -8,6 +8,7 @@ import Messages from './Messages';
 function Chatpage() {
     const { user, suggestedUser, selecteduser } = useSelector(store => store.auth);
     const dispatch = useDispatch();
+    const { onlineUsers } = useSelector(store => store.chat);
     useEffect(() => {
         dispatch(setSelectedUser(null));
 
@@ -20,31 +21,34 @@ function Chatpage() {
         }
         else settext("");
     }
-    const isOnline = false;
+
     return (
         <div className="bg-gray-100 h-screen pr-4 py-6 flex w-full ">
             <section className="bg-white shadow border-2 rounded-xl border-gray-300 p-4  h-full w-[25%] flex flex-col">
                 <h1 className="text-xl font-bold mb-4 px-2">{user?.username}</h1>
                 <hr className="border-gray-300 mb-4" />
                 <div className="overflow-y-auto space-y-2 pr-2">
-                    {suggestedUser.map((u) => (
-                        <div onClick={() => dispatch(setSelectedUser(u))}
-                            key={u._id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                            <Avatar className="w-10 h-10">
-                                <AvatarImage
-                                    className="w-10 h-10 border-2 border-green-600 rounded-full object-cover"
-                                    src={u?.profilePicture}
-                                />
-                                <AvatarFallback>CN</AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                                <span className="font-medium">{u?.username}</span>
-                                <span className={`text-xs font-semibold ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-                                    {isOnline ? 'online' : 'offline'}
-                                </span>
+                    {suggestedUser.map((u) => {
+                        const isOnline = onlineUsers.includes(u._id);
+                        return (
+                            <div onClick={() => dispatch(setSelectedUser(u))}
+                                key={u._id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                <Avatar className="w-10 h-10">
+                                    <AvatarImage
+                                        className="w-10 h-10 border-2 border-green-600 rounded-full object-cover"
+                                        src={u?.profilePicture}
+                                    />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
+                                <div className="flex flex-col">
+                                    <span className="font-medium">{u?.username}</span>
+                                    <span className={`text-xs font-semibold ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
+                                        {isOnline ? 'Online' : 'Offline'}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </section>
             {
@@ -60,14 +64,14 @@ function Chatpage() {
                             </Avatar>
                             <div className="flex flex-col">
                                 <span className="font-medium">{selecteduser?.username}</span>
-                                <span className={`text-xs font-semibold ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-                                    {isOnline ? 'online' : 'offline'}
+                                <span className={`text-xs font-semibold ${onlineUsers.includes(selecteduser._id) ? 'text-green-600' : 'text-red-600'}`}>
+                                    {onlineUsers.includes(selecteduser._id) ? 'Online' : 'Offline'}
                                 </span>
                             </div>
 
                         </div>
 
-                            <Messages selectedUser = {selecteduser}/>
+                        <Messages selectedUser={selecteduser} />
 
                         <div className='m-3 bottom-0 sticky flex justify-between py-2 pl-4 rounded-full w-auto border-2 b-0'>
                             <input type="text" placeholder='Send a message...'
