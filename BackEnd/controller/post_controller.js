@@ -113,6 +113,18 @@ export const LikeUnlikePost = async (req, res)=>{
             await Post.updateOne({ _id: postId }, { $addToSet: { likes: UserId } });
         }
         const user = await User.findById(UserId);
+        if(post.author.toString() !== UserId && str === "Liked"){
+            const user = await User.findById(UserId).select('username profilePicture');
+            const notification = {
+                type:'Like',
+                user,
+                postId
+            }
+            const postAuthorSocketId = getReceiverSocketId(post.author.toString());
+
+            io.to(postAuthorSocketId).emit('notification' , notification);
+
+        }
 
 
         return res.status(200).json({

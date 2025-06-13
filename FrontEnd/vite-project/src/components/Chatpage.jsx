@@ -4,22 +4,41 @@ import { MessageCircle } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Messages from './Messages';
+import axios from 'axios';
+import { setChatmessages } from '@/redux/chatSlice';
 
 function Chatpage() {
     const { user, suggestedUser, selecteduser } = useSelector(store => store.auth);
     const dispatch = useDispatch();
-    const { onlineUsers } = useSelector(store => store.chat);
+    
+    const { onlineUsers  , ChatMessages} = useSelector(store => store.chat);
     useEffect(() => {
         dispatch(setSelectedUser(null));
 
     }, [])
     const [text, settext] = useState("");
-    const textHandler = (e) => {
-        const msg = e.target.value.trim();
-        if (msg) {
-            settext(msg);
+ 
+    const sendMessageHandler = async()=>{
+      
+        try{
+
+            const res = await axios.post(`http://localhost:8000/api/chats/send/${selecteduser._id}` ,{message:text.trim()}  ,{withCredentials:true});
+            
+            if(res.data.success){
+                dispatch(setChatmessages([...ChatMessages , res.data.newMessage]))
+            }
+            settext("");
         }
-        else settext("");
+        catch(err){
+          
+           console.log(err.response?.data || err.message);
+        }
+    }
+    const SendButtonPressHandler = (e)=>{
+        if(e.key === 'Enter'){
+            sendMessageHandler();
+        }
+
     }
 
     return (
@@ -76,9 +95,11 @@ function Chatpage() {
                         <div className='m-3 bottom-0 sticky flex justify-between py-2 pl-4 rounded-full w-auto border-2 b-0'>
                             <input type="text" placeholder='Send a message...'
                                 className='outline-none w-full '
-                                onChange={(e) => { textHandler(e) }} />
+                                onKeyDown={SendButtonPressHandler}
+                                value={text}
+                                onChange={(e) => { settext(e.target.value)}} />
                             {text !== "" && (
-                                <button className='w-32 text-blue-500 text-md font-semibold h-full'>Send</button>
+                                <button  onClick={sendMessageHandler} className='w-32 cursor-pointer text-blue-500 text-md font-semibold h-full'>Send</button>
                             )}
 
                         </div>
