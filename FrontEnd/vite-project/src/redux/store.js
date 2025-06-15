@@ -4,6 +4,8 @@ import postSlice from './postSlice.js';
 import authSlice from './authSlice.js'
 import socketSlice from './socketSLice.js'
 import chatSlice from './chatSlice.js'
+import notificationSlice from './NotificationSlice.js'
+
 import {
 
     persistReducer,
@@ -16,7 +18,7 @@ import {
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
-import { Socket } from "socket.io-client";
+
 const persistConfig = {
     key: 'root',
     version: 1,
@@ -27,7 +29,9 @@ const rootReducer = combineReducers({
     auth: authSlice,
     post:postSlice,
     socketio:socketSlice,
-    chat:chatSlice
+    chat:chatSlice,
+    notification:notificationSlice
+
 
 })
 const persistedReducer = persistReducer(persistConfig, rootReducer)

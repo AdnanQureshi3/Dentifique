@@ -11,6 +11,7 @@ import { io } from "socket.io-client";
 import { useEffect } from 'react'
 import { setSocket } from './redux/socketSLice'
 import { setOnlineUsers } from './redux/chatSlice'
+import { setNotification } from './redux/notificationSlice'
 
 const browserRouter = createBrowserRouter([
   {
@@ -47,6 +48,7 @@ const browserRouter = createBrowserRouter([
 function App() {
   const {user} = useSelector(store => store.auth);
   const dispatch = useDispatch();
+  const {notification }= useSelector(state => state.notification);
   let socketio;
 
   useEffect(()=>{
@@ -64,6 +66,12 @@ function App() {
         // console.log(Onlineusers)
         dispatch(setOnlineUsers(Onlineusers));
       })
+      socketio.on('notification', (data) => {
+        // dispatch(setNotification([...noti , notification]))
+        dispatch(setNotification(data))
+      });
+
+
       return ()=>{
         // works when u leavce this page 
         socketio.close();

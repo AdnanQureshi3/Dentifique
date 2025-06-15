@@ -3,6 +3,8 @@ import {Post} from '../models/posts_model.js'; // default export
 import User from '../models/user_Model.js'
 import sharp from "sharp";
 import Comments from '../models/comment_Model.js';
+import { getReceiverSocketId, io } from "../socket/socket.js";
+
 
 // import { populate } from "dotenv";
 export const addNewPost = async (req,res) =>{
@@ -113,13 +115,16 @@ export const LikeUnlikePost = async (req, res)=>{
             await Post.updateOne({ _id: postId }, { $addToSet: { likes: UserId } });
         }
         const user = await User.findById(UserId);
-        if(post.author.toString() !== UserId && str === "Liked"){
-            const user = await User.findById(UserId).select('username profilePicture');
+
+        if(post.author.toString() !== UserId    ){
+            const user = await User.findById(UserId).select('username profilePicture _id').lean();
             const notification = {
-                type:'Like',
+                type:str,
                 user,
-                postId
+                postId,
+
             }
+            console.log(notification)
             const postAuthorSocketId = getReceiverSocketId(post.author.toString());
 
             io.to(postAuthorSocketId).emit('notification' , notification);

@@ -9,6 +9,8 @@ import { setAuthuser } from "@/redux/authSlice";
 import CreatePost from "./CreatePost";
 
 function LeftSidebar() {
+    const {notifications }= useSelector(store => store.notification);
+
     const [Open , setOpen] = useState(false);
     const {user} = useSelector(store => store.auth);
     const dispatch = useDispatch();
@@ -84,6 +86,12 @@ const sidebarItems = [
                                 className="flex items-center gap-4 relative hover:bg-gray-200 cursor-pointer rounded-lg p-3 my-3 "
                             >
                                 {item.icon} <span>{item.text}</span>
+                                {
+                                    notifications && notifications.length > 0?
+                                    (<span>{notifications.length}</span>):
+
+                                    (<span>{notifications.length}</span>)
+                                }
                             </div>
                         );
                     })}
