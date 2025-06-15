@@ -14,7 +14,7 @@ function Profile() {
   useProfileUser(id);
   const commonBTNCSS = "px-2 text-lg font-semibold rounded-lg transition-colors duration-200 cursor-pointer";
   const { userprofile, user } = useSelector(state => state.auth)
-  const isLoggedInUser = (user?._id === userprofile._id);
+  const isLoggedInUser = (user?._id === userprofile?._id);
   const isFollowing = true;
   const [Open, setOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -104,7 +104,7 @@ function Profile() {
 
         <div className="grid grid-cols-3 gap-2 sm:gap-4">
 
-          {(DispaleyItem.length > 0)
+          {(DispaleyItem?.length > 0)
             ? DispaleyItem.map((post, i) => {
               return (
                 <div onClick={() => { setOpen(true); setSelectedPost(post) }} key={post._id || i}

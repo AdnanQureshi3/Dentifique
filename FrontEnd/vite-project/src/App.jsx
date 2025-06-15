@@ -58,11 +58,7 @@ function App() {
         transports:['websocket']
       });
       
-    
-      
-      dispatch(setSocket(socketio));
-  
-      
+      dispatch(setSocket(socketio))
       // on means “Listen for an event.”
       socketio.on('getOnlineUsers' , (Onlineusers) =>{
         // console.log(Onlineusers)

@@ -26,7 +26,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth: authSlice,
     post:postSlice,
-    Socketio:socketSlice,
+    socketio:socketSlice,
     chat:chatSlice
 
 })
@@ -44,5 +44,13 @@ const store = configureStore({
         },
       }),
   })
+/*
+cd frontend
+cd vite-project
+npm run dev
+
+cd backend 
+npm run dev
+*/
 
 export default store;

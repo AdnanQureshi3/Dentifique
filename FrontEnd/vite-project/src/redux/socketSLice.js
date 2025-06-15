@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const socketSlice = createSlice({
     name:'socketio',
     initialState:{
-        socket:null
+        socket:null,
     },
     reducers:{
         setSocket:(state , action) =>{
@@ -12,5 +12,5 @@ const socketSlice = createSlice({
     }
 })
 
-export const {setSocket} = socketSlice.actions; 
+export const {setSocket } = socketSlice.actions; 
 export default socketSlice.reducer;

@@ -40,6 +40,20 @@ function Chatpage() {
         }
 
     }
+    const deleteChatHandler = async()=>{
+        try{
+            const res =await axios.delete(`http://localhost:8000/api/chats/delete/${selecteduser._id}` , {withCredentials:true});
+
+            if(res.data.success){
+                console.log('chat deleted');
+                dispatch(setChatmessages([]))
+            }
+
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
 
     return (
         <div className="bg-gray-100 h-screen pr-4 py-6 flex w-full ">
@@ -51,6 +65,7 @@ function Chatpage() {
                         const isOnline = onlineUsers.includes(u._id);
                         return (
                             <div onClick={() => dispatch(setSelectedUser(u))}
+
                                 key={u._id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
                                 <Avatar className="w-10 h-10">
                                     <AvatarImage
@@ -82,11 +97,12 @@ function Chatpage() {
                                 <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
-                                <span className="font-medium">{selecteduser?.username}</span>
+                                <span className="font-medium">{selecteduser?.username } </span>
                                 <span className={`text-xs font-semibold ${onlineUsers.includes(selecteduser._id) ? 'text-green-600' : 'text-red-600'}`}>
                                     {onlineUsers.includes(selecteduser._id) ? 'Online' : 'Offline'}
                                 </span>
                             </div>
+                            <button onClick={deleteChatHandler}>Delete</button>
 
                         </div>
 
