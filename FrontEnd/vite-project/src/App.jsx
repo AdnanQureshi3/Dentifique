@@ -11,7 +11,7 @@ import { io } from "socket.io-client";
 import { useEffect } from 'react'
 import { setSocket } from './redux/socketSLice'
 import { setOnlineUsers } from './redux/chatSlice'
-import { setNotification } from './redux/notificationSlice'
+import { setNotification } from './redux/notificationSlice.js'
 
 const browserRouter = createBrowserRouter([
   {

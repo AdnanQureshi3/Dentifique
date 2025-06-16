@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken'
 import getDataURI from '../utils/datauri.js';
 import cloudinary from '../utils/cloudinary.js';
 import { Post } from '../models/posts_model.js';
+import axios from 'axios'
+import { getReceiverSocketId, io } from '../socket/socket.js';
+import Notification from "../models/notification_Model.js";
 
 export const register = async (req, res) => {
     try {
@@ -127,20 +130,28 @@ export const logout = async (req, res) => {
 export const getprofile = async (req, res) => {
     try {
         const userId = req.params.id;
-        
-        const user = await User.findById(userId)
-        .select('-password -email')
-            .populate({ path: 'posts', options: { sort: { createdAt: -1 } } ,
-            populate:[
-                {path:'comments' , options:{sort: {createdAt:-1}} ,
-                populate:[{path:'author' ,model: 'User',  select: '-password -email',}]},
-            {path:'author' } ] })
 
-           .populate({ path: 'saved', options: { sort: { createdAt: -1 } } ,
-            populate:[
-                {path:'comments' , options:{sort: {createdAt:-1}} ,
-                populate:[{path:'author' ,model: 'User',  select: '-password -email',}]},
-            {path:'author' } ] })
+        const user = await User.findById(userId)
+            .select('-password -email')
+            .populate({
+                path: 'posts', options: { sort: { createdAt: -1 } },
+                populate: [
+                    {
+                        path: 'comments', options: { sort: { createdAt: -1 } },
+                        populate: [{ path: 'author', model: 'User', select: '-password -email', }]
+                    },
+                    { path: 'author' }]
+            })
+
+            .populate({
+                path: 'saved', options: { sort: { createdAt: -1 } },
+                populate: [
+                    {
+                        path: 'comments', options: { sort: { createdAt: -1 } },
+                        populate: [{ path: 'author', model: 'User', select: '-password -email', }]
+                    },
+                    { path: 'author' }]
+            })
         return res.status(200).json({
             user,
             success: true
@@ -151,7 +162,7 @@ export const getprofile = async (req, res) => {
     catch (err) {
         console.log(err);
     }
-    
+
 }
 export const editProfile = async (req, res) => {
     try {
@@ -186,7 +197,7 @@ export const editProfile = async (req, res) => {
         return res.status(200).json({
             msg: "User updated successfully",
             success: true,
-            user:safeUser
+            user: safeUser
         })
 
     }
@@ -200,7 +211,7 @@ export const getSuggestedusers = async (req, res) => {
 
         const loggedInUser = await User.findById(req.id);
         // const excludeIds = [...loggedInUser.following, req.id];
-        const excludeIds = [ req.id];
+        const excludeIds = [req.id];
 
         const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
 
@@ -254,12 +265,28 @@ export const followorUnfollow = async (req, res) => {
                 User.updateOne({ _id: loggedInUserId }, { $pull: { following: otherUserId } }),
                 User.updateOne({ _id: otherUserId }, { $pull: { followers: loggedInUserId } }),
             ])
+            const notification = {
+                type: "Unfollowed",
+                user: loggedInUser,
+                postId: ""
+            }
+            // console.log(notification)
+            const otherUserSocketId = getReceiverSocketId(otherUserId);
+            io.to(otherUserSocketId).emit('notification', notification);
+            await Notification.deleteOne({
+                type:"followed",
+                receiver: otherUserId,
+                user: loggedInUserId
+            });
+
+
 
             return res.status(200).json({
                 msg: "Unfollowed Successfully",
                 success: true,
                 user: loggedInUser
             })
+
         }
         else {
             // follow logic
@@ -267,7 +294,20 @@ export const followorUnfollow = async (req, res) => {
                 User.updateOne({ _id: loggedInUserId }, { $push: { following: otherUserId } }),
                 User.updateOne({ _id: otherUserId }, { $push: { followers: loggedInUserId } }),
             ])
-
+            const notification = {
+                type: "followed",
+                user: loggedInUser,
+                postId: ""
+            }
+            // console.log(notification)
+            const otherUserSocketId = getReceiverSocketId(otherUserId);
+            io.to(otherUserSocketId).emit('notification', notification);
+            await Notification.create({
+                type: "followed",
+                user: loggedInUser,
+                receiver:otherUserId
+            })
+            // await axios.post(`http://localhost:8000/api/user/noti/${otherUserId}`, notification);
 
             return res.status(200).json({
                 msg: "Followed Successfully",

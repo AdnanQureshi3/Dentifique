@@ -4,7 +4,7 @@ import postSlice from './postSlice.js';
 import authSlice from './authSlice.js'
 import socketSlice from './socketSLice.js'
 import chatSlice from './chatSlice.js'
-import notificationSlice from './NotificationSlice.js'
+import notificationSlice from './notificationSlice.js'
 
 import {
 
