@@ -72,9 +72,19 @@ function LeftSidebar() {
         },
         { icon: <LogOut />, text: "Logout" },
     ];
-    const clearNotificationHandler = () => {
+    const clearNotificationHandler = async() => {
         // console.log("noti cleared");
         dispatch(clearNotification([]));
+        try{
+            const res = await axios.delete('http://localhost:8000/api/user/noti/delete', {
+  withCredentials: true,
+});
+
+            console.log("deleting")
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 
 
@@ -141,7 +151,7 @@ function LeftSidebar() {
                       >
                         <Avatar>
                           <AvatarImage
-                            className="w-10 h-10 border border-gray-300 rounded-full"
+                            className="w-10 h-10 border-2 border-green-600 rounded-full"
                             src={noti.user?.profilePicture}
                           />
                         </Avatar>
@@ -149,7 +159,9 @@ function LeftSidebar() {
                           <span className="font-medium">
                             {noti.user?.username}
                           </span>{" "}
-                          {noti.type} your post
+                          {noti.type === 'Liked' ? 'Liked your post': 
+                            noti.type === 'commented'? 'commented on your post' : 'started following you'
+                          } 
                         </p>
                       </div>
                     ))

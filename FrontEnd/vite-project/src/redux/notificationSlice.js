@@ -7,9 +7,9 @@ const notificationSlice = createSlice({
   },
   reducers: {
     setNotification: (state, action) => {
-      if (action.payload.type === "Liked" || action.payload.type === "commented") {
+      if (action.payload.type === "Liked" || action.payload.type === "commented" || action.payload.type === "followed") {
         state.notifications.push(action.payload);
-      } else if (action.payload.type === "Unliked") {
+      } else if (action.payload.type === "Unliked"  ) {
         state.notifications = state.notifications.filter(
           item =>
             !(
@@ -17,6 +17,18 @@ const notificationSlice = createSlice({
               item.postId === action.payload.postId
             )
         );
+      }
+      else if(action.payload.type === "Unfollowed"){
+         state.notifications = state.notifications.filter(
+          item =>
+            !(
+              item.user._id === action.payload.user._id &&
+              item.receiver === action.payload.receiver &&
+              item.type === "followed"
+            )
+        );
+
+
       }
     },
     clearNotification: (state) => {

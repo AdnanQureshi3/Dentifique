@@ -5,7 +5,7 @@ import getDataURI from '../utils/datauri.js';
 import cloudinary from '../utils/cloudinary.js';
 import { Post } from '../models/posts_model.js';
 import axios from 'axios'
-import { getReceiverSocketId, io } from '../socket/socket.js';
+import { getReceiverSocketId, io } from "../socket/socket.js";
 import Notification from "../models/notification_Model.js";
 
 export const register = async (req, res) => {
@@ -268,11 +268,12 @@ export const followorUnfollow = async (req, res) => {
             const notification = {
                 type: "Unfollowed",
                 user: loggedInUser,
-                postId: ""
+                receiver:otherUserId
             }
             // console.log(notification)
             const otherUserSocketId = getReceiverSocketId(otherUserId);
             io.to(otherUserSocketId).emit('notification', notification);
+
             await Notification.deleteOne({
                 type:"followed",
                 receiver: otherUserId,
@@ -297,14 +298,15 @@ export const followorUnfollow = async (req, res) => {
             const notification = {
                 type: "followed",
                 user: loggedInUser,
-                postId: ""
+                receiver:otherUserId
             }
 
             const otherUserSocketId = getReceiverSocketId(otherUserId);
             io.to(otherUserSocketId).emit('notification', notification);
+
             await Notification.create({
                 type: "followed",
-                user: loggedInUser,
+                user: loggedInUserId,
                 receiver:otherUserId
             })
 

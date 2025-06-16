@@ -51,8 +51,12 @@ export const getAllReciverNoti = async (req, res) => {
 }
 export const deleteAllReceiverNoti = async (req, res) => {
     try {
+        
         const receiverId = req.id;
+        console.log(req.id);
         await Notification.deleteMany({ receiver: receiverId });
+        console.log(req.id , "delet ho gai");
+        
 
         res.status(200).json({ msg: "All notifications deleted", success: true });
     } catch (err) {
