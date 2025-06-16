@@ -114,22 +114,22 @@ export const LikeUnlikePost = async (req, res)=>{
             str = "Liked"
             await Post.updateOne({ _id: postId }, { $addToSet: { likes: UserId } });
         }
-        // const user = await User.findById(UserId);
+        let user;
 
-        // if(post.author.toString() !== UserId    ){
-            const user = await User.findById(UserId).select('username profilePicture _id').lean();
+        if(post.author.toString() !== UserId ){
+            user = await User.findById(UserId).select('username profilePicture _id').lean();
             const notification = {
                 type:str,
                 user,
                 postId,
 
             }
-            console.log(notification)
+            // console.log(notification)
             const postAuthorSocketId = getReceiverSocketId(post.author.toString());
 
             io.to(postAuthorSocketId).emit('notification' , notification);
 
-        // }
+        }
 
 
         return res.status(200).json({
@@ -163,12 +163,23 @@ export const makeComment = async (req, res)=>{
             author: UserId,
             post: postId,
         });
+        const user = await User.findById(UserId).select('username profilePicture _id').lean();
         
         comment = await comment.populate({ path: 'author', select: 'username profilePicture' });
         
 
         post.comments.push(comment._id);
         await post.save();
+
+        if(post.author !== user._id){
+            const notification = {
+                type:"commented",
+                user,
+                postId,
+            }
+            const postAuthorSocketId = getReceiverSocketId(post.author.toString());
+            io.to(postAuthorSocketId).emit('notification' , notification);
+        }
 
         return res.status(201).json({
             msg:"Comment Added Successfully",

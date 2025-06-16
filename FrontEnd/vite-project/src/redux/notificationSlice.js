@@ -7,7 +7,7 @@ const notificationSlice = createSlice({
   },
   reducers: {
     setNotification: (state, action) => {
-      if (action.payload.type === "Liked") {
+      if (action.payload.type === "Liked" || action.payload.type === "commented") {
         state.notifications.push(action.payload);
       } else if (action.payload.type === "Unliked") {
         state.notifications = state.notifications.filter(
