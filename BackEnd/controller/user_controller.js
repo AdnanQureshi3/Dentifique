@@ -299,7 +299,7 @@ export const followorUnfollow = async (req, res) => {
                 user: loggedInUser,
                 postId: ""
             }
-            // console.log(notification)
+
             const otherUserSocketId = getReceiverSocketId(otherUserId);
             io.to(otherUserSocketId).emit('notification', notification);
             await Notification.create({
@@ -307,7 +307,6 @@ export const followorUnfollow = async (req, res) => {
                 user: loggedInUser,
                 receiver:otherUserId
             })
-            // await axios.post(`http://localhost:8000/api/user/noti/${otherUserId}`, notification);
 
             return res.status(200).json({
                 msg: "Followed Successfully",
@@ -315,7 +314,6 @@ export const followorUnfollow = async (req, res) => {
                 user: loggedInUser
             })
         }
-
 
     }
     catch (err) {
