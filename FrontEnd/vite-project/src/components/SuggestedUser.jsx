@@ -33,7 +33,7 @@ function SuggestedUser() {
                         src={u?.profilePicture}
                       />
                       <AvatarFallback
-                       className="w-10 border-2 border-green-600 rounded-full aspect-square bg-amber-500">User</AvatarFallback>
+                        className="w-10 border-2 border-green-600 rounded-full aspect-square bg-amber-500">User</AvatarFallback>
                     </Avatar>
                   </Link>
                   <div className='flex flex-col'>
@@ -41,8 +41,13 @@ function SuggestedUser() {
                     <span className='font-light text-xs text-gray-500'>{u.bio || 'I am a dev'}</span>
                   </div>
                 </div>
+                <button
+                  onClick={() => FollowHandlerFunc(u?._id, dispatch)}
+                  className='text-blue-500 text-sm font-semibold cursor-pointer'
+                >
+                  {user.following.includes(u._id) ? 'UnFollow' : 'Follow'}
+                </button>
 
-                <button onClick={() => FollowHandlerFunc(u?._id, dispatch)} className='text-blue-500 text-sm font-semibold cursor-pointer '>Follow</button>
               </div>
             ))}
       </div>

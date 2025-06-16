@@ -114,9 +114,9 @@ export const LikeUnlikePost = async (req, res)=>{
             str = "Liked"
             await Post.updateOne({ _id: postId }, { $addToSet: { likes: UserId } });
         }
-        const user = await User.findById(UserId);
+        // const user = await User.findById(UserId);
 
-        if(post.author.toString() !== UserId    ){
+        // if(post.author.toString() !== UserId    ){
             const user = await User.findById(UserId).select('username profilePicture _id').lean();
             const notification = {
                 type:str,
@@ -129,7 +129,7 @@ export const LikeUnlikePost = async (req, res)=>{
 
             io.to(postAuthorSocketId).emit('notification' , notification);
 
-        }
+        // }
 
 
         return res.status(200).json({
