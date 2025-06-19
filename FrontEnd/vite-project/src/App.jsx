@@ -12,25 +12,27 @@ import { useEffect } from 'react'
 import { setSocket } from './redux/socketSLice'
 import { setOnlineUsers } from './redux/chatSlice'
 import { setNotification } from './redux/notificationSlice.js'
+import { getAllNoti } from './Hooks/getAllNoti'
+import Protected_routes from './components/ui/protected_routes'
 
 const browserRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Mainlayout />,
+    element: <Protected_routes><Mainlayout /></Protected_routes> ,
     children: [
       {
         path: '/home',
-        element: <Home />
+        element: <Protected_routes> <Home /></Protected_routes> 
       },
       {
         path: '/profile/:id',
-        element: <Profile />
+        element:<Protected_routes><Profile/></Protected_routes> 
       },{
         path:'/account/edit',
-        element: <EditProfile/>
+        element: <Protected_routes><EditProfile/></Protected_routes> 
       },{
         path:'/chat',
-        element: <Chatpage/>
+        element:<Protected_routes><Chatpage/></Protected_routes> 
       }
     ]
   },
@@ -52,6 +54,9 @@ function App() {
   let socketio;
 
   useEffect(()=>{
+
+    getAllNoti(dispatch);
+    
     if(user){
       socketio = io('http://localhost:8000' , {
         query:{

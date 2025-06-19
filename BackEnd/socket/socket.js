@@ -20,13 +20,13 @@ io.on('connection' , (socket) =>{
     const userId = socket.handshake.query.userId;
     if(userId){
         userSocketMap[userId] = socket.id;
-        console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
+        // console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
         io.emit('getOnlineUsers' , Object.keys(userSocketMap));
     }
     
     socket.on('disconnect' , ()=>{
         if(userId){
-            console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
+            // console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
             delete userSocketMap[userId];
         }
         io.emit('getOnlineUsers' , Object.keys(userSocketMap));

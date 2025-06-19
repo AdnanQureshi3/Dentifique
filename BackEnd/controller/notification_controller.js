@@ -41,11 +41,12 @@ export const getAllReciverNoti = async (req, res) => {
         const receiverId = req.id;
         const notis = await Notification.find({ receiver: receiverId }).sort({ createdAt: -1 }).populate('user', 'username profilePicture');
 
-        res.status(201).json({ msg: "Notification fecthed", notis, success: true });
+        res.status(200).json({ msg: "Notification fecthed", notis, success: true });
 
     }
     catch (err) {
         console.log(err);
+        res.status(500).json({ msg: "Server error", success: false });
 
     }
 }
@@ -55,7 +56,7 @@ export const deleteAllReceiverNoti = async (req, res) => {
         const receiverId = req.id;
         console.log(req.id);
         await Notification.deleteMany({ receiver: receiverId });
-        console.log(req.id , "delet ho gai");
+        // console.log(req.id , "delet ho gai");
         
 
         res.status(200).json({ msg: "All notifications deleted", success: true });

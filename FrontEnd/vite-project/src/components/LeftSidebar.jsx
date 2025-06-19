@@ -109,7 +109,7 @@ function LeftSidebar() {
               {isNotification && notifications.length > 0 && (
                 <Button
                   size={"icon"}
-                  className="rounded-full absolute left-3 bottom-4 p-0 w-6 h-6 bg-black text-white text-xs flex items-center justify-center"
+                  className="rounded-full absolute left-5 bottom-6  p-0 w-5 h-5 bg-red-600 font-bold text-white text-xs flex items-center justify-center"
                 >
                   {notifications.length}
                 </Button>

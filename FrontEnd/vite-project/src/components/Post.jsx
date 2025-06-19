@@ -24,6 +24,8 @@ function Post({post}) {
   const [likeCounts, setlikeCounts] = useState(post?.likes?.length);
   const [comment , setComment] = useState(post?.comments);
   const [saved , setSaved] = useState(user?.saved?.includes(post._id) || false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   useEffect(() =>{
     setComment(post?.comments);
@@ -166,26 +168,34 @@ const saveHandler = async()=>{
   )}
 </div>
 
-        <Dialog>
+        <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
 
           <DialogTrigger asChild>
             <MoreHorizontal className="cursor-pointer" />
           </DialogTrigger>
           
-          <DialogContent className="p-0 text-sm text-center bg-white border-0">
-            {
-              user &&  user._id !== post.author._id &&
-              <Button className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Unfollow</Button>
+         <DialogContent className="w-64 cursor-pointer p-0 overflow-hidden bg-white rounded-xl shadow-lg border border-gray-200">
+  {user && user._id !== post.author._id && (
+    <Button className="w-full cursor-pointer py-3 text-red-500 bg-white hover:bg-gray-100 rounded-none border-b">
+      Unfollow
+    </Button>
+  )}
+  <Button onClick={saveHandler} className="w-full cursor-pointer py-3 bg-white hover:bg-gray-100 text-gray-800 rounded-none border-b">
+    {saved? 'Remove from favourite' :'Add to favourite'}
+  </Button>
+  {user && user._id === post.author._id && (
+    <Button
+      onClick={deletePostHandler}
+      className="w-full py-3 cursor-pointer text-red-600 bg-white hover:bg-gray-100 rounded-none border-b"
+    >
+      Delete
+    </Button>
+  )}
+  <Button  onClick={() => setMenuOpen(false)}  className="w-full cursor-pointer py-3 bg-white hover:bg-gray-100 text-gray-700 rounded-none">
+    Cancel
+  </Button>
+</DialogContent>
 
-            }
-            <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Add to favorites</Button>
- 
-          {
-            user &&  user._id === post.author._id &&
-            <Button onClick={deletePostHandler}  className="w-full py-4 bg-gray-800 text-[#ED4956] rounded-none">Delete</Button>
-          }
-          <Button className="w-full py-4 bg-gray-800 text-white rounded-none">Cancel</Button>
-          </DialogContent>
         </Dialog>
       </div>
 
