@@ -11,7 +11,6 @@ export const getAllMessages= async(receiverId , dispatch)=>{
         if(res.data.success){
             // console.log("23567890m"  , res.data.messages)
             dispatch(setChatmessages(res.data.messages));
-
         }
 
     }

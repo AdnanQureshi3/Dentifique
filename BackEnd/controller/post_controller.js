@@ -288,6 +288,13 @@ export const deleteComment = async (req, res) => {
         const commentId = req.params.id;
         const userId = req.id;
         const comment = await Comments.findById(commentId);
+        if(!comment) {
+            return res.status(404).json({
+                msg: "Comment not found",
+                success: false,
+            })
+
+        }
 
 
         if (userId !== comment.author.toString()) {
@@ -305,10 +312,76 @@ export const deleteComment = async (req, res) => {
 
         await Comments.findByIdAndDelete(commentId);
         return res.status(200).json({
-            msg: "Comment deleted Successfully",
+            msg: `Comment deleted Successfully`,
             success: true,
+            postId,
+            commentId
         })
 
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+
+export const editComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.id;
+        const {text} = req.body;
+        const comment = await Comments.findById(commentId)
+        
+        if(!comment) {
+            return res.status(404).json({
+                msg: "Comment not found",
+                success: false,
+            })
+        }
+        
+
+       const updatedComment = await Comments.findByIdAndUpdate(commentId , {content:text})
+       .populate({ path: 'author', select: 'username , profilePicture' })
+        return res.status(200).json({
+            msg: "Comment edited Successfully",
+            success: true,
+            updatedComment,
+        })
+
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+
+export const LikeComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.id;
+        const comment = await Comments.findById(commentId)
+        .populate({ path: 'author', select: 'username , profilePicture' })
+        let str= '';
+
+        if(comment.likes.includes(userId)){
+
+            comment.likes.pull(userId);
+            str = "liked"
+        }
+        else{
+            comment.likes.push(userId);
+            str = 'unliked'
+        }
+        await comment.save();
+
+        return res.status(200).json({
+            msg: `Comment ${str} Successfully`,
+            success: true,
+            str,
+            updatedComment:comment
+        })
 
     }
     catch (err) {

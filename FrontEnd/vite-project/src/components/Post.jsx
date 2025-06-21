@@ -250,7 +250,7 @@ const saveHandler = async()=>{
       }
 
 
-      <CommentDialog Open={Open} setOpen={setOpen} post ={post} />
+    <CommentDialog deletePostHandler={deletePostHandler} saved={saved} saveHandler={saveHandler} Open={Open} setOpen={setOpen} post ={post} />
 
       <div className=' px-3 pb-3 flex justify-between items-center'>
         <input

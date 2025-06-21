@@ -164,7 +164,36 @@ export const getprofile = async (req, res) => {
     }
 
 }
-export const editProfile = async (req, res) => {
+export const removePhoto = async(req, res) => {
+    try{
+        console.log("we are changing")
+        const userId = req.id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                msg: "User not found",
+                success: false,
+
+            })
+        }
+        user.profilePicture = '/defaultPhoto.png';
+        await user.save();
+     
+        const { password, email, ...safeUser } = user.toObject();
+
+            return res.status(200).json({
+                msg: "Photo Removed",
+                success: true,
+                user:safeUser
+
+            })
+
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+ export const editProfile = async (req, res) => {
     try {
         const userId = req.id;
         const { gender, bio } = req.body;

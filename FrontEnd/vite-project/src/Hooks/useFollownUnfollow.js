@@ -12,6 +12,7 @@ export const FollowHandlerFunc = async (id , dispatch ) => {
       dispatch(setAuthuser(res.data.user));
       const sugUsers = await axios.get('http://localhost:8000/api/user/suggested' ,{withCredentials:true} );
       if(sugUsers.data.success){
+        
           dispatch(setSuggestedUser(sugUsers.data.users));
           console.log("user updated and sugg users")
           

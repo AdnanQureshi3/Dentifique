@@ -19,7 +19,7 @@ function SuggestedUser() {
         <span className='font-semibold text-sm'>See All</span>
       </div>
 
-      <div className='flex flex-col gap-4 mt-4'>
+      <div className='flex flex-col gap-2 mt-4'>
         {Array.isArray(suggestedUser) &&
           suggestedUser?.filter(u => user._id !== u._id)
             .map(u => (

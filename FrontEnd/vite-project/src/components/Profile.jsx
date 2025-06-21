@@ -1,21 +1,27 @@
 import useProfileUser from '@/Hooks/usegetProfileUser'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { Heart, MessageCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog'
 import Post from './Post'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import CommentDialog from './CommentDialog'
+import axios from 'axios'
+import { setAuthuser, setProfileUser } from '@/redux/authSlice'
+import { FollowHandlerFunc } from '../Hooks/useFollownUnfollow.js'
 
 function Profile() {
   const { id } = useParams();
-  useProfileUser(id);
+  const [refresh, setRefresh] = useState(false);
+  useProfileUser(id, refresh);
   const commonBTNCSS = "px-2 text-lg font-semibold rounded-lg transition-colors duration-200 cursor-pointer";
   const { userprofile, user } = useSelector(state => state.auth)
   const isLoggedInUser = (user?._id === userprofile?._id);
-  const isFollowing = true;
+ const isFollowing = userprofile?.followers?.includes(user?._id);
+
+  const dispatch = useDispatch();
   const [Open, setOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   function btnClass(extra = '') {
@@ -29,6 +35,19 @@ function Profile() {
       setDisplayItem(userprofile?.posts);
     else setDisplayItem(userprofile?.saved);
 
+  }
+  const RemovePhotoHandler = async () => {
+    try {
+      const res = await axios.get('http://localhost:8000/api/user/profile/removephoto', { withCredentials: true });
+      if (res.data.success) {
+        dispatch(setAuthuser(res.data.user));
+        dispatch(setProfileUser(res.data.user))
+      }
+
+    }
+    catch (err) {
+
+    }
   }
 
 
@@ -45,10 +64,34 @@ function Profile() {
     <div className="max-w-4xl mx-auto py-10 px-4">
       {/* Top Section */}
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-10">
-        <Avatar className='w-[15%] aspect-square '>
-          <AvatarImage className='object-cover w-full border-2 border-green-700 h-full rounded-full' src={userprofile.profilePicture} alt='user' />
-          <AvatarFallback>User</AvatarFallback>
-        </Avatar>
+        <div className='w-[15%] cursor-pointer aspect-square relative group'>
+
+          <Avatar className=''>
+            <AvatarImage
+              className='object-cover h-full w-full rounded-full border-2 border-green-700'
+              src={
+                userprofile?.profilePicture
+              }
+              alt='user'
+            />
+          </Avatar>
+          {
+            isLoggedInUser &&(
+
+              (userprofile?.profilePicture !== '/defaultPhoto.png') ? (
+
+              <div onClick={RemovePhotoHandler} className="absolute inset-0 bg-black bg-opacity-20 rounded-full opacity-0 group-hover:opacity-70 cursor-pointer transition duration-200 flex items-center justify-center text-white text-sm">
+                Remove Photo</div>
+            ) : (
+               <Link to={'/account/edit'} >
+              <div className="absolute inset-0 bg-black bg-opacity-20 rounded-full opacity-0 group-hover:opacity-70 cursor-pointer transition duration-200 flex items-center justify-center text-white text-sm">
+                Update Photo</div>
+              </Link>
+            ))
+
+
+          }
+        </div>
 
         <div className="flex flex-col gap-3 items-center sm:items-start">
           <div className="flex flex-row gap-2">
@@ -65,12 +108,12 @@ function Profile() {
                 isFollowing ? (
 
                   <>
-                    <button className={btnClass('bg-[#0095F6] text-white hover:bg-[#3192d2] ')}>Follow</button>
+                    <button onClick={() => FollowHandlerFunc(userprofile?._id, dispatch)} className={btnClass('bg-[#0095F6] text-white hover:bg-[#3192d2] ')}>Unfollow</button>
                     <button className={btnClass('bg-[#0095F6] text-white hover:bg-[#3192d2] ')}>Message</button>
                   </>
                 ) : (
                   <>
-                    <button className={btnClass('bg-[#0095F6] text-white hover:bg-[#3192d2] ')} >Follow</button>
+                    <button onClick={() => FollowHandlerFunc(u?._id, dispatch)} className={btnClass('bg-[#0095F6] text-white hover:bg-[#3192d2] ')} >Follow</button>
 
                   </>
                 )

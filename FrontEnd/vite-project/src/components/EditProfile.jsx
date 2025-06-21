@@ -86,7 +86,13 @@ function EditProfile() {
           <div className='flex items-center gap-3 '>
 
             <Avatar className='w-[15%] aspect-square '>
-              <AvatarImage className='object-cover w-full border-2 border-green-700 h-full rounded-full' src={user.profilePicture} alt='user' />
+              <AvatarImage className='object-cover w-full border-2 border-green-700 h-full rounded-full' 
+             src={
+    user?.profilePicture === 'defaultPhoto.png'
+      ? '/defaultPhoto.png'
+      : user?.profilePicture
+  }
+              alt='user' />
               <AvatarFallback>User</AvatarFallback>
             </Avatar>
 
