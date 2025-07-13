@@ -33,6 +33,39 @@ export const addNewPost = async (req, res) => {
             caption,
             image: cloudResponse.secure_url,
             author: authorId,
+            type: 'post' // default type for posts
+        })
+        const user = await User.findById(authorId);
+
+        user.posts.push(post._id);
+        await user.save();
+
+        await post.populate({ path: 'author', select: '-password' });
+        res.status(201).json({ msg: "Post created", post, success: true });
+
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ msg: "Something  kh nwent wrong", success: false });
+    }
+}
+export const addNewArticle = async (req, res) => {
+
+    try {
+        
+        const { content, title } = req.body;
+        const authorId = req.id;
+
+        if (!content || !title) {
+            return res.status(400).json({ msg: "Content and title are required" });
+        }
+
+       
+        const post = await Post.create({
+            caption:content,
+            author: authorId,
+            title: title,
+            type: 'article' // set type to article
         })
         const user = await User.findById(authorId);
 

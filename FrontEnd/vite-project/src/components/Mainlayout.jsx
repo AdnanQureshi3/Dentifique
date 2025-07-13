@@ -4,7 +4,7 @@ import LeftSidebar from './LeftSidebar'
 
 function Mainlayout() {
   return (
-    <div className='flex '>
+    <div className='flex ml-[250px]'>
     <LeftSidebar/>
     <Outlet/>
     </div>

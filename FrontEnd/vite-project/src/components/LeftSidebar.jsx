@@ -1,143 +1,129 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Heart, Home, LogOut, MessageCircle, PlusSquare, Search, TrendingUp, } from "lucide-react";
-import React, { useState } from "react";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import {
+  Home, Search, TrendingUp, MessageCircle,
+  Heart, PlusSquare, LogOut
+} from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import axios from 'axios'
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
+import axios from "axios";
 import { setAuthuser } from "@/redux/authSlice";
-import CreatePost from "./CreatePost";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { clearNotification } from "@/redux/notificationSlice";
 import { Button } from "./ui/button";
-import { clearNotification, setNotification } from "@/redux/notificationSlice.js";
-// import second from 'first'
+import CreatePost from "./CreatePost";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent
+} from "@radix-ui/react-popover";
 
 function LeftSidebar() {
-  const { notifications } = useSelector(store => store.notification);
-
-  const [Open, setOpen] = useState(false);
-  const { user } = useSelector(store => store.auth);
-  const dispatch = useDispatch();
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector(store => store.auth);
+  const { notifications } = useSelector(store => store.notification);
+  const [Open, setOpen] = useState(false);
+
   const logoutHandler = async () => {
     try {
-      // withCredentials: true tells the browser to include cookies and authentication headers with the request.
       const res = await axios.get('http://localhost:8000/api/user/logout', { withCredentials: true });
       if (res.data.success) {
-        navigate('/login')
         dispatch(setAuthuser(null));
+        navigate('/login');
         toast.success(res.data.msg);
       }
     } catch (err) {
-      // console.log(err);
-      toast.error(err.response?.data?.msg || "Something went wrong", {
-        className: "bg-red-500 text-white p-4 rounded-lg shadow-md", // Tailwind classes
-      });
+      toast.error(err.response?.data?.msg || "Something went wrong");
     }
   };
-  const sidebarHandler = (type) => {
-    console.log(type);
-    if (type == "Logout") logoutHandler();
-    else if (type == 'Create') setOpen(true);
-    else if (type == 'Profile') {
-      navigate(`/profile/${user?._id}`);
-    }
-    else if (type == 'Home') {
-      navigate(`Home`);
-    }
-    else if (type == 'Messages') {
-      navigate(`Chat`);
-    }
 
-  }
+  const handleSidebarClick = (type) => {
+    if (type === "Logout") logoutHandler();
+    else if (type === "Create") setOpen(true);
+    else if (type === "Profile") navigate(`/profile/${user?._id}`);
+    else if (type === "Messages") navigate("/chat");
+    else navigate("/home");
+  };
+
   const sidebarItems = [
-    { icon: <Home />, text: "Home" },
-    { icon: <Search />, text: "Search" },
-    { icon: <TrendingUp />, text: "Explore" },
-    { icon: <MessageCircle />, text: "Messages" },
-    { icon: <Heart />, text: "Notifications" },
-    { icon: <PlusSquare />, text: "Create" },
+    { icon: <Home size={24} />, text: "Home", show: true },
+    { icon: <Search size={24} />, text: "Search", show: true },
+    { icon: <MessageCircle size={24} />, text: "Messages", show: !!user },
+    { icon: <Heart size={24} />, text: "Notifications", show: !!user },
+    { icon: <PlusSquare size={24} />, text: "Create", show: !!user },
     {
       icon: (
-        <Avatar className="w-8 h-8 ">
-
-
+        <Avatar className="w-7 h-7">
           <AvatarImage
-            className="rounded-full bg-gray-500 "
-            src={
-              user?.profilePicture === 'defaultPhoto.png'
-                ? '/defaultPhoto.png'
-                : user?.profilePicture
-            }
-          // alt={user?.username}
+            className="rounded-full bg-gray-300"
+            src={user?.profilePicture === "defaultPhoto.png"
+              ? "/defaultPhoto.png"
+              : user?.profilePicture}
           />
-          {/* <AvatarFallback>{user?.username}</AvatarFallback> */}
         </Avatar>
       ),
       text: "Profile",
+      show: !!user
     },
-    { icon: <LogOut />, text: "Logout" },
+    { icon: <LogOut size={24} />, text: "Logout", show: !!user }
   ];
+
   const clearNotificationHandler = async () => {
-    // console.log("noti cleared");
     dispatch(clearNotification([]));
     try {
-      const res = await axios.delete('http://localhost:8000/api/user/noti/delete', {
+      await axios.delete("http://localhost:8000/api/user/noti/delete", {
         withCredentials: true,
       });
-
-      console.log("deleting")
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
     }
-  }
-
+  };
 
   return (
-    <div className="z-10 left-0 px-4 border-r border-gray-300 w-[20%] h-screen overflow-y-auto">
-      <div className="flex flex-col">
-        <div className="w-full flex justify-center my-5">
-          <img src="src/assets/logo.png" className="w-[70%]" alt="Logo" />
+<aside className="fixed top-0 left-0 w-[250px] h-screen bg-white border-r shadow-md z-50 px-4 py-6">
+      {/* Top Logo */}
+      <div>
+        <div className="flex justify-center mb-6">
+          <img src="src/assets/logo.png" className="w-24" alt="Logo" />
         </div>
 
-        <div>
+        {/* Navigation */}
+        <nav className="flex flex-col space-y-2">
           {sidebarItems.map((item, index) => {
+            if (!item.show) return null;
             const isNotification = item.text === "Notifications";
-            const content = (
+
+            const navItem = (
               <div
-                onClick={() => !isNotification && sidebarHandler(item.text)}
-                key={index}
-                className="flex items-center gap-4 relative hover:bg-gray-200 cursor-pointer rounded-lg p-3 my-2"
+                onClick={() => !isNotification && handleSidebarClick(item.text)}
+                className="flex items-center gap-4 px-4 py-3 text-sm rounded-lg text-gray-800 font-medium hover:bg-white hover:shadow transition cursor-pointer relative"
               >
                 {item.icon}
                 <span>{item.text}</span>
+
                 {isNotification && notifications.length > 0 && (
-                  <Button
-                    size={"icon"}
-                    className="rounded-full absolute left-5 bottom-6  p-0 w-5 h-5 bg-red-600 font-bold text-white text-xs flex items-center justify-center"
-                  >
+                  <span className="absolute left-6 -top-2 bg-red-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
                     {notifications.length}
-                  </Button>
+                  </span>
                 )}
               </div>
             );
 
             return isNotification ? (
               <Popover key={index}>
-                <PopoverTrigger asChild>{content}</PopoverTrigger>
+                <PopoverTrigger asChild>{navItem}</PopoverTrigger>
                 <PopoverContent
                   side="right"
-                  align="center"
-                  className="w-72 max-h-96 overflow-y-auto p-4 z-30 shadow-xl rounded-xl bg-white border border-gray-200">
-                  <div className="flex items-center justify-between mb-3 sticky top-0 bg-white z-10">
-                    <h1 className="text-lg font-semibold text-gray-800">
-                      Notifications
-                    </h1>
+                  align="start"
+                  className="w-72 max-h-96 overflow-y-auto p-4 bg-white border rounded-xl shadow-xl"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h1 className="text-sm font-semibold text-gray-800">Notifications</h1>
                     <Button
+                      size="sm"
                       variant="outline"
-                      className="h-8 px-3 py-1 text-sm"
+                      className="h-7 px-2 py-1 text-xs"
                       onClick={clearNotificationHandler}
                     >
                       Clear
@@ -145,46 +131,58 @@ function LeftSidebar() {
                   </div>
 
                   {notifications.length === 0 ? (
-                    <p className="text-center text-gray-500 text-sm mt-4">
-                      No new Notifications
-                    </p>
+                    <p className="text-center text-gray-500 text-sm mt-2">No new notifications</p>
                   ) : (
-                    [...notifications]
-                      .reverse()
-                      .map((noti) => (
-                        <div
-                          key={noti.user._id}
-                          className="flex items-center gap-3 py-2 border-b last:border-none"
-                        >
-                          <Avatar>
-                            <AvatarImage
-                              className="w-10 h-10 border-2 border-green-600 rounded-full"
-                              src={noti.user?.profilePicture}
-                            />
-                          </Avatar>
-                          <p className="text-sm text-gray-700 leading-snug">
-                            <span className="font-medium">
-                              {noti.user?.username}
-                            </span>{" "}
-                            {noti.type === 'Liked' ? 'Liked your post' :
-                              noti.type === 'commented' ? 'commented on your post' : 'started following you'
-                            }
-                          </p>
-                        </div>
-                      ))
+                    [...notifications].reverse().map(noti => (
+                      <div
+                        key={noti.user._id}
+                        className="flex items-center gap-3 py-2 border-b last:border-none"
+                      >
+                        <Avatar>
+                          <AvatarImage
+                            className="w-9 h-9 border-2 border-green-500 rounded-full"
+                            src={noti.user?.profilePicture}
+                          />
+                        </Avatar>
+                        <p className="text-sm text-gray-700">
+                          <span className="font-medium">{noti.user?.username}</span>{" "}
+                          {noti.type === "Liked"
+                            ? "liked your post"
+                            : noti.type === "commented"
+                            ? "commented on your post"
+                            : "started following you"}
+                        </p>
+                      </div>
+                    ))
                   )}
                 </PopoverContent>
               </Popover>
             ) : (
-              <div key={index}>{content}</div>
+              <div key={index}>{navItem}</div>
             );
           })}
-          <CreatePost Open={Open} setOpen={setOpen} />
-        </div>
+        </nav>
       </div>
-    </div>
-  );
 
+      {/* Bottom User Summary (optional) */}
+      {user && (
+        <div className="border-t pt-4 flex items-center gap-3">
+          <Avatar>
+            <AvatarImage
+              className="w-10 h-10 rounded-full border border-gray-400"
+              src={user?.profilePicture || "/defaultPhoto.png"}
+            />
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{user.username}</span>
+            <span className="text-xs text-gray-500">{user.email}</span>
+          </div>
+        </div>
+      )}
+
+      <CreatePost Open={Open} setOpen={setOpen} />
+    </aside>
+  );
 }
 
 export default LeftSidebar;
