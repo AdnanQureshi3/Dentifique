@@ -13,7 +13,7 @@ function Comment({ comment, post, setComment, Comments }) {
   const dispatch = useDispatch();
   const { posts } = useSelector(store => store.post)
   const isAuthor = user?._id === comment?.author?._id;
-  const isLiked = comment?.likes?.includes(user?._id) || false;
+  let isLiked = comment?.likes?.includes(user?._id) || false;
  
 
 
@@ -38,6 +38,7 @@ function Comment({ comment, post, setComment, Comments }) {
 
         const updatedPosts = posts.map(p => {
           if (p._id === res.data.postId) {
+            
             const updatedComments = post.comments.filter(c => c._id !== id);
             setComment(updatedComments)
             return { ...p, comments: updatedComments };
