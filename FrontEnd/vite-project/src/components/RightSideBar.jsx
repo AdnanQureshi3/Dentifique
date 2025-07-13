@@ -1,42 +1,27 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom';
-import SuggestedUser from './SuggestedUser.jsx';
+import { Link } from 'react-router-dom'
+import SuggestedUser from './SuggestedUser.jsx'
 
 function RightSideBar() {
-  const {user} = useSelector(store=>store.auth);
+  const { user } = useSelector(store => store.auth)
+
   return (
-    <div>
+    <div className="w-full p-4 bg-white rounded-md mt-2 shadow-md border space-y-6">
 
-      <div className="">
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg p-4">
+        <h1 className="text-lg font-semibold mb-1">Try Premium</h1>
+        <p className="text-sm mb-3">Get access to exclusive features and content</p>
+        <Link 
+          to="/premium" 
+          className="inline-block bg-white text-blue-600 font-semibold text-sm px-4 py-2 rounded hover:bg-gray-100 transition"
+        >
+          Upgrade Now
+        </Link>
+      </div>
 
-
-        <div className='flex items-center gap-4 border-b pt-12 pb-5 px-4'>
-
-  <Link className='h-16 w-16' to={`/profile/${user?._id}`}>
-    <Avatar className='h-full w-full'>
-      <AvatarImage
-        className='object-cover h-full w-full rounded-full border-2 border-green-700'
-        src={user.profilePicture}
-        alt='user'
-      />
-      <AvatarFallback>User</AvatarFallback>
-    </Avatar>
-  </Link>
-
-  <div className='flex flex-col justify-center'>
-    <h1 className="font-semibold text-base">{user?.username}</h1>
-    <span className="font-light text-sm text-gray-600">{user?.bio || 'I am a dev'}</span>
-  </div>
-
-</div>
-
-        <SuggestedUser/>
-
-        
-        </div>
-        
+      <SuggestedUser />
     </div>
   )
 }

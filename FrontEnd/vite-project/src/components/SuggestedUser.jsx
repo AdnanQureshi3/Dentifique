@@ -13,9 +13,9 @@ function SuggestedUser() {
   const dispatch = useDispatch();
 
   return (
-    <div>
+    <div className='w-full p-4 bg-white rounded-md mt-2 shadow-md border space-y-6'>
       <div className='flex justify-between'>
-        <span className='font-semibold text-sm text-gray-500'>Suggested for you</span>
+        <span className='font-semibold text-sm text-gray-500'>Whom to follow.</span>
         <span className='font-semibold text-sm'>See All</span>
       </div>
 

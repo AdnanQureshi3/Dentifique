@@ -1,5 +1,5 @@
 import express from "express";
-import { editProfile, followorUnfollow, getprofile, getSuggestedusers, login, logout, register, removePhoto } from "../controller/user_controller.js";
+import { editProfile, followorUnfollow, getprofile, getSuggestedusers, login, logout, register, removePhoto, resendOtp, verifyOtp } from "../controller/user_controller.js";
 import isAuthenticated from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
 import { createNotification, deleteAllReceiverNoti, getAllReciverNoti, markAllReceiverNotiasRead } from "../controller/notification_controller.js";
@@ -14,6 +14,9 @@ router.route('/profile/edit').post(isAuthenticated ,upload.single('profilePhoto'
 router.route('/suggested').get(isAuthenticated , getSuggestedusers)
 router.route('/followUnfollow/:id').get(isAuthenticated , followorUnfollow)
 router.route('/profile/removephoto').get( isAuthenticated , removePhoto);
+
+router.route('/verify/').get( isAuthenticated , verifyOtp);
+router.route('/verify/resend').get( isAuthenticated , resendOtp);
 
 router.route('/noti/:id').post( createNotification);
 router.route('/noti/get').get( isAuthenticated, getAllReciverNoti);

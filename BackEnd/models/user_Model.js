@@ -11,7 +11,13 @@ const userSchema = new mongoose.Schema({
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     saved: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    isVerified: { type: Boolean, default: false },
+    isPremium: { type: Boolean, default: false },
+    otp: { type: String, default: '' },
+    otpExpiry: { type: Date, default: Date.now },
 }, { timestamps: true });
+ 
+ 
 
 const User = mongoose.model('User', userSchema);
 

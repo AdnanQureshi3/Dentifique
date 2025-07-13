@@ -14,6 +14,7 @@ import { setOnlineUsers } from './redux/chatSlice'
 import { setNotification } from './redux/notificationSlice.js'
 import { getAllNoti } from './Hooks/getAllNoti'
 import Protected_routes from './components/ui/protected_routes'
+import Verification from './components/Verification'
 
 const browserRouter = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const browserRouter = createBrowserRouter([
   {
     path: '/signup',
     element: <Signup />
+  },
+  {
+    path: '/verify',
+    element: <Verification />
   }
 ])
 

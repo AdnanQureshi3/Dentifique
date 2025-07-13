@@ -52,7 +52,7 @@ function CreateArticle({ Open, setOpen }) {
     else if (tag === 'italic') setContent(prev => prev + ' <i></i>');
     else if (tag === 'h1') setContent(prev => prev + ' <h1></h1>');
     else if (tag === 'h2') setContent(prev => prev + ' <h2></h2>');
-    else if (tag === 'link') setContent(prev => prev + ' <a href=""></a>');
+    else if (tag === 'link') setContent(prev => prev + ' <a href="add a link here">LINK</a>');
   };
 
   return (

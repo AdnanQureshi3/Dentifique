@@ -7,6 +7,7 @@ import { Post } from '../models/posts_model.js';
 import axios from 'axios'
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import Notification from "../models/notification_Model.js";
+import { sendVerificationEmail } from '../utils/sendVerificationEmail.js';
 
 export const register = async (req, res) => {
     try {
@@ -48,6 +49,37 @@ export const register = async (req, res) => {
         console.log(err);
     }
 }
+export const verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user || user.otp !== otp || Date.now() > user.otpExpiry)
+    return res.status(400).json({ msg: 'Invalid or expired OTP' });
+
+  user.isVerified = true;
+  user.otp = null;
+  user.otpExpiry = null;
+  await user.save();
+
+  res.json({ success: true, msg: 'Email verified' });
+};
+
+export const resendOtp = async (req, res) => {
+  const id = req.id;
+
+  const user = await User.findById(id);
+  if (!user) return res.status(404).json({ msg: 'User not found' });
+
+  const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+  user.otp = newOtp;
+  user.otpExpiry = Date.now() + 10 * 60 * 1000;
+  await user.save();
+  console.log(`New OTP for ${user.email}: ${newOtp}`);
+
+  await sendVerificationEmail(user.email, user.username, newOtp);
+
+  res.json({ success: true, msg: 'New OTP sent' });
+};
 
 export const login = async (req, res) => {
     try {
