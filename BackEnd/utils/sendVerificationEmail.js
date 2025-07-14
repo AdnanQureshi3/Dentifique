@@ -1,7 +1,7 @@
 // lib/resend.js
 import { Resend } from 'resend';
 
-export const resend = new Resend('re_Pn4t4yY9_EvVTBajbXeQ8LQmcN2tqXmyC');
+export const resend = new Resend(process.env.Resend_API_KEY);
 
 export async function sendVerificationEmail(email, username, code) {
   try {
