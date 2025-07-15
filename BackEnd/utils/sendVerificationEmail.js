@@ -1,4 +1,4 @@
-// lib/resend.js
+
 import { Resend } from 'resend';
 
 export const resend = new Resend(process.env.Resend_API_KEY);
@@ -7,8 +7,8 @@ export async function sendVerificationEmail(email, username, code) {
   try {
 
     await resend.emails.send({
-      from: 'adnanq262@gmail.com',
-      to: 'adnanquresh262@gmail.com',
+      from: 'UpChain <onboarding@resend.dev>',
+      to: ['adnanq262@gmail.com' , 'adnanquresh262@gmail.com'],
       subject: 'Verify your Email',
       html:`
        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">

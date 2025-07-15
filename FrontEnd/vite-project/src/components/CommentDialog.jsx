@@ -34,7 +34,7 @@ function CommentDialog({deletePostHandler , Open, setOpen, post , saveHandler , 
         else setText("");
     }
     useEffect(() => {
-        setComment(post.comments)
+        setComment(post?.comments)
 
         if (Open) document.body.style.overflow = 'hidden';
         else document.body.style.overflow = 'auto';
@@ -59,7 +59,7 @@ function CommentDialog({deletePostHandler , Open, setOpen, post , saveHandler , 
                 setComment(updatedComment);
 
                 const upadtedPostData = posts.map(p =>
-                    p._id === post._id ? {
+                    p._id === post?._id ? {
                         ...p, comments: updatedComment
                     } : p
                 )
@@ -102,17 +102,17 @@ function CommentDialog({deletePostHandler , Open, setOpen, post , saveHandler , 
 
                     {/* Content Section */}
                     <div className='w-full sm:w-[55%] p-4 flex flex-col justify-between'>
-                        <div className='flex items-center justify-between border-b-[1px] pb-2 border-gray-6 00 '>
+                        <div className='flex items-center justify-between border-b-[1px] pb-2 border-gray-600'>
                             <div className='flex items-center gap-3'>
-                                <Link to={`/profile/${post?.author._id}`} >
+                                <Link to={`/profile/${post?.author?._id}`} >
                                     <Avatar className=" w-2 rounded-full">
-                                        <AvatarImage className='w-10 aspect-square border-2 border-green-600 rounded-full' src={post.author.profilePicture} />
+                                        <AvatarImage className='w-10 aspect-square border-2 border-green-600 rounded-full' src={post?.author?.profilePicture} />
                                         {/* <AvatarFallback></AvatarFallback> */}
                                     </Avatar>
                                 </Link>
                                 <div>
-                                    <Link to={`/profile/${post?.author._id}`} className='font-semibold text-sm text-gray-800 hover:text-blue-500 transition duration-200 ease-in'>
-                                        {post.author.username}
+                                    <Link to={`/profile/${post?.author?._id}`} className='font-semibold text-sm text-gray-800 hover:text-blue-500 transition duration-200 ease-in'>
+                                        {post?.author?.username}
                                     </Link>
                                     <p className='text-xs text-gray-500 mt-1'>Just now</p>
                                 </div>
@@ -126,7 +126,7 @@ function CommentDialog({deletePostHandler , Open, setOpen, post , saveHandler , 
                                 </DialogTrigger>
 
                                 <DialogContent className="w-64 cursor-pointer p-0 overflow-hidden bg-white rounded-xl shadow-lg border border-gray-200">
-                                    {user && user._id !== post.author._id && (
+                                    {user && user._id !== post?.author?._id && (
                                         <Button className="w-full cursor-pointer py-3 text-red-500 bg-white hover:bg-gray-100 rounded-none border-b">
                                             Unfollow
                                         </Button>
@@ -134,7 +134,7 @@ function CommentDialog({deletePostHandler , Open, setOpen, post , saveHandler , 
                                     <Button onClick={saveHandler} className="w-full cursor-pointer py-3 bg-white hover:bg-gray-100 text-gray-800 rounded-none border-b">
                                         {saved ? 'Remove from favourite' : 'Add to favourite'}
                                     </Button>
-                                    {user && user._id === post.author._id && (
+                                    {user && user._id === post?.author?._id && (
                                         <Button
                                             onClick={deletePostHandler}
                                             className="w-full py-3 cursor-pointer text-red-600 bg-white hover:bg-gray-100 rounded-none border-b"
