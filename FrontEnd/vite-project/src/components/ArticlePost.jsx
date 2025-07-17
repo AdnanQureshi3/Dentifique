@@ -51,10 +51,11 @@ function CreateArticle({ Open, setOpen }) {
 
   return (
     <Dialog open={Open} onOpenChange={setOpen}>
-   <DialogContent className='sm:max-w-[900px] bg-white rounded-lg shadow-lg'>
+   <DialogContent className="sm:max-w-[900px] bg-white rounded-2xl shadow-xl p-6 space-y-4">
+  <h2 className="text-xl font-semibold text-gray-800">Create New Article</h2>
+  <Tiptap setTitle={setTitle} title={title} setContent={setContent} handleSubmit={handleSubmit} />
+</DialogContent>
 
-    <Tiptap setTitle={setTitle} setContent={setContent} handleSubmit={handleSubmit} />
-      </DialogContent>
     </Dialog>
   );
 }
