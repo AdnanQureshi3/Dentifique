@@ -165,6 +165,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit }) {
                         w-full
                         editor-content border p-2 rounded min-h-[120px] max-h-[300px] overflow-y-auto
                         [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:bg-black [&_pre]:text-white
+                        [&_pre]:w-[400px] [&_pre]:mx-auto [&_pre]:p-3 [&_pre]:rounded-md
                         [&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-2
                         [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-1
                         [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-1
