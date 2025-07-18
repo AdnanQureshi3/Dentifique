@@ -5,6 +5,7 @@ import { Undo2, Redo2 } from 'lucide-react';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
+import CharacterCount from '@tiptap/extension-character-count';
 
 
 const extensions = [
@@ -15,6 +16,9 @@ const extensions = [
         autolink: true,
         linkOnPaste: true,
     }),
+     CharacterCount.configure({
+        limit: 3000,
+      }),
     Placeholder.configure({
         placeholder: 'Write your content here...',
     }),
@@ -161,7 +165,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit }) {
                 <EditorContent
                     editor={contentEditor}
                     className={`
-                        break-words whitespace-pre-wrap px-1
+                        break-normal whitespace-pre-wrap px-1
                         w-full
                         editor-content border p-2 rounded min-h-[120px] max-h-[300px] overflow-y-auto
                         [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:bg-black [&_pre]:text-white

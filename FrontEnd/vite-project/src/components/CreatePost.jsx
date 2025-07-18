@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from '@/redux/postSlice';
+import EmojiSelector from './EmojiSelector';
 
 function CreatePost({Open , setOpen}) {
     const ImageRef = useRef();
@@ -72,6 +73,9 @@ function CreatePost({Open , setOpen}) {
             <DialogHeader className=' items-center font-semibold '>Create new post</DialogHeader>
 
             <Textarea value={Caption} onChange={(e)=>setCaption(e.target.value)} className={'focus-visible:ring-transparent border-none '} placeholder="Write a caption..." />
+
+              <EmojiSelector onSelect={(emoji) => setCaption(prev => prev + emoji)} />
+
             {
                 ImagePreview && (
                     <div className='w-full h-64 flex items-center justify-center'>
