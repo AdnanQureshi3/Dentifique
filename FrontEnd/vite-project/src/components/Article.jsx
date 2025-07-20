@@ -14,6 +14,7 @@ import { Badge } from './ui/badge.jsx'
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { setAuthuser } from '@/redux/authSlice'
 import parse from 'html-react-parser';
+import EmojiSelector from './EmojiSelector'
 
 function Article({ post }) {
     const [text, settext] = useState("");
@@ -294,15 +295,21 @@ function Article({ post }) {
             )}
 
             {/* Add Comment */}
-            <div className='px-5 py-3 flex items-center gap-2 border-t border-gray-100'>
+            <div className='px-5 py-3 flex items-center gap-2 border-t border-gray-100 '> 
+
+                {/* <div className='flex-1 outline-none py-2 px-3 text-sm rounded-lg border items-center border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'> */}
+
+                     <EmojiSelector  onSelect={(emoji) => settext(prev => prev + emoji)} />
                 <input
                     type='text'
                     placeholder='Add a comment...'
                     onChange={textchangeHandler}
-                    value={text}
+                    value = {text}
                     onKeyDown={handleKeyPress}
-                    className='flex-1 outline-none py-2 px-3 text-sm rounded-lg border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'
-                />
+                    className='flex-1 outline-none py-2 px-3 text-sm rounded-lg border items-center border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'
+                    />
+                    {/* </div> */}
+
                 {text && (
                     <button 
                         onClick={commentHanlder}

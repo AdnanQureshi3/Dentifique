@@ -6,6 +6,8 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import CharacterCount from '@tiptap/extension-character-count';
+import parse from 'html-react-parser';
+import EmojiSelector from './EmojiSelector';
 
 
 const extensions = [
@@ -25,12 +27,15 @@ const extensions = [
 ];
 
 
-function Tiptap({ setTitle, title, setContent, handleSubmit }) {
+function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
     const contentEditor = useEditor({
         extensions,
         content: '',
     });
+
+    const maxTitleLength = 60;
+    const maxContentLength = 2000;
 
 
     useEffect(() => {
@@ -150,18 +155,30 @@ function Tiptap({ setTitle, title, setContent, handleSubmit }) {
             </div>
 
 
+                <div className='flex justify-start'>
+
             <input type="text"
                 placeholder='Enter title here...'
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-2 mb-4 text-lg font-semibold border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="w-[80%] p-2 mb-4 text-lg font-semibold border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
                 value={title}
-            />
+                />
+                <span className={`text-xs w-10 m-3 text-center items-center font-semibold ${title.length <= maxTitleLength ? 'text-black' :'text-red-500'} `}>
+                    {title.length } / {maxTitleLength}
+                </span>
+                </div>
+
 
             {/* Toolbar */}
 
 
             {/* Content Editor */}
+            <EmojiSelector className="absolute bottom-0 left-0 z-10" onSelect={(emoji) => {
+    contentEditor.chain().focus().insertContent(emoji).run();
+}} />
+            
             <div className="w-full max-w-full overflow-x-hidden">
+                 
                 <EditorContent
                     editor={contentEditor}
                     className={`
@@ -182,7 +199,10 @@ function Tiptap({ setTitle, title, setContent, handleSubmit }) {
                 />
 
 
+           
             </div>
+
+
 
             <div className='flex justify-end'>
                 <button onClick={handleSubmit} className="mt-4 px-4 py-2   bg-blue-500 text-white rounded">

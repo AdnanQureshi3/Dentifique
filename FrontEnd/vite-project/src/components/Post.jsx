@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge.jsx';
 import { setPosts, setSelectedPost } from '@/redux/postSlice';
 import { setAuthuser } from '@/redux/authSlice';
+import EmojiSelector from './EmojiSelector';
 
 function Post({ post }) {
   const [text, settext] = useState("");
@@ -294,6 +295,7 @@ function Post({ post }) {
 
       {/* Add Comment */}
       <div className='px-5 pb-4 flex items-center gap-2 border-t border-gray-200 pt-3'>
+         <EmojiSelector onSelect={(emoji) => settext(prev => prev + emoji)} />
         <input
           type='text'
           placeholder='Add a comment...'

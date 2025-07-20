@@ -8,6 +8,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import Tiptap from './Tiptap';
+import EmojiSelector from './EmojiSelector';
 
 function CreateArticle({ Open, setOpen }) {
 
@@ -53,7 +54,9 @@ function CreateArticle({ Open, setOpen }) {
     <Dialog open={Open} onOpenChange={setOpen}>
    <DialogContent className="sm:max-w-[900px] bg-white rounded-2xl shadow-xl p-6 space-y-4">
   <h2 className="text-xl font-semibold text-gray-800">Create New Article</h2>
-  <Tiptap setTitle={setTitle} title={title} setContent={setContent} handleSubmit={handleSubmit} />
+  
+  <Tiptap setTitle={setTitle} content = {content} title={title} setContent={setContent} handleSubmit={handleSubmit} />
+
 </DialogContent>
 
     </Dialog>

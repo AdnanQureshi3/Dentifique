@@ -15,7 +15,7 @@ export default function EmojiSelector({ onSelect }) {
       </button>
 
       {showPicker && (
-        <div className="absolute z-50 bottom-full mb-2 right-0">
+        <div className="absolute bottom-full mb-2 left-0 z-1000 w-[300px] rounded-lg border bg-white shadow-lg">
           <EmojiPicker
             onEmojiClick={(emojiData) => {
               onSelect(emojiData.emoji)

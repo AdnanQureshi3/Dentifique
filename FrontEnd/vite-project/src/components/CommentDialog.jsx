@@ -11,6 +11,7 @@ import axios from 'axios';
 import { setPosts } from '@/redux/postSlice';
 import parse from 'html-react-parser';
 import { X } from "lucide-react"
+import EmojiSelector from './EmojiSelector';
 
 
 function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, saved }) {
@@ -91,11 +92,11 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
 
                             <div className="max-w-3xl mx-auto ">
                                 
-                                <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
+                                <div className="bg-white text-wrap rounded-xl shadow-sm p-5 mb-4">
                                     <h1 className='text-3xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200'>
                                         {parse(String(post?.title || ''))}
                                     </h1>
-                                    <div className="prose prose-lg max-w-none text-gray-700">
+                                    <div className=" max-w-none [&_pre]:text-wrap text-gray-700">
                                         {parse(String(post?.caption || ''))}
                                     </div>
                                 </div>
@@ -247,6 +248,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                             
                             <div className='sticky bottom-0 bg-white border-t border-gray-200 p-4'>
                                 <div className='flex items-center gap-2'>
+                                <EmojiSelector onSelect={(emoji) => setText(prev => prev + emoji)} />
                                     <input
                                         type="text"
                                         placeholder="Add a comment..."
