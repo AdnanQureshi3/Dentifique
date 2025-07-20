@@ -8,6 +8,7 @@ import Link from '@tiptap/extension-link';
 import CharacterCount from '@tiptap/extension-character-count';
 import parse from 'html-react-parser';
 import EmojiSelector from './EmojiSelector';
+import axios from 'axios';
 
 
 const extensions = [
@@ -28,6 +29,8 @@ const extensions = [
 
 
 function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
+    const [loadingforPublish , setloadingforPublish] = useState(false);
+    const [loadingforAI , setloadingforAI] = useState(false);
 
     const contentEditor = useEditor({
         extensions,
@@ -50,6 +53,26 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
     const baseBtn =
         'w-8 h-8 flex items-center justify-center rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed';
+
+        const EnhancedText = async () => {
+            // console.log(content);
+            try{
+                const res = await axios.post('http://localhost:8000/api/ai/enhancedText' , {text:content} , 
+            {withCredentials:true});
+            const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
+            console.log(enhancedText);
+
+            if (contentEditor && contentEditor.commands) {
+  contentEditor.chain().clearContent().insertContent(enhancedText).run();
+}
+
+            }
+            catch(error){
+                console.log(error);
+
+            }
+
+        }
 
     return (
         <div>
@@ -198,6 +221,10 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
                     `}
                 />
 
+                <button onClick={EnhancedText}>
+                 Enhaced it by AI
+                </button>
+
 
            
             </div>
@@ -205,6 +232,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
 
             <div className='flex justify-end'>
+                {}
                 <button onClick={handleSubmit} className="mt-4 px-4 py-2   bg-blue-500 text-white rounded">
                     Publish
                 </button>
