@@ -18,6 +18,7 @@ console.log(__dirname);
 const PORT = process.env.PORT || 8000;
 
 //middleware
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({extented:true}));
@@ -25,6 +26,7 @@ const corsOptions = {
     origin: ['http://localhost:5173', 'https://upchain-tvvm.onrender.com'],
     credentials: true
 }
+
 app.use(cors(corsOptions));
 
 app.get('/login', (req, res) => {
