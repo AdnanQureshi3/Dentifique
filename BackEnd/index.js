@@ -27,12 +27,10 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-app.get('/login' , (req,res)=>{
-    return res.status(200).json({
-            msg: "yesh its working",
-            success:true
-    })
-})
+app.get('/login', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'Frontend', 'dist', 'index.html'));
+});
+
 
 app.use("/api/user" , UserRoute);
 app.use("/api/post" , PostRoute);
