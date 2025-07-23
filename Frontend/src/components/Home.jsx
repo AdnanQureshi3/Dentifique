@@ -15,7 +15,7 @@ function Home() {
           <Outlet />
         </div>
         <div className='w-[30%] '>
-          <RightSidebar />
+          <RightSideBar />
         </div>
       </div>
     </div>
