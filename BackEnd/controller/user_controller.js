@@ -136,7 +136,7 @@ export const login = async (req, res) => {
             isPremiumExpiry: user.isPremiumExpiry,
         }
 
-        res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+        res.cookie('token', token, { httpOnly: true, secure:true , sameSite: 'none', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
             msg: `Welcome back ${user.username}`,
             success: true,
             user,
