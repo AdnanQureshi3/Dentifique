@@ -8,6 +8,7 @@ import axios from 'axios'
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import Notification from "../models/notification_Model.js";
 import { sendVerificationEmail } from '../utils/sendVerificationEmail.js';
+import Conversation from '../models/conversation_Model.js';
 
 export const register = async (req, res) => {
     try {
@@ -129,8 +130,10 @@ export const login = async (req, res) => {
             bio: user.bio,
             followers: user.followers,
             following: user.following,
-            posts: populatedPost
-
+            posts: populatedPost,
+            isPremium: user.isPremium,
+            isVerified: user.isVerified,
+            isPremiumExpiry: user.isPremiumExpiry,
         }
 
         res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
@@ -295,6 +298,98 @@ export const getSuggestedusers = async (req, res) => {
     }
 
 }
+export const getMessageUsers = async (req, res) => {
+    try {
+
+        const MessageUsers = loggedInUser.following;
+        loggedInUser.followers.map((follower) => {
+            if (!MessageUsers.includes(follower)) {
+                MessageUsers.push(follower);
+            }
+        });
+
+        const conversations = await Conversation.find({ participants: req.id });
+
+        const convoUserIds = new Set();
+
+        for (const convo of conversations) {
+        for (const id of convo.participants) {
+            if (id.toString() !== req.id) convoUserIds.add(id.toString());
+        }
+        }
+
+        const finalUserIds = [...new Set([...followingIds.map(id => id.toString()), ...convoUserIds])];
+
+        const users = await User.find({ _id: { $in: finalUserIds } }).select("-password");
+
+
+        if (!Suggestedusers) {
+            return res.status(400).json({
+                msg: "No Suggested users are there",
+                success: false,
+            })
+
+        }
+        return res.status(200).json({
+
+            success: true,
+            users: Suggestedusers,
+        })
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+export const UpgradeToPremium = async (req, res) => {
+    try {   
+        const userId = req.id;
+        const user = await User.findById(userId).select("-password -email");
+        if (!user) {
+            return res.status(404).json({
+                msg: "User not found",
+                success: false,
+            });
+        }
+        user.isPremium = true;
+        user.isPremiumExpiry = new Date(Date.now() +   60 * 1000); // 1 day from now
+        
+        await user.save();
+        return res.status(200).json({
+            msg: "Upgraded to Premium successfully",
+            success: true,
+            user
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+// export const searchUser = async (req, res) => {
+//     try {
+//         const { query } = req.body;
+//         if (!query) {
+//             return res.status(400).json({
+//                 msg: "Query is required",
+//                 success: false,
+//             });
+//         }
+//         const users = await User.find({
+//             $or: [
+//                 { username: { $regex: query, $options: "i" } },
+//                 { email: { $regex: query, $options: "i" } },
+//             ],
+//         }).select("-password");
+//         return res.status(200).json({
+//             success: true,
+//             users,
+//         });
+//     } catch (err) {
+//         console.log(err);
+//     }
+// };
+        
 export const followorUnfollow = async (req, res) => {
     try {
         const loggedInUserId = req.id;

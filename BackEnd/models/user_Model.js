@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     saved: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
     isVerified: { type: Boolean, default: false },
     isPremium: { type: Boolean, default: false },
+    isPremiumExpiry: { type: Date, default: Date.now },
     otp: { type: String, default: '' },
     otpExpiry: { type: Date, default: Date.now },
 }, { timestamps: true });

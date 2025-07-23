@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Undo2, Redo2 } from 'lucide-react';
+import { Undo2, Redo2, Loader2 } from 'lucide-react';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
@@ -9,7 +9,6 @@ import CharacterCount from '@tiptap/extension-character-count';
 import parse from 'html-react-parser';
 import EmojiSelector from './EmojiSelector';
 import axios from 'axios';
-
 
 const extensions = [
     StarterKit,
@@ -19,9 +18,9 @@ const extensions = [
         autolink: true,
         linkOnPaste: true,
     }),
-     CharacterCount.configure({
+    CharacterCount.configure({
         limit: 3000,
-      }),
+    }),
     Placeholder.configure({
         placeholder: 'Write your content here...',
     }),
@@ -29,8 +28,8 @@ const extensions = [
 
 
 function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
-    const [loadingforPublish , setloadingforPublish] = useState(false);
-    const [loadingforAI , setloadingforAI] = useState(false);
+    const [loadingforPublish, setloadingforPublish] = useState(false);
+    const [loaderforAI, setloaderforAI] = useState(false);
 
     const contentEditor = useEditor({
         extensions,
@@ -54,25 +53,29 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
     const baseBtn =
         'w-8 h-8 flex items-center justify-center rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed';
 
-        const EnhancedText = async () => {
-            // console.log(content);
-            try{
-                const res = await axios.post('http://localhost:8000/api/ai/enhancedText' , {text:content} , 
-            {withCredentials:true});
+    const EnhancedText = async () => {
+        setloaderforAI(true);
+        // console.log(content);
+        try {
+            const res = await axios.post('http://localhost:8000/api/ai/enhancedText', { text: content },
+                { withCredentials: true });
             const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
             console.log(enhancedText);
 
             if (contentEditor && contentEditor.commands) {
-  contentEditor.chain().clearContent().insertContent(enhancedText).run();
-}
-
-            }
-            catch(error){
-                console.log(error);
-
+                contentEditor.chain().clearContent().insertContent(enhancedText).run();
             }
 
         }
+        catch (error) {
+            console.log(error);
+
+        }
+        finally {
+            setloaderforAI(false);
+        }
+
+    }
 
     return (
         <div>
@@ -178,18 +181,18 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
             </div>
 
 
-                <div className='flex justify-start'>
+            <div className='flex justify-start'>
 
-            <input type="text"
-                placeholder='Enter title here...'
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-[80%] p-2 mb-4 text-lg font-semibold border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
-                value={title}
+                <input type="text"
+                    placeholder='Enter title here...'
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-[80%] p-2 mb-4 text-lg font-semibold border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800"
+                    value={title}
                 />
-                <span className={`text-xs w-10 m-3 text-center items-center font-semibold ${title.length <= maxTitleLength ? 'text-black' :'text-red-500'} `}>
-                    {title.length } / {maxTitleLength}
+                <span className={`text-xs w-10 m-3 text-center items-center font-semibold ${title.length <= maxTitleLength ? 'text-black' : 'text-red-500'} `}>
+                    {title.length} / {maxTitleLength}
                 </span>
-                </div>
+            </div>
 
 
             {/* Toolbar */}
@@ -197,11 +200,11 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
             {/* Content Editor */}
             <EmojiSelector className="absolute bottom-0 left-0 z-10" onSelect={(emoji) => {
-    contentEditor.chain().focus().insertContent(emoji).run();
-}} />
-            
+                contentEditor.chain().focus().insertContent(emoji).run();
+            }} />
+
             <div className="w-full max-w-full overflow-x-hidden">
-                 
+
                 <EditorContent
                     editor={contentEditor}
                     className={`
@@ -220,22 +223,65 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
                     
                     `}
                 />
+<button
+  onClick={EnhancedText}
+  disabled={loaderforAI || content.length < 10}
+  className={`
+    group
+    h-12
+    font-semibold
+    text-white
+    transition-all
+    duration-300
+    shadow-md
+    flex rounded-full
+    items-center
+    justify-center
+    overflow-hidden
+    ${loaderforAI
+      ? 'px-4 rounded-xl bg-gray-400 cursor-not-allowed'
+      : 'w-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:w-[200px] hover:px-4 hover:rounded-full hover:from-indigo-600 hover:to-purple-500 cursor-pointer'}
+  `}
+>
+  {loaderforAI ? (
+    <>
+      <Loader2 className="animate-spin h-4 w-4 mr-2" />
+      Enhancing...
+    </>
+  ) : (
+    <>
+      <span className='group-hover:hidden '>✨AI</span>
+      <span className="whitespace-nowrap pl-2 opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto transition-all rounded-full duration-300">
+        ✨Enhance it by AI
+      </span>
+    </>
+  )}
+</button>
 
-                <button onClick={EnhancedText}>
-                 Enhaced it by AI
-                </button>
+
+              
 
 
-           
+
+
+
             </div>
 
 
 
             <div className='flex justify-end'>
-                {}
-                <button onClick={handleSubmit} className="mt-4 px-4 py-2   bg-blue-500 text-white rounded">
-                    Publish
-                </button>
+                {loadingforPublish === true ? (
+                    <button className="mt-4 px-4 py-2   bg-blue-500 text-white rounded">
+                        <Loader2 className='mr-2 h-2 animate-spin w-4 font-bold ' />
+                        Please wait
+                    </button>
+
+                ) : (
+
+                    <button onClick={handleSubmit} className="mt-4 px-4 py-2   bg-blue-500 text-white rounded">
+                        Publish
+                    </button>
+                )}
             </div>
         </div>
     );
