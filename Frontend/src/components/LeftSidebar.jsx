@@ -11,7 +11,7 @@ import axios from "axios";
 import { setAuthuser } from "@/redux/authSlice";
 import { clearNotification } from "@/redux/notificationSlice";
 import { Button } from "./ui/button";
-import CreatePost from "./CreatePost";
+import CreatePost from "./CreatePost.jsx";
 import {
   Popover,
   PopoverTrigger,

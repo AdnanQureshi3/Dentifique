@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPosts } from '@/redux/postSlice';
-import EmojiSelector from './EmojiSelector';
+import EmojiSelector from './EmojiSelector.jsx';
 
 function CreatePost({Open , setOpen}) {
     const ImageRef = useRef();

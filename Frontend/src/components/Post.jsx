@@ -5,7 +5,7 @@ import { DialogContent } from './ui/dialog';
 import { Bookmark, BookmarkCheck, MessageCircle, MoreHorizontal, Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import CommentDialog from './CommentDialog';
+import CommentDialog from './CommentDialog.jsx';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge.jsx';
 import { setPosts, setSelectedPost } from '@/redux/postSlice';
 import { setAuthuser } from '@/redux/authSlice';
-import EmojiSelector from './EmojiSelector';
+import EmojiSelector from './EmojiSelector.jsx';
 
 function Post({ post }) {
   const [text, settext] = useState("");

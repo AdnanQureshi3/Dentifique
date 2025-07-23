@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import Posts from './Posts'
 import { PencilLine, FileText, Sparkles } from 'lucide-react'
-import CreatePost from './CreatePost';
-import CreateArticle from './ArticlePost';
+import CreatePost from './CreatePost.jsx';
+import CreateArticle from './ArticlePost.jsx';
 
 function Feed() {
   const [OpenCreatePost, setOpenCreatePost] = useState(false);

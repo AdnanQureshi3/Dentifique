@@ -7,7 +7,7 @@ import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import CharacterCount from '@tiptap/extension-character-count';
 import parse from 'html-react-parser';
-import EmojiSelector from './EmojiSelector';
+import EmojiSelector from './EmojiSelector.jsx';
 import axios from 'axios';
 
 const extensions = [

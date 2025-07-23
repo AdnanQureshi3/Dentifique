@@ -4,14 +4,14 @@ import { Dialog, DialogContent, DialogTrigger } from '@radix-ui/react-dialog';
 import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
 import { MoreHorizontal } from 'lucide-react';
-import Comment from './Comment';
+import Comment from './Comment.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { setPosts } from '@/redux/postSlice';
 import parse from 'html-react-parser';
 import { X } from "lucide-react"
-import EmojiSelector from './EmojiSelector';
+import EmojiSelector from './EmojiSelector,jsx';
 
 
 function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, saved }) {

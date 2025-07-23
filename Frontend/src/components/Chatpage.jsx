@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { MessageCircle } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Messages from './Messages';
+import Messages from './Messages.jsx';
 import axios from 'axios';
 import { setChatmessages } from '@/redux/chatSlice';
 

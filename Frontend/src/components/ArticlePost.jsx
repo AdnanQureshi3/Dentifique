@@ -7,8 +7,8 @@ import { Bold, Italic, Heading1, Heading2, Link2 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
-import Tiptap from './Tiptap';
-import EmojiSelector from './EmojiSelector';
+import Tiptap from './Tiptap.jsx';
+import EmojiSelector from './EmojiSelector.jsx';
 
 function CreateArticle({ Open, setOpen }) {
 
