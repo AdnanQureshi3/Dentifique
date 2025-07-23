@@ -11,7 +11,7 @@ import axios from 'axios';
 import { setPosts } from '@/redux/postSlice';
 import parse from 'html-react-parser';
 import { X } from "lucide-react"
-import EmojiSelector from './EmojiSelector,jsx';
+import EmojiSelector from './EmojiSelector.jsx';
 
 
 function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, saved }) {
