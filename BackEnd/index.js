@@ -9,6 +9,10 @@ import connectDB from './utils/db.js';
  import MessageRoute from "./routes/message_route.js"
  import aiRoute from "./routes/ai_route.js"
 import {app , server} from './socket/socket.js'
+import path from 'path';
+
+const __dirname = path.resolve();
+console.log(__dirname);
 
 
 const PORT = process.env.PORT || 8000;
@@ -23,7 +27,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-app.get('/' , (req,res)=>{
+app.get('/login' , (req,res)=>{
     return res.status(200).json({
             msg: "yesh its working",
             success:true
@@ -35,6 +39,11 @@ app.use("/api/post" , PostRoute);
 app.use("/api/chats" , MessageRoute);
 app.use("/api/ai" , aiRoute);
 
+app.use(express.static(path.join(__dirname, '/Frontend/dist')));
+
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'Frontend', 'dist', 'index.html'));
+});
 
 server.listen(PORT , ()=>{
     connectDB();

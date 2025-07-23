@@ -298,50 +298,50 @@ export const getSuggestedusers = async (req, res) => {
     }
 
 }
-export const getMessageUsers = async (req, res) => {
-    try {
+// export const getMessageUsers = async (req, res) => {
+//     try {
 
-        const MessageUsers = loggedInUser.following;
-        loggedInUser.followers.map((follower) => {
-            if (!MessageUsers.includes(follower)) {
-                MessageUsers.push(follower);
-            }
-        });
+//         const MessageUsers = loggedInUser.following;
+//         loggedInUser.followers.map((follower) => {
+//             if (!MessageUsers.includes(follower)) {
+//                 MessageUsers.push(follower);
+//             }
+//         });
 
-        const conversations = await Conversation.find({ participants: req.id });
+//         const conversations = await Conversation.find({ participants: req.id });
 
-        const convoUserIds = new Set();
+//         const convoUserIds = new Set();
 
-        for (const convo of conversations) {
-        for (const id of convo.participants) {
-            if (id.toString() !== req.id) convoUserIds.add(id.toString());
-        }
-        }
+//         for (const convo of conversations) {
+//         for (const id of convo.participants) {
+//             if (id.toString() !== req.id) convoUserIds.add(id.toString());
+//         }
+//         }
 
-        const finalUserIds = [...new Set([...followingIds.map(id => id.toString()), ...convoUserIds])];
+//         const finalUserIds = [...new Set([...followingIds.map(id => id.toString()), ...convoUserIds])];
 
-        const users = await User.find({ _id: { $in: finalUserIds } }).select("-password");
+//         const users = await User.find({ _id: { $in: finalUserIds } }).select("-password");
 
 
-        if (!Suggestedusers) {
-            return res.status(400).json({
-                msg: "No Suggested users are there",
-                success: false,
-            })
+//         if (!Suggestedusers) {
+//             return res.status(400).json({
+//                 msg: "No Suggested users are there",
+//                 success: false,
+//             })
 
-        }
-        return res.status(200).json({
+//         }
+//         return res.status(200).json({
 
-            success: true,
-            users: Suggestedusers,
-        })
+//             success: true,
+//             users: Suggestedusers,
+//         })
 
-    }
-    catch (err) {
-        console.log(err);
-    }
+//     }
+//     catch (err) {
+//         console.log(err);
+//     }
 
-}
+// }
 export const UpgradeToPremium = async (req, res) => {
     try {   
         const userId = req.id;

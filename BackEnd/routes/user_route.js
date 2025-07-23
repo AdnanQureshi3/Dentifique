@@ -15,14 +15,14 @@ router.route('/suggested').get(isAuthenticated , getSuggestedusers)
 router.route('/followUnfollow/:id').get(isAuthenticated , followorUnfollow)
 router.route('/profile/removephoto').get( isAuthenticated , removePhoto);
 
-router.route('/verify/').get( isAuthenticated , verifyOtp);
+router.route('/verify').get( isAuthenticated , verifyOtp);
 router.route('/verify/resend').get( isAuthenticated , resendOtp);
 
 router.route('/noti/:id').post( createNotification);
 router.route('/noti/get').get( isAuthenticated, getAllReciverNoti);
 router.route('/noti/delete').delete(isAuthenticated ,deleteAllReceiverNoti)
 router.route('/noti/markRead').put( isAuthenticated,markAllReceiverNotiasRead);
-router.route('/noti/:id/delete').get(isAuthenticated , deleteAllReceiverNoti);
+router.route('/noti/delete/:id').get(isAuthenticated , deleteAllReceiverNoti);
 
 
 router.route('/UpgradeToPremium').get(isAuthenticated , UpgradeToPremium );
