@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(urlencoded({extented:true}));
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://upchain-tvvm.onrender.com'],
+    origin: ['http://localhost:5173', process.env.URL || 'https://upchain-tvvm.onrender.com'],
     credentials: true
 }
 

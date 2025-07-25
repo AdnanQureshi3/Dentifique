@@ -6,7 +6,7 @@ export const getAllNoti= async( dispatch)=>{
     console.log("notis are comming")
 
     try{
-        const res = await axios.get(`http://localhost:8000/api/user/noti/get` , {withCredentials:true});
+        const res = await axios.get(`https://upchain-tvvm.onrender.com/api/user/noti/get` , {withCredentials:true});
         
         if(res.data.success){
             // console.log("23567890m"  , res.data.messages)

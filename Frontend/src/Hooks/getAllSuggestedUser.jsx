@@ -11,7 +11,7 @@ const useSuggestedUser =()=>{
 
         const fetchAllusers = async()=>{
             try{
-                const res = await axios.get('http://localhost:8000/api/user/suggested' ,{withCredentials:true} );
+                const res = await axios.get('https://upchain-tvvm.onrender.com/api/user/suggested' ,{withCredentials:true} );
                 if(res.data.success){
                     // console.log(res.data);
                     dipatch(setSuggestedUser(res.data.users));

@@ -31,7 +31,7 @@ function CreatePost({Open , setOpen}) {
           setloading(true);
 
           const res = await axios.post(
-            'http://localhost:8000/api/post/addpost',
+            'https://upchain-tvvm.onrender.com/api/post/addpost',
             formData,
             {
               headers: {

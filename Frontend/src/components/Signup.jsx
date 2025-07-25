@@ -27,7 +27,7 @@ function Signup() {
 
         try{
             setloading(true);
-            const res = await axios.post('http://localhost:8000/api/user/register' , input , {
+            const res = await axios.post('https://upchain-tvvm.onrender.com/api/user/register' , input , {
                 headers:{
                     'Content-Type':'application/json' //tells the backend that its json formate data
                 },

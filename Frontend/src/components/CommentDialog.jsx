@@ -38,7 +38,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
 
     const commentHanlder = async () => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/post/${post._id}/addComment`, { text }, {
+            const res = await axios.post(`https://upchain-tvvm.onrender.com/api/post/${post._id}/addComment`, { text }, {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });

@@ -51,7 +51,7 @@ function EditProfile() {
       }
 
       const res = await axios.post(
-        'http://localhost:8000/api/user/profile/edit',
+        'https://upchain-tvvm.onrender.com/api/user/profile/edit',
         formdata,
         {
           headers: {

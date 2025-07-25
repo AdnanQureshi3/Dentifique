@@ -22,7 +22,7 @@ function Chatpage() {
       
         try{
 
-            const res = await axios.post(`http://localhost:8000/api/chats/send/${selecteduser._id}` ,{message:text.trim()}  ,{withCredentials:true});
+            const res = await axios.post(`https://upchain-tvvm.onrender.com/api/chats/send/${selecteduser._id}` ,{message:text.trim()}  ,{withCredentials:true});
             
             if(res.data.success){
                 dispatch(setChatmessages([...ChatMessages , res.data.newMessage]))
@@ -42,7 +42,7 @@ function Chatpage() {
     }
     const deleteChatHandler = async()=>{
         try{
-            const res =await axios.delete(`http://localhost:8000/api/chats/delete/${selecteduser._id}` , {withCredentials:true});
+            const res =await axios.delete(`https://upchain-tvvm.onrender.com/api/chats/delete/${selecteduser._id}` , {withCredentials:true});
 
             if(res.data.success){
                 console.log('chat deleted');
