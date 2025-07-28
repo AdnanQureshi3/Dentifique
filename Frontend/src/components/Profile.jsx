@@ -38,7 +38,7 @@ function Profile() {
   }
   const RemovePhotoHandler = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/user/profile/removephoto', { withCredentials: true });
+      const res = await axios.get('https://upchain-tvvm.onrender.com/api/user/profile/removephoto', { withCredentials: true });
       if (res.data.success) {
         dispatch(setAuthuser(res.data.user));
         dispatch(setProfileUser(res.data.user))

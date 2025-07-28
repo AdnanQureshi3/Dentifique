@@ -31,7 +31,7 @@ function Comment({ comment, post, setComment, Comments }) {
 
   const deleteCommentHandler = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:8000/api/post/${id}/deleteComment`, { withCredentials: true });
+      const res = await axios.delete(`https://upchain-tvvm.onrender.com/api/post/${id}/deleteComment`, { withCredentials: true });
       if (res.data.success) {
         const updatedPosts = posts.map(p => {
           if (p._id === res.data.postId) {

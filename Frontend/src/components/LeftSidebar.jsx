@@ -72,7 +72,7 @@ function LeftSidebar() {
   const clearNotificationHandler = async () => {
     dispatch(clearNotification([]));
     try {
-      await axios.delete("http://localhost:8000/api/user/delete/noti", {
+      await axios.delete("https://upchain-tvvm.onrender.com/api/user/delete/noti", {
         withCredentials: true,
       });
     } catch (err) {
