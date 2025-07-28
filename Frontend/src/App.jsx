@@ -63,7 +63,7 @@ function App() {
     getAllNoti(dispatch);
     
     if(user){
-      socketio = io('http://localhost:8000' , {
+      socketio = io('https://upchain-tvvm.onrender.com' , {
         query:{
           userId:user?._id
         },
