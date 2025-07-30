@@ -38,7 +38,7 @@ function Post({ post }) {
 
   const deletePostHandler = async () => {
     try {
-      const res = await axios.delete(`https://upchain-tvvm.onrender.com/api/post/${post._id}/deletePost`, { withCredentials: true });
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/deletePost`, { withCredentials: true });
       if (res.data.success) {
         const updatedPost = posts.filter((postItem) => postItem._id != post._id);
         dispatch(setPosts(updatedPost));
@@ -52,7 +52,7 @@ function Post({ post }) {
 
   const commentHanlder = async () => {
     try {
-      const res = await axios.post(`https://upchain-tvvm.onrender.com/api/post/${post._id}/addComment`, { text }, {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/addComment`, { text }, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -79,7 +79,7 @@ function Post({ post }) {
 
   const likeorUnlike = async () => {
     try {
-      const res = await axios.get(`https://upchain-tvvm.onrender.com/api/post/${post._id}/like_unlike`, { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/like_unlike`, { withCredentials: true });
       if (res.data.success) {
         const likes = Liked ? likeCounts - 1 : likeCounts + 1;
         setlikeCounts(likes);
@@ -107,7 +107,7 @@ function Post({ post }) {
   
   const saveHandler = async () => {
     try {
-      const res = await axios.get(`https://upchain-tvvm.onrender.com/api/post/${post._id}/save`, { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/save`, { withCredentials: true });
       if (res.data.success) {
         dispatch(setAuthuser(res.data.user));
         toast.success(res.data.msg);

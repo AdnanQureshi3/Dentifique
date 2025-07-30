@@ -6,6 +6,8 @@ import { toast } from 'sonner'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import logo from '../assets/logo.png'; 
+
 
 function Signup() {
     const [loading , setloading] = useState(false);
@@ -27,7 +29,7 @@ function Signup() {
 
         try{
             setloading(true);
-            const res = await axios.post('https://upchain-tvvm.onrender.com/api/user/register' , input , {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/user/register` , input , {
                 headers:{
                     'Content-Type':'application/json' //tells the backend that its json formate data
                 },
@@ -63,7 +65,7 @@ function Signup() {
 
                 <div className='my-4 '>
                     <div className='w-full flex justify-center mb-5'>
-                     <img src="src\assets\logo.png" className='w-[70%]' alt="Logo" />
+                     <img src={logo} className='w-[70%]' alt="Logo" />
                     </div>
                 <p className='text-sm text-center'>Signup to see photos and videos from your Friends.</p>
                 </div>

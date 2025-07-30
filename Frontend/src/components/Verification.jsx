@@ -73,7 +73,7 @@ function Verification() {
     setResendActive(false);
     
     try{
-        const res = await axios.get('https://upchain-tvvm.onrender.com/api/user/verify/resend', { withCredentials: true });
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/verify/resend`, { withCredentials: true });
         if (res.data.success) {
           console.log('OTP resent successfully');
         }

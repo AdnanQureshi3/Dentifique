@@ -31,7 +31,7 @@ function Comment({ comment, post, setComment, Comments }) {
 
   const deleteCommentHandler = async (id) => {
     try {
-      const res = await axios.delete(`https://upchain-tvvm.onrender.com/api/post/${id}/deleteComment`, { withCredentials: true });
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/post/${id}/deleteComment`, { withCredentials: true });
       if (res.data.success) {
         const updatedPosts = posts.map(p => {
           if (p._id === res.data.postId) {
@@ -51,7 +51,7 @@ function Comment({ comment, post, setComment, Comments }) {
 
   const likeCommentHandler = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/post/${id}/comment/likeUnlike`, { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/${id}/comment/likeUnlike`, { withCredentials: true });
       if (res.data.success) {
         const updatedComment = res.data.updatedComment;
         updatePostState(updatedComment);
@@ -66,7 +66,7 @@ function Comment({ comment, post, setComment, Comments }) {
   const editCommentHandler = async (id) => {
     try {
       const res = await axios.put(
-        `http://localhost:8000/api/post/${id}/comment/edit`, 
+        `${import.meta.env.VITE_API_URL}/api/post/${id}/comment/edit`, 
         { text: editedText }, 
         {
           headers: { 'Content-Type': 'application/json' },

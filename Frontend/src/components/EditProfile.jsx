@@ -51,7 +51,7 @@ function EditProfile() {
       }
 
       const res = await axios.post(
-        'https://upchain-tvvm.onrender.com/api/user/profile/edit',
+        `${import.meta.env.VITE_API_URL}/api/user/profile/edit`,
         formdata,
         {
           headers: {

@@ -8,7 +8,7 @@ const useGetAllPost =()=>{
     useEffect(()=>{
         const fetchAllPost = async()=>{
             try{
-                const res = await axios.get('https://upchain-tvvm.onrender.com/api/post/allpost' ,{withCredentials:true} );
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/allpost` ,{withCredentials:true} );
                 if(res.data.success){
                     // console.log(res.data);
                     dipatch(setPosts(res.data.posts));

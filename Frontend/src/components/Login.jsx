@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setAuthuser } from '@/redux/authSlice.js'
+import logo from '../assets/logo.png';
 
 function Login() {
     const [loading , setloading] = useState(false);
@@ -30,7 +31,9 @@ function Login() {
 
         try{
             setloading(true);
-            const res = await axios.post('https://upchain-tvvm.onrender.com/api/user/login' , input , {
+            
+
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/user/login` , input , {
                 headers:{
                     'Content-Type':'application/json' //tells the backend that its json formate data
                 },
@@ -74,7 +77,7 @@ function Login() {
 
                 <div className='my-4 '>
                     <div className='w-full flex justify-center mb-5'>
-                     <img src="src\assets\logo.png" className='w-[70%]' alt="Logo" />
+                     <img src={logo} className='w-[70%]' alt="Logo" />
                     </div>
                 <p className='text-sm text-center'>Signup to see photos and videos from your Friends.</p>
                 </div>

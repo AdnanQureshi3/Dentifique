@@ -57,7 +57,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
         setloaderforAI(true);
        
         try {
-            const res = await axios.post('https://upchain-tvvm.onrender.com/api/ai/enhancedText', { text: content },
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/enhancedText`, { text: content },
                 { withCredentials: true });
             const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
             console.log(enhancedText);

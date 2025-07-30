@@ -14,7 +14,7 @@ function RightSideBar() {
     // Logic to handle premium upgrade
     try{
       console.log("Upgrading to premium...");
-      const res = await axios.get('https://upchain-tvvm.onrender.com/api/user/UpgradeToPremium', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/UpgradeToPremium`, {
         withCredentials: true
       });
       if(res.data.success) {

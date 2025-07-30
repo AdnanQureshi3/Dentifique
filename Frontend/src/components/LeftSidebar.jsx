@@ -12,6 +12,8 @@ import { setAuthuser } from "@/redux/authSlice";
 import { clearNotification } from "@/redux/notificationSlice";
 import { Button } from "./ui/button";
 import CreatePost from "./CreatePost.jsx";
+import logo from '../assets/logo.png';
+
 import {
   Popover,
   PopoverTrigger,
@@ -27,7 +29,7 @@ function LeftSidebar() {
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.get('https://upchain-tvvm.onrender.com/api/user/logout', { withCredentials: true });
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/logout`, { withCredentials: true });
       if (res.data.success) {
         dispatch(setAuthuser(null));
         navigate('/login');
@@ -85,7 +87,7 @@ function LeftSidebar() {
       {/* Top Logo */}
       <div>
         <div className="flex justify-center mb-6">
-          <img src="src/assets/logo.png" className="w-24" alt="Logo" />
+          <img src={logo} className="w-24" alt="Logo" />
         </div>
 
         {/* Navigation */}

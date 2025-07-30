@@ -27,7 +27,7 @@ function CreateArticle({ Open, setOpen }) {
 
     try {
       const res = await axios.post(
-        'https://upchain-tvvm.onrender.com/api/post/addarticle',
+        `${import.meta.env.VITE_API_URL}/api/post/addarticle`,
         {
           content,
           title,

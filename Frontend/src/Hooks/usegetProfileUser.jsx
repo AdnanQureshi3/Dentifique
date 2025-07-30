@@ -12,7 +12,7 @@ const useProfileUser =(id)=>{
 
         const fetchProfileuser = async()=>{
             try{
-                 const res = await axios.get(`https://upchain-tvvm.onrender.com/api/user/${id}/getprofile` ,{withCredentials:true} );
+                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/${id}/getprofile` ,{withCredentials:true} );
             if(res.data.success){
                 dispatch(setProfileUser(res.data.user));
                 console.log(res.data.user)
