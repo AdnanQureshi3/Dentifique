@@ -15,6 +15,7 @@ import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { setAuthuser } from '@/redux/authSlice'
 import parse from 'html-react-parser';
 import EmojiSelector from './EmojiSelector.jsx'
+import ReportHandler from '@/Hooks/ReportHandler'
 
 function Article({ post }) {
     const [text, settext] = useState("");
@@ -36,7 +37,7 @@ function Article({ post }) {
         const inputText = e.target.value.replace(/^\s+/, "");
         settext(inputText ? inputText : "");
     }
-    
+
     const deletePostHandler = async () => {
         try {
             const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/deletePost`, { withCredentials: true });
@@ -51,18 +52,18 @@ function Article({ post }) {
             toast.error(error.response.msg);
         }
     }
-    
+
     const commentHanlder = async () => {
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/addComment`, { text }, {
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
             if (res.data.success) {
                 const updatedComment = [...comment, res.data.comment];
                 setComment(updatedComment);
                 const upadtedPostData = posts.map(p =>
-                    p._id === post._id ? {...p, comments: updatedComment} : p
+                    p._id === post._id ? { ...p, comments: updatedComment } : p
                 )
                 dispatch(setPosts(upadtedPostData));
                 settext("");
@@ -96,11 +97,11 @@ function Article({ post }) {
             toast.error(err.response.msg);
         }
     }
-    
+
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && text.trim()) commentHanlder();
     };
-    
+
     const saveHandler = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/save`, { withCredentials: true });
@@ -115,13 +116,16 @@ function Article({ post }) {
         }
     }
 
+    const [showReport, setShowReport] = useState(false);
+
+
     return (
         <div className="w-full max-w-2xl mx-auto my-8 bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl border border-gray-100">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
                 <div className="flex items-center gap-3">
-                    <Link 
-                        to={`/profile/${post.author._id}`} 
+                    <Link
+                        to={`/profile/${post.author._id}`}
                         className="flex items-center gap-2 group"
                     >
                         <Avatar className="h-10 w-10 border-2 border-white shadow-md transition-transform duration-300 group-hover:scale-105">
@@ -161,8 +165,8 @@ function Article({ post }) {
                                 <span>Unfollow</span>
                             </Button>
                         )}
-                        <Button 
-                            onClick={saveHandler} 
+                        <Button
+                            onClick={saveHandler}
                             className="w-full py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-none border-b border-gray-100 flex items-center justify-start gap-2"
                         >
                             {saved ? (
@@ -188,8 +192,20 @@ function Article({ post }) {
                                 <span>Delete</span>
                             </Button>
                         )}
-                        <Button 
-                            onClick={() => setMenuOpen(false)} 
+                        {user && user._id === post.author._id && (
+                            <Button
+                                onClick={() =>{setShowReport(true)}}
+                                className="w-full py-3 text-red-600 bg-white hover:bg-red-50 rounded-none border-b border-gray-100 flex items-center justify-start gap-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 2a1 1 0 00-1 1v18a1 1 0 102 0v-7h9.382l1.724 3.447A1 1 0 0020 17V5a1 1 0 00-1.894-.447L16.382 8H7V3a1 1 0 00-1-1z" />
+                                </svg>
+
+                                <span>Report</span>
+                            </Button>
+                        )}
+                        <Button
+                            onClick={() => setMenuOpen(false)}
                             className="w-full py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-none flex items-center justify-start gap-2"
                         >
                             <span>Cancel</span>
@@ -203,7 +219,7 @@ function Article({ post }) {
                 <h1 className='text-2xl font-bold text-gray-800 mb-3 pb-2 border-b border-gray-100'>
                     {parse(String(post?.title || ''))}
                 </h1>
-                
+
                 <div className="prose prose-sky max-w-none break-words
                     [&_pre]:bg-gray-900 [&_pre]:text-gray-800 [&_pre]:p-4 
                     [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:shadow-inner
@@ -214,8 +230,8 @@ function Article({ post }) {
                 ">
                     {parse(String(post?.caption || '').slice(0, 400))}
                     {String(post?.caption || '').length > 400 && (
-                        <button 
-                            onClick={() => setOpen(true)} 
+                        <button
+                            onClick={() => setOpen(true)}
                             className='text-blue-500 hover:text-blue-700 font-medium transition-colors mt-2 inline-flex items-center'
                         >
                             ...Read more
@@ -230,7 +246,7 @@ function Article({ post }) {
             {/* Action Bar */}
             <div className="flex items-center justify-between px-5 py-3 border-t border-b border-gray-100 bg-gray-50">
                 <div className="flex items-center gap-4">
-                    <button 
+                    <button
                         onClick={likeorUnlike}
                         className="flex items-center gap-1 group"
                     >
@@ -243,8 +259,8 @@ function Article({ post }) {
                             {likeCounts}
                         </span>
                     </button>
-                    
-                    <button 
+
+                    <button
                         onClick={() => { dispatch(setSelectedPost(post)); setOpen(true) }}
                         className="flex items-center gap-1 group"
                     >
@@ -253,13 +269,13 @@ function Article({ post }) {
                             {comment.length}
                         </span>
                     </button>
-                    
+
                     <button className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
                         <Send />
                     </button>
                 </div>
-                
-                <button 
+
+                <button
                     onClick={saveHandler}
                     className={`p-2 rounded-full transition-colors ${saved ? 'text-blue-500 bg-blue-50' : 'text-gray-500 hover:bg-gray-100'}`}
                 >
@@ -270,7 +286,7 @@ function Article({ post }) {
             {/* Comments Preview */}
             {comment.length > 0 && (
                 <div className="px-5 py-3 bg-white">
-                    <div 
+                    <div
                         onClick={() => { dispatch(setSelectedPost(post)); setOpen(true) }}
                         className="cursor-pointer text-gray-500 hover:text-blue-500 transition-colors inline-flex items-center"
                     >
@@ -279,7 +295,7 @@ function Article({ post }) {
                             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                         </svg>
                     </div>
-                    
+
                     {/* Show last comment */}
                     {comment.length > 0 && (
                         <div className="mt-2 flex items-start gap-2">
@@ -295,23 +311,23 @@ function Article({ post }) {
             )}
 
             {/* Add Comment */}
-            <div className='px-5 py-3 flex items-center gap-2 border-t border-gray-100 '> 
+            <div className='px-5 py-3 flex items-center gap-2 border-t border-gray-100 '>
 
                 {/* <div className='flex-1 outline-none py-2 px-3 text-sm rounded-lg border items-center border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'> */}
 
-                     <EmojiSelector  onSelect={(emoji) => settext(prev => prev + emoji)} />
+                <EmojiSelector onSelect={(emoji) => settext(prev => prev + emoji)} />
                 <input
                     type='text'
                     placeholder='Add a comment...'
                     onChange={textchangeHandler}
-                    value = {text}
+                    value={text}
                     onKeyDown={handleKeyPress}
                     className='flex-1 outline-none py-2 px-3 text-sm rounded-lg border items-center border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors'
-                    />
-                    {/* </div> */}
+                />
+                {/* </div> */}
 
                 {text && (
-                    <button 
+                    <button
                         onClick={commentHanlder}
                         className="text-blue-500 hover:text-blue-700 font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors"
                     >
@@ -319,14 +335,24 @@ function Article({ post }) {
                     </button>
                 )}
             </div>
+            {/* const [showReport, setShowReport] = useState(false); */}
 
-            <CommentDialog 
-                deletePostHandler={deletePostHandler} 
-                saved={saved} 
-                saveHandler={saveHandler} 
-                Open={Open} 
-                setOpen={setOpen} 
-                post={post} 
+            {showReport && (
+                <ReportHandler
+                    post={post}
+                    user={user}
+                    type="Article"
+                    onClose={() => setShowReport(false)}
+                />
+            )}
+
+            <CommentDialog
+                deletePostHandler={deletePostHandler}
+                saved={saved}
+                saveHandler={saveHandler}
+                Open={Open}
+                setOpen={setOpen}
+                post={post}
             />
         </div>
     )

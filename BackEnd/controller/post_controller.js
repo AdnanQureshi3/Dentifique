@@ -6,6 +6,7 @@ import Comments from '../models/comment_Model.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import axios from 'axios'
 import Notification from "../models/notification_Model.js";
+import {sendReportEmail} from '../utils/sendEmail.js'
 
 
 
@@ -471,9 +472,14 @@ export const saveThePost = async (req, res) => {
 
 export const ReportThePost = async (req,res)=>{
     try{
-        const {username, text, post, type} = req.body;
-
-        await sendReportEmail(username, text, post, type);
+        
+        const {user, reason, author, description , type } = req.body;
+        const postId = req.params.id;
+        // console.log(req.params);
+    
+        
+        await sendReportEmail(user, description , postId, type , reason , author );
+        
 
         return res.status(200).json({
             msg: "Report sent successfully",

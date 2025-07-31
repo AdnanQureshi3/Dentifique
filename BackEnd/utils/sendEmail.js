@@ -30,23 +30,25 @@ export async function sendVerificationEmail(email, username, code) {
     throw new Error('Email send failed');
   }
 }
-
-export async function sendReportEmail(username, text, post, type) {
+export async function sendReportEmail(user, description, postId, type, reason, author) {
   try {
     await resend.emails.send({
       from: 'UpChain <onboarding@resend.dev>',
       to: ['adnanq262@gmail.com'],
-      subject: 'Report from UpChain',
+      subject: '🚨 New Report Submitted on UpChain',
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-          <h2 style="color: #0d6efd;">Hello Admin,</h2>
-          <p><strong>${username}</strong> has reported a <strong>${type}</strong>.</p>
-          <p><strong>Reason:</strong> ${text}</p>
-          <p><strong>Reported Post:</strong></p>
-          <div style="background: #f9f9f9; padding: 15px; border-left: 4px solid #dc3545; margin: 10px 0;">
-            ${post}
+        <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.6; padding: 20px; background: #f5f5f5;">
+          <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+            <h2 style="color: #dc3545;">⚠️ Content Report Notification</h2>
+            <p><strong>${user}</strong> has reported a <strong>${type}</strong> on the platform.</p>
+            <p><strong>Reason for Report:</strong> ${reason}</p>
+            <p><strong>Additional Description:</strong> ${description || 'N/A'}</p>
+            <hr />
+            <p><strong>Post ID:</strong> ${postId}</p>
+            <p><strong>Author of Reported Post:</strong> ${author}</p>
+            <p style="margin-top: 30px;">Please review this report and take necessary action if required.</p>
+            <p style="color: #6c757d; font-size: 0.9em;">This is an automated message from the UpChain Report System.</p>
           </div>
-          <p style="margin-top: 30px;">Best regards,<br />UpChain Report System</p>
         </div>
       `
     });

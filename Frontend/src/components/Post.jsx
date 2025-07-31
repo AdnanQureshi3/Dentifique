@@ -14,6 +14,7 @@ import { Badge } from '../components/ui/badge.jsx';
 import { setPosts, setSelectedPost } from '@/redux/postSlice';
 import { setAuthuser } from '@/redux/authSlice';
 import EmojiSelector from './EmojiSelector.jsx';
+import ReportHandler from '../Hooks/ReportHandler.jsx';
 
 function Post({ post }) {
   const [text, settext] = useState("");
@@ -104,7 +105,7 @@ function Post({ post }) {
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && text.trim()) commentHanlder();
   };
-  
+
   const saveHandler = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/${post._id}/save`, { withCredentials: true });
@@ -117,6 +118,8 @@ function Post({ post }) {
       toast.error(err.response.msg);
     }
   }
+  const [showReport, setShowReport] = useState(false);
+
 
   return (
     <div className="w-full max-w-md mx-auto my-6 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-2xl">
@@ -124,8 +127,8 @@ function Post({ post }) {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <Link 
-            to={`/profile/${post.author._id}`} 
+          <Link
+            to={`/profile/${post.author._id}`}
             className="flex items-center gap-2 group"
           >
             <Avatar className="h-10 w-10 border-2 border-white shadow-md group-hover:border-blue-300 transition-colors">
@@ -162,7 +165,7 @@ function Post({ post }) {
           <DialogTrigger asChild>
             <MoreHorizontal className="text-gray-500 hover:text-gray-800 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors" />
           </DialogTrigger>
-          
+
           <DialogContent className="w-56 p-0 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
             <div className="py-2">
               {user && user._id !== post.author._id && (
@@ -173,8 +176,8 @@ function Post({ post }) {
                   <span>Unfollow</span>
                 </Button>
               )}
-              <Button 
-                onClick={saveHandler} 
+              <Button
+                onClick={saveHandler}
                 className="w-full text-left py-3 hover:bg-gray-100 text-gray-800 rounded-none border-b flex items-center gap-2"
               >
                 {saved ? (
@@ -200,8 +203,21 @@ function Post({ post }) {
                   <span>Delete</span>
                 </Button>
               )}
-              <Button 
-                onClick={() => setMenuOpen(false)} 
+              {user && user._id === post.author._id && (
+                <Button
+                  onClick={() => setShowReport(true)}
+                  className="w-full text-left py-3 text-red-600 hover:bg-red-50 rounded-none border-b flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 2a1 1 0 00-1 1v18a1 1 0 102 0v-7h9.382l1.724 3.447A1 1 0 0020 17V5a1 1 0 00-1.894-.447L16.382 8H7V3a1 1 0 00-1-1z" />
+                  </svg>
+
+                  <span>Report</span>
+                </Button>
+              )}
+
+              <Button
+                onClick={() => setMenuOpen(false)}
                 className="w-full text-left py-3 hover:bg-gray-100 text-gray-700 rounded-none flex items-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -209,6 +225,7 @@ function Post({ post }) {
                 </svg>
                 <span>Cancel</span>
               </Button>
+
             </div>
           </DialogContent>
         </Dialog>
@@ -227,7 +244,7 @@ function Post({ post }) {
       {/* Action Bar */}
       <div className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={likeorUnlike}
             className="flex items-center gap-1 group"
           >
@@ -240,8 +257,8 @@ function Post({ post }) {
               {likeCounts}
             </span>
           </button>
-          
-          <button 
+
+          <button
             onClick={() => {
               dispatch(setSelectedPost(post));
               setOpen(true);
@@ -253,13 +270,13 @@ function Post({ post }) {
               {comment.length}
             </span>
           </button>
-          
+
           <button className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
             <Send />
           </button>
         </div>
-        
-        <button 
+
+        <button
           onClick={saveHandler}
           className={`p-2 rounded-full transition-colors ${saved ? 'text-blue-500 bg-blue-50' : 'text-gray-500 hover:bg-gray-100'}`}
         >
@@ -278,7 +295,7 @@ function Post({ post }) {
       {/* Comments Preview */}
       {comment.length > 0 && (
         <div className="px-5 pb-3">
-          <button 
+          <button
             onClick={() => {
               dispatch(setSelectedPost(post));
               setOpen(true);
@@ -295,7 +312,7 @@ function Post({ post }) {
 
       {/* Add Comment */}
       <div className='px-5 pb-4 flex items-center gap-2 border-t border-gray-200 pt-3'>
-         <EmojiSelector onSelect={(emoji) => settext(prev => prev + emoji)} />
+        <EmojiSelector onSelect={(emoji) => settext(prev => prev + emoji)} />
         <input
           type='text'
           placeholder='Add a comment...'
@@ -305,7 +322,7 @@ function Post({ post }) {
           className='flex-1 p-3 text-sm text-gray-800 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
         />
         {text && (
-          <button 
+          <button
             onClick={commentHanlder}
             className="text-blue-500 hover:text-blue-700 font-medium px-4 py-2 rounded-full hover:bg-blue-50 transition-colors"
           >
@@ -314,14 +331,23 @@ function Post({ post }) {
         )}
       </div>
 
-      <CommentDialog 
-        deletePostHandler={deletePostHandler} 
-        saved={saved} 
-        saveHandler={saveHandler} 
-        Open={Open} 
-        setOpen={setOpen} 
-        post={post} 
+      <CommentDialog
+        deletePostHandler={deletePostHandler}
+        saved={saved}
+        saveHandler={saveHandler}
+        Open={Open}
+        setOpen={setOpen}
+        post={post}
       />
+
+      {showReport && (
+        <ReportHandler
+          post={post}
+          user={user}
+          type="Post"
+          onClose={() => setShowReport(false)}
+        />
+      )}
     </div>
   )
 }
