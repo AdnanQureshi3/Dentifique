@@ -469,7 +469,21 @@ export const saveThePost = async (req, res) => {
     }
 }
 
+export const ReportThePost = async (req,res)=>{
+    try{
+        const {username, text, post, type} = req.body;
 
+        await sendReportEmail(username, text, post, type);
+
+        return res.status(200).json({
+            msg: "Report sent successfully",
+            success: true
+        });
+    }
+    catch(err){
+        console.log(err);
+    }
+}
 
 
 
