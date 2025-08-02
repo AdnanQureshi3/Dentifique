@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog'
 import { DialogContent } from './ui/dialog'
-import { Bookmark, BookmarkCheck, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
+import { Bookmark, BookmarkCheck,  MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import { Button } from './ui/button'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import CommentDialog from './CommentDialog.jsx'
@@ -16,6 +16,7 @@ import { setAuthuser } from '@/redux/authSlice'
 import parse from 'html-react-parser';
 import EmojiSelector from './EmojiSelector.jsx'
 import ReportHandler from '@/Hooks/ReportHandler'
+import CopyBox from './Copy.jsx'
 
 function Article({ post }) {
     const [text, settext] = useState("");
@@ -28,6 +29,7 @@ function Article({ post }) {
     const [comment, setComment] = useState(post?.comments);
     const [saved, setSaved] = useState(user?.saved?.includes(post._id) || false);
     const [menuOpen, setMenuOpen] = useState(false);
+    const [openCopy  ,setopenCopy] = useState(false);
 
     useEffect(() => {
         setComment(post?.comments);
@@ -203,7 +205,7 @@ function Article({ post }) {
 
                                 <span>Report</span>
                             </Button>
-                        )}
+                        )} 
                         <Button
                             onClick={() => setMenuOpen(false)}
                             className="w-full py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-none flex items-center justify-start gap-2"
@@ -270,8 +272,11 @@ function Article({ post }) {
                         </span>
                     </button>
 
-                    <button className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
-                        <Send />
+                    <button onClick={() =>{
+                        console.log("opening");
+                            setopenCopy(true);
+                        }} className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
+                        <Send  />
                     </button>
                 </div>
 
@@ -309,6 +314,8 @@ function Article({ post }) {
                     )}
                 </div>
             )}
+            <CopyBox url= {`${import.meta.env.VITE_API_URL}/api/post/${post._id}`} 
+            open={openCopy} setOpen= {setopenCopy} />
 
             {/* Add Comment */}
             <div className='px-5 py-3 flex items-center gap-2 border-t border-gray-100 '>

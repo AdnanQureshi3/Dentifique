@@ -61,9 +61,9 @@ function ReportHandler({ post, user, onClose, type  }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(val) => { setOpen(val); if (!val && onClose) onClose(); }}>
+    <Dialog  open={open} onOpenChange={(val) => { setOpen(val); if (!val && onClose) onClose(); }}>
       <DialogContent
-        className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md"
+        className="bg-white p-6 rounded-xl shadow-2xl w-full z-2000 max-w-md"
         onInteractOutside={() => setOpen(false)}
       >
         <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6">

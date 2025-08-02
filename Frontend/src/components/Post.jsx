@@ -15,6 +15,7 @@ import { setPosts, setSelectedPost } from '@/redux/postSlice';
 import { setAuthuser } from '@/redux/authSlice';
 import EmojiSelector from './EmojiSelector.jsx';
 import ReportHandler from '../Hooks/ReportHandler.jsx';
+import CopyBox from './Copy.jsx'
 
 function Post({ post }) {
   const [text, settext] = useState("");
@@ -27,6 +28,7 @@ function Post({ post }) {
   const [comment, setComment] = useState(post?.comments);
   const [saved, setSaved] = useState(user?.saved?.includes(post._id) || false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openCopy  ,setopenCopy] = useState(false);
 
   useEffect(() => {
     setComment(post?.comments);
@@ -119,6 +121,7 @@ function Post({ post }) {
     }
   }
   const [showReport, setShowReport] = useState(false);
+  
 
 
   return (
@@ -231,6 +234,8 @@ function Post({ post }) {
         </Dialog>
       </div>
 
+              <CopyBox url= {`${import.meta.env.VITE_API_URL}/api/post/${post._id}`} 
+            open={openCopy} setOpen= {setopenCopy} />
       {/* Post Image */}
       <div className="relative overflow-hidden group">
         <img
@@ -271,7 +276,12 @@ function Post({ post }) {
             </span>
           </button>
 
-          <button className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
+          <button 
+          onClick={() =>{
+                        console.log("opening");
+                            setopenCopy(true);
+                        }}
+          className="text-gray-600 hover:text-blue-500 transition-colors hover:scale-110">
             <Send />
           </button>
         </div>

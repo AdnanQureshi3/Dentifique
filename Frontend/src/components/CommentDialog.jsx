@@ -12,6 +12,7 @@ import { setPosts } from '@/redux/postSlice';
 import parse from 'html-react-parser';
 import { X } from "lucide-react"
 import EmojiSelector from './EmojiSelector.jsx';
+import ReportHandler from '@/Hooks/ReportHandler';
 
 
 function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, saved }) {
@@ -59,39 +60,39 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
     const handleKeyPress = e => {
         if (e.key === 'Enter' && text.trim()) commentHanlder();
     };
-
+    const [showReport, setShowReport] = useState(false);
     return (
         <Dialog open={Open}>
             <DialogContent
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
                 // onInteractOutside={() => setOpen(false)}
-                  onInteractOutside={() => setOpen(false)}
+                onInteractOutside={() => setOpen(false)}
             >
 
                 <div className={`flex ${isPost ? 'flex-row' : 'flex-row-reverse'} relative bg-white rounded-xl overflow-hidden shadow-2xl w-full max-w-6xl h-[85vh]`}>
 
                     <button onClick={() => setOpen(false)} className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded">
                         <X className="w-5 h-5" />
-                        </button>
+                    </button>
 
                     {/* Media Content Area */}
                     {isPost ? (
                         <div className='flex-1 relative overflow-hidden bg-gradient-to-br from-gray-900 to-black'>
-                            <img 
-                                src={post.image} 
-                                alt="post" 
-                                className='absolute inset-0 w-full h-full object-contain p-4' 
+                            <img
+                                src={post.image}
+                                alt="post"
+                                className='absolute inset-0 w-full h-full object-contain p-4'
                             />
                         </div>
                     ) : (
                         <div className='flex-1 relative bg-gradient-to-br from-blue-50 to-indigo-100 overflow-auto p-6'>
 
-                <button onClick={() => setOpen(false)} className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded">
-                        <X className="w-5 h-5" />
-                        </button>
+                            <button onClick={() => setOpen(false)} className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded">
+                                <X className="w-5 h-5" />
+                            </button>
 
                             <div className="max-w-3xl mx-auto ">
-                                
+
                                 <div className="bg-white text-wrap rounded-xl shadow-sm p-5 mb-4">
                                     <h1 className='text-3xl font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200'>
                                         {parse(String(post?.title || ''))}
@@ -100,12 +101,12 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                         {parse(String(post?.caption || ''))}
                                     </div>
                                 </div>
-                                
+
                                 {post?.tags?.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mb-6">
                                         {post.tags.map((tag, index) => (
-                                            <span 
-                                                key={index} 
+                                            <span
+                                                key={index}
                                                 className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium"
                                             >
                                                 #{tag}
@@ -124,9 +125,9 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                 <div className='flex items-center gap-3'>
                                     <Link to={`/profile/${post?.author?._id}`} className="group">
                                         <Avatar className="w-10 h-10 border-2 border-white shadow-md group-hover:border-blue-300 transition-colors">
-                                            <AvatarImage 
-                                                className='w-[70px] h-[70px] object-cover rounded-full' 
-                                                src={post?.author?.profilePicture} 
+                                            <AvatarImage
+                                                className='w-[70px] h-[70px] object-cover rounded-full'
+                                                src={post?.author?.profilePicture}
                                             />
                                             <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white font-bold flex items-center justify-center">
                                                 {post?.author?.username?.charAt(0)}
@@ -134,8 +135,8 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                         </Avatar>
                                     </Link>
                                     <div>
-                                        <Link 
-                                            to={`/profile/${post?.author?._id}`} 
+                                        <Link
+                                            to={`/profile/${post?.author?._id}`}
                                             className='font-bold text-gray-800 hover:text-blue-600 transition-colors'
                                         >
                                             {post?.author?.username}
@@ -151,7 +152,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                    <button 
+                                    <button
                                         onClick={saveHandler}
                                         className={`p-2 rounded-full transition-colors ${saved ? 'text-blue-500 bg-blue-50' : 'text-gray-500 hover:bg-gray-100'}`}
                                     >
@@ -165,7 +166,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                             </svg>
                                         )}
                                     </button>
-                                    
+
                                     <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
                                         <DialogTrigger asChild>
                                             <MoreHorizontal className="text-gray-500 hover:text-gray-800 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors" />
@@ -180,7 +181,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                                         <span>Unfollow</span>
                                                     </button>
                                                 )}
-                                                <button 
+                                                <button
                                                     onClick={saveHandler}
                                                     className="w-full text-left px-4 py-3 text-gray-800 hover:bg-gray-100 flex items-center gap-2"
                                                 >
@@ -201,7 +202,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                                     )}
                                                 </button>
                                                 {user && user._id === post?.author?._id && (
-                                                    <button 
+                                                    <button
                                                         onClick={deletePostHandler}
                                                         className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 flex items-center gap-2"
                                                     >
@@ -211,7 +212,20 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                                         <span>Delete</span>
                                                     </button>
                                                 )}
-                                                <button 
+
+                                                {user && user._id === post.author._id && (
+                                                    <Button
+                                                        onClick={() => setShowReport(true)}
+                                                        className="w-full text-left py-3 text-red-600 hover:bg-red-50 rounded-none border-b flex items-center gap-2"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M6 2a1 1 0 00-1 1v18a1 1 0 102 0v-7h9.382l1.724 3.447A1 1 0 0020 17V5a1 1 0 00-1.894-.447L16.382 8H7V3a1 1 0 00-1-1z" />
+                                                        </svg>
+
+                                                        <span>Report</span>
+                                                    </Button>
+                                                )}
+                                                <button
                                                     onClick={() => setMenuOpen(false)}
                                                     className="w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
                                                 >
@@ -232,7 +246,7 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                 {Comments && [...Comments].reverse().map(c => (
                                     <Comment key={c._id} setComment={setComment} Comments={Comments} comment={c} post={post} />
                                 ))}
-                                
+
                                 {Comments.length === 0 && (
                                     <div className="flex flex-col items-center justify-center h-full text-center py-10">
                                         <div className="bg-gray-100 p-5 rounded-full mb-4">
@@ -245,10 +259,10 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                     </div>
                                 )}
                             </div>
-                            
+
                             <div className='sticky bottom-0 bg-white border-t border-gray-200 p-4'>
                                 <div className='flex items-center gap-2'>
-                                <EmojiSelector onSelect={(emoji) => setText(prev => prev + emoji)} />
+                                    <EmojiSelector onSelect={(emoji) => setText(prev => prev + emoji)} />
                                     <input
                                         type="text"
                                         placeholder="Add a comment..."
@@ -257,8 +271,8 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                                         onKeyDown={handleKeyPress}
                                         className="flex-1 p-3 text-sm text-gray-800 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                     />
-                                    <Button 
-                                        onClick={commentHanlder} 
+                                    <Button
+                                        onClick={commentHanlder}
                                         disabled={!text}
                                         className="rounded-full px-5 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all shadow-md disabled:opacity-50"
                                     >
@@ -269,6 +283,14 @@ function CommentDialog({ deletePostHandler, Open, setOpen, post, saveHandler, sa
                         </div>
                     </div>
                 </div>
+                {showReport && (
+                    <ReportHandler
+                        post={post}
+                        user={user}
+                        type="Post"
+                        onClose={() => setShowReport(false)}
+                    />
+                )}
             </DialogContent>
         </Dialog>
     );
