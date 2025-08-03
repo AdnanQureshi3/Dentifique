@@ -30,6 +30,7 @@ const extensions = [
 function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
     const [loadingforPublish, setloadingforPublish] = useState(false);
     const [loaderforAI, setloaderforAI] = useState(false);
+    const [loaderforAiTitle, setloaderforAiTitle] = useState(false);
 
     const contentEditor = useEditor({
         extensions,
@@ -55,7 +56,8 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
     const EnhancedText = async () => {
         setloaderforAI(true);
-       
+        console.log("jgkbn vvmbvmmnv");
+
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/enhancedText`, { text: content },
                 { withCredentials: true });
@@ -65,16 +67,32 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
             if (contentEditor && contentEditor.commands) {
                 contentEditor.chain().clearContent().insertContent(enhancedText).run();
             }
-
         }
         catch (error) {
             console.log(error);
-
         }
         finally {
             setloaderforAI(false);
         }
+    }
+    const GenerateAiTitle = async () => {
+        setloaderforAiTitle(true);
+        
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/title`, { text: content },
+                { withCredentials: true });
+                const AiTitle = res.data.result.response.candidates[0].content.parts[0].text;
+                console.log("title");
+            console.log(AiTitle);
 
+            setTitle(AiTitle);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        finally {
+            setloaderforAiTitle(false);
+        }
     }
 
     return (
@@ -192,6 +210,26 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
                 <span className={`text-xs w-10 m-3 text-center items-center font-semibold ${title.length <= maxTitleLength ? 'text-black' : 'text-red-500'} `}>
                     {title.length} / {maxTitleLength}
                 </span>
+
+                <button
+                    onClick={GenerateAiTitle}
+                    disabled={loaderforAiTitle || content.length < 10}
+                    className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold shadow-md rounded-full w-12 h-12 flex items-center justify-center border-2 border-white 
+             hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg hover:scale-110 transition-all duration-200"
+                >
+                    {loaderforAiTitle ? (
+                        <>
+                        <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                        </>
+                    ):(
+                        <>
+                        AI
+                        </>
+                    )
+            }
+                
+                </button>
+
             </div>
 
 
@@ -223,10 +261,10 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
                     
                     `}
                 />
-<button
-  onClick={EnhancedText}
-  disabled={loaderforAI || content.length < 10}
-  className={`
+                <button
+                    onClick={EnhancedText}
+                    disabled={loaderforAI || content.length < 10}
+                    className={`
     group
     h-12
     font-semibold
@@ -239,27 +277,27 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
     justify-center
     overflow-hidden
     ${loaderforAI
-      ? 'px-4 rounded-xl bg-gray-400 cursor-not-allowed'
-      : 'w-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:w-[200px] hover:px-4 hover:rounded-full hover:from-indigo-600 hover:to-purple-500 cursor-pointer'}
+                            ? 'px-4 rounded-xl bg-gray-400 cursor-not-allowed'
+                            : 'w-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:w-[200px] hover:px-4 hover:rounded-full hover:from-indigo-600 hover:to-purple-500 cursor-pointer'}
   `}
->
-  {loaderforAI ? (
-    <>
-      <Loader2 className="animate-spin h-4 w-4 mr-2" />
-      Enhancing...
-    </>
-  ) : (
-    <>
-      <span className='group-hover:hidden '>✨AI</span>
-      <span className="whitespace-nowrap pl-2 opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto transition-all rounded-full duration-300">
-        ✨Enhance it by AI
-      </span>
-    </>
-  )}
-</button>
+                >
+                    {loaderforAI ? (
+                        <>
+                            <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                            Enhancing...
+                        </>
+                    ) : (
+                        <>
+                            <span className='group-hover:hidden '>✨AI</span>
+                            <span className="whitespace-nowrap pl-2 opacity-0 w-0 group-hover:opacity-100 group-hover:w-auto transition-all rounded-full duration-300">
+                                ✨Enhance it by AI
+                            </span>
+                        </>
+                    )}
+                </button>
 
 
-              
+
 
 
 
