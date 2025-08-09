@@ -56,10 +56,8 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
 
     const EnhancedText = async () => {
         setloaderforAI(true);
-        console.log("jgkbn vvmbvmmnv");
-
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/enhancedText`, { text: content },
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/enhancedText`, { text: content , title },
                 { withCredentials: true });
             const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
             console.log(enhancedText);
@@ -82,6 +80,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/title`, { text: content },
                 { withCredentials: true });
                 const AiTitle = res.data.result.response.candidates[0].content.parts[0].text;
+                
                 console.log("title");
             console.log(AiTitle);
 
@@ -263,7 +262,7 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
                 />
                 <button
                     onClick={EnhancedText}
-                    disabled={loaderforAI || content.length < 10}
+                    disabled={loaderforAI }
                     className={`
     group
     h-12
