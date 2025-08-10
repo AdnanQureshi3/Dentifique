@@ -1,8 +1,8 @@
+import { useState, useEffect } from 'react';
 import { setSelectedUser } from '@/redux/authSlice';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-import { MessageCircle } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { MessageCircle, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
 import Messages from './Messages.jsx';
 import axios from 'axios';
 import { setChatmessages } from '@/redux/chatSlice';
@@ -10,127 +10,227 @@ import { setChatmessages } from '@/redux/chatSlice';
 function Chatpage() {
     const { user, suggestedUser, selecteduser } = useSelector(store => store.auth);
     const dispatch = useDispatch();
+    const { onlineUsers, ChatMessages } = useSelector(store => store.chat);
     
-    const { onlineUsers  , ChatMessages} = useSelector(store => store.chat);
+    const [text, settext] = useState("");
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    
     useEffect(() => {
         dispatch(setSelectedUser(null));
+    }, []);
+    
+    const sendMessageHandler = async () => {
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/chats/send/${selecteduser._id}`, 
+                { message: text.trim() }, 
+                { withCredentials: true }
+            );
 
-    }, [])
-    const [text, settext] = useState("");
- 
-    const sendMessageHandler = async()=>{
-      
-        try{
-
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/chats/send/${selecteduser._id}` ,{message:text.trim()}  ,{withCredentials:true});
-            
-            if(res.data.success){
-                dispatch(setChatmessages([...ChatMessages , res.data.newMessage]))
+            if (res.data.success) {
+                dispatch(setChatmessages([...ChatMessages, res.data.newMessage]));
             }
             settext("");
-        }
-        catch(err){
-          
-           console.log(err.response?.data || err.message);
+        } catch (err) {
+            console.log(err.response?.data || err.message);
         }
     }
-    const SendButtonPressHandler = (e)=>{
-        if(e.key === 'Enter'){
+    
+    const SendButtonPressHandler = (e) => {
+        if (e.key === 'Enter') {
             sendMessageHandler();
         }
-
     }
-    const deleteChatHandler = async()=>{
-        try{
-            const res =await axios.delete(`${import.meta.env.VITE_API_URL}/api/chats/delete/${selecteduser._id}` , {withCredentials:true});
+    
+    const deleteChatHandler = async () => {
+        try {
+            const res = await axios.delete(
+                `${import.meta.env.VITE_API_URL}/api/chats/delete/${selecteduser._id}`, 
+                { withCredentials: true }
+            );
 
-            if(res.data.success){
+            if (res.data.success) {
                 console.log('chat deleted');
-                dispatch(setChatmessages([]))
+                dispatch(setChatmessages([]));
             }
-
-        }
-        catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
+    
+    const toggleSidebar = () => {
+        setIsSidebarCollapsed(!isSidebarCollapsed);
+    }
 
     return (
-        <div className="bg-gray-100 h-screen pr-4 py-6 flex w-full ">
-            <section className="bg-white shadow border-2 rounded-xl border-gray-300 p-4  h-full w-[25%] flex flex-col">
-                <h1 className="text-xl font-bold mb-4 px-2">{user?.username}</h1>
-                <hr className="border-gray-300 mb-4" />
-                <div className="overflow-y-auto space-y-2 pr-2">
+        <div className="bg-gradient-to-br from-indigo-50 to-blue-100 min-h-screen p-4 flex">
+            {/* Sidebar */}
+            <section className={`bg-white shadow-lg rounded-xl border border-gray-200 p-4 h-[calc(100vh-2rem)] flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'w-20' : 'w-80'}`}>
+                <div className="flex items-center justify-between mb-4">
+                    {!isSidebarCollapsed && (
+                        <h1 className="text-xl font-bold text-indigo-800">{user?.username}</h1>
+                    )}
+                    <button 
+                        onClick={toggleSidebar}
+                        className="p-2 rounded-full hover:bg-indigo-100 transition-colors"
+                    >
+                        {isSidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+                    </button>
+                </div>
+                
+                <hr className="border-gray-200 mb-4" />
+                
+                <div className="overflow-y-auto pr-2 flex-grow">
                     {suggestedUser.map((u) => {
                         const isOnline = onlineUsers.includes(u._id);
                         return (
-                            <div onClick={() => dispatch(setSelectedUser(u))}
-
-                                key={u._id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                <Avatar className="w-10 h-10">
-                                    <AvatarImage
-                                        className="w-10 h-10 border-2 border-green-600 rounded-full object-cover"
-                                        src={u?.profilePicture}
-                                    />
-                                    <AvatarFallback>CN</AvatarFallback>
-                                </Avatar>
-                                <div className="flex flex-col">
-                                    <span className="font-medium">{u?.username}</span>
-                                    <span className={`text-xs font-semibold ${isOnline ? 'text-green-600' : 'text-red-600'}`}>
-                                        {isOnline ? 'Online' : 'Offline'}
-                                    </span>
+                            <div 
+                                onClick={() => {
+                                    if (u._id !== selecteduser?._id) {
+                                        dispatch(setSelectedUser(u));
+                                        dispatch(setChatmessages([]));
+                                    }
+                                }}
+                                key={u._id} 
+                                className={`flex items-center gap-3 p-2 rounded-lg hover:bg-indigo-50 cursor-pointer transition-colors ${
+                                    selecteduser?._id === u._id ? 'bg-indigo-100 border border-indigo-300' : ''
+                                }`}
+                            >
+                                <div className="relative">
+                                    <Avatar className="w-10 h-10">
+                                        <AvatarImage
+                                            className="w-10 h-10 rounded-full object-cover"
+                                            src={u?.profilePicture}
+                                        />
+                                        <AvatarFallback className="bg-indigo-200 text-indigo-800 font-medium flex items-center justify-center w-10 h-10 rounded-full">
+                                            {u.username.charAt(0)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                                        isOnline ? 'bg-green-500' : 'bg-gray-400'
+                                    }`}></span>
                                 </div>
+                                
+                                {!isSidebarCollapsed && (
+                                    <div className="flex flex-col truncate">
+                                        <span className="font-medium text-gray-800">{u?.username}</span>
+                                        <span className={`text-xs font-semibold ${
+                                            isOnline ? 'text-green-600' : 'text-gray-500'
+                                        }`}>
+                                            {isOnline ? 'Online' : 'Offline'}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         )
                     })}
                 </div>
-            </section>
-            {
-                selecteduser ? (
-                    <div className=' border-gray-300 border-l-0 relative h-full overflow-y-auto rounded-xl border-2 flex flex-col w-[75%]'>
-                        <div className='flex flex-row px-4 py-2 border-b-2 border-gray-600 rounded-xl'>
-                            <Avatar className="w-10 h-10 mr-4">
+                
+                {!isSidebarCollapsed && (
+                    <div className="mt-auto pt-4 border-t border-gray-200">
+                        <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
                                 <AvatarImage
-                                    className="w-10 h-10 border-2 border-green-600 rounded-full object-cover"
-                                    src={selecteduser?.profilePicture}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                    src={user?.profilePicture}
                                 />
-                                <AvatarFallback>CN</AvatarFallback>
+                                <AvatarFallback className="bg-indigo-200 text-indigo-800 font-medium flex items-center justify-center w-10 h-10 rounded-full">
+                                    {user?.username.charAt(0)}
+                                </AvatarFallback>
                             </Avatar>
-                            <div className="flex flex-col">
-                                <span className="font-medium">{selecteduser?.username } </span>
-                                <span className={`text-xs font-semibold ${onlineUsers.includes(selecteduser._id) ? 'text-green-600' : 'text-red-600'}`}>
-                                    {onlineUsers.includes(selecteduser._id) ? 'Online' : 'Offline'}
-                                </span>
+                            <div>
+                                <p className="font-medium text-gray-800">{user?.username}</p>
+                                <p className="text-xs text-gray-500">Active now</p>
                             </div>
-                            <button onClick={deleteChatHandler}>Delete</button>
-
-                        </div>
-
-                        <Messages selectedUser={selecteduser} />
-
-                        <div className='m-3 bottom-0 sticky flex justify-between py-2 pl-4 rounded-full w-auto border-2 b-0'>
-                            <input type="text" placeholder='Send a message...'
-                                className='outline-none w-full '
-                                onKeyDown={SendButtonPressHandler}
-                                value={text}
-                                onChange={(e) => { settext(e.target.value)}} />
-                            {text !== "" && (
-                                <button  onClick={sendMessageHandler} className='w-32 cursor-pointer text-blue-500 text-md font-semibold h-full'>Send</button>
-                            )}
-
                         </div>
                     </div>
-                ) : (
-                    <div className='flex flex-col items-center justify-center mx-auto '>
-                        <MessageCircle size={80} />
-                        <h1 className='font-semibold text-2xl text-gray-800' >Your messages</h1>
-                        <span className='font-semibold text-xl text-gray-600'>Send a message to start a chat.</span>
-                    </div>
-                )
-            }
+                )}
+            </section>
+            
 
+            {selecteduser ? (
+                 <div className={`relative h-[calc(100vh-2rem)] ml-4 rounded-xl border border-gray-200 flex flex-col bg-white shadow-lg flex-grow transition-all duration-300 ease-in-out ${
+        isSidebarCollapsed ? 'w-[calc(100%-6rem)]' : 'w-[calc(100%-18rem)]'
+    }`}>
+                    {/* Chat Header */}
+                    <div className='flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white rounded-t-xl'>
+                        <div className="flex items-center">
+                            <div className="relative mr-3">
+                                <Avatar className="w-10 h-10">
+                                    <AvatarImage
+                                        className="w-10 h-10 rounded-full object-cover"
+                                        src={selecteduser?.profilePicture}
+                                    />
+                                    <AvatarFallback className="bg-indigo-200 text-indigo-800 font-medium flex items-center justify-center w-10 h-10 rounded-full">
+                                        {selecteduser?.username.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                                    onlineUsers.includes(selecteduser._id) ? 'bg-green-500' : 'bg-gray-400'
+                                }`}></span>
+                            </div>
+                            <div>
+                                <p className="font-medium text-gray-800">{selecteduser?.username}</p>
+                                <p className={`text-xs font-semibold ${
+                                    onlineUsers.includes(selecteduser._id) ? 'text-green-600' : 'text-gray-500'
+                                }`}>
+                                    {onlineUsers.includes(selecteduser._id) ? 'Online' : 'Offline'}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <button 
+                            onClick={deleteChatHandler}
+                            className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                            title="Delete conversation"
+                        >
+                            <Trash2 size={20} />
+                        </button>
+                    </div>
+
+                    {/* Messages */}
+                    <Messages selectedUser={selecteduser} />
+                    
+                    {/* Message Input */}
+                    <div className='m-4 mt-0 bottom-0 sticky flex justify-between items-center p-3 rounded-xl bg-gray-50 border border-gray-200'>
+                        <input 
+                            type="text" 
+                            placeholder='Type a message...'
+                            className='outline-none bg-transparent flex-grow mr-3 px-3 py-2'
+                            onKeyDown={SendButtonPressHandler}
+                            value={text}
+                            onChange={(e) => { settext(e.target.value) }} 
+                        />
+                        
+                        {text !== "" && (
+                            <button 
+                                onClick={sendMessageHandler} 
+                                className='bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors'
+                            >
+                                Send
+                            </button>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <div className='flex flex-col items-center justify-center ml-4 flex-grow bg-white rounded-xl border border-gray-200 shadow-lg'>
+                    <div className="bg-indigo-100 p-6 rounded-full mb-6">
+                        <MessageCircle size={60} className="text-indigo-600" />
+                    </div>
+                    <h1 className='font-bold text-2xl text-gray-800 mb-2'>Your Messages</h1>
+                    <p className='text-gray-600 max-w-md text-center mb-8'>
+                        Select a conversation or start a new chat. Your messages will appear here.
+                    </p>
+                    <button 
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                        onClick={() => dispatch(setSelectedUser(suggestedUser[0]))}
+                    >
+                        Start New Chat
+                    </button>
+                </div>
+            )}
         </div>
     )
 }
 
-export default Chatpage
+export default Chatpage;
