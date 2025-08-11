@@ -11,6 +11,7 @@ function useRTM() {
 
     useEffect(()=>{
         socket?.on('newMessage' , (newMessage)=>{
+            console.log(newMessage, "new message received");
             if(selecteduser && newMessage.senderId === selecteduser._id)  // Ignore messages sent by the current user
                
             dispatch(setChatmessages([...ChatMessages , newMessage]));

@@ -1,7 +1,7 @@
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import {
-  Home, Search, TrendingUp, MessageCircle,
-  Heart, PlusSquare, LogOut
+  Home, Search, MessageCircle,
+  Heart, PlusSquare, LogOut, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,12 +20,13 @@ import {
   PopoverContent
 } from "@radix-ui/react-popover";
 
-function LeftSidebar() {
+function LeftSidebar({collapsed , setCollapsed}) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector(store => store.auth);
   const { notifications } = useSelector(store => store.notification);
   const [Open, setOpen] = useState(false);
+  
 
   const logoutHandler = async () => {
     try {
@@ -83,11 +84,22 @@ function LeftSidebar() {
   };
 
   return (
-<aside className="fixed top-0 left-0 w-[250px] h-screen bg-white border-r shadow-md z-50 px-4 py-6">
+    <aside
+      className={`fixed top-0 left-0 ${collapsed ? "w-[100px]" : "w-[250px]"} 
+      h-screen bg-white border-r shadow-md z-50 px-4 py-6 transition-all duration-300`}
+    >
+      {/* Collapse Button */}
+      <div
+        className="absolute top-4 right-[-12px] bg-white border rounded-full shadow p-1 cursor-pointer"
+        onClick={() => setCollapsed(!collapsed)}
+      >
+        {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+      </div>
+
       {/* Top Logo */}
       <div>
         <div className="flex justify-center mb-6">
-          <img src={logo} className="w-24" alt="Logo" />
+          {!collapsed && <img src={logo} className="w-24" alt="Logo" />}
         </div>
 
         {/* Navigation */}
@@ -102,7 +114,7 @@ function LeftSidebar() {
                 className="flex items-center gap-4 px-4 py-3 text-sm rounded-lg text-gray-800 font-medium hover:bg-white hover:shadow transition cursor-pointer relative"
               >
                 {item.icon}
-                <span>{item.text}</span>
+                {!collapsed && <span>{item.text}</span>}
 
                 {isNotification && notifications.length > 0 && (
                   <span className="absolute left-6 -top-2 bg-red-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center">
@@ -115,49 +127,51 @@ function LeftSidebar() {
             return isNotification ? (
               <Popover key={index}>
                 <PopoverTrigger asChild>{navItem}</PopoverTrigger>
-                <PopoverContent
-                  side="right"
-                  align="start"
-                  className="w-72 max-h-96 overflow-y-auto p-4 bg-white border rounded-xl shadow-xl"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <h1 className="text-sm font-semibold text-gray-800">Notifications</h1>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 px-2 py-1 text-xs"
-                      onClick={clearNotificationHandler}
-                    >
-                      Clear
-                    </Button>
-                  </div>
-
-                  {notifications.length === 0 ? (
-                    <p className="text-center text-gray-500 text-sm mt-2">No new notifications</p>
-                  ) : (
-                    [...notifications].reverse().map(noti => (
-                      <div
-                        key={noti.user._id}
-                        className="flex items-center gap-3 py-2 border-b last:border-none"
+                {!collapsed && (
+                  <PopoverContent
+                    side="right"
+                    align="start"
+                    className="w-72 max-h-96 overflow-y-auto p-4 bg-white border rounded-xl shadow-xl"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h1 className="text-sm font-semibold text-gray-800">Notifications</h1>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 px-2 py-1 text-xs"
+                        onClick={clearNotificationHandler}
                       >
-                        <Avatar>
-                          <AvatarImage
-                            className="w-9 h-9 border-2 border-green-500 rounded-full"
-                            src={noti.user?.profilePicture}
-                          />
-                        </Avatar>
-                        <p className="text-sm text-gray-700">
-                          <span className="font-medium">{noti.user?.username}</span>{" "}
-                          {noti.type === "Liked"
-                            ? "liked your post"
-                            : noti.type === "commented"
-                            ? "commented on your post"
-                            : "started following you"}
-                        </p>
-                      </div>
-                    ))
-                  )}
-                </PopoverContent>
+                        Clear
+                      </Button>
+                    </div>
+
+                    {notifications.length === 0 ? (
+                      <p className="text-center text-gray-500 text-sm mt-2">No new notifications</p>
+                    ) : (
+                      [...notifications].reverse().map(noti => (
+                        <div
+                          key={noti.user._id}
+                          className="flex items-center gap-3 py-2 border-b last:border-none"
+                        >
+                          <Avatar>
+                            <AvatarImage
+                              className="w-9 h-9 border-2 border-green-500 rounded-full"
+                              src={noti.user?.profilePicture}
+                            />
+                          </Avatar>
+                          <p className="text-sm text-gray-700">
+                            <span className="font-medium">{noti.user?.username}</span>{" "}
+                            {noti.type === "Liked"
+                              ? "liked your post"
+                              : noti.type === "commented"
+                              ? "commented on your post"
+                              : "started following you"}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </PopoverContent>
+                )}
               </Popover>
             ) : (
               <div key={index}>{navItem}</div>
@@ -166,8 +180,8 @@ function LeftSidebar() {
         </nav>
       </div>
 
-      {/* Bottom User Summary (optional) */}
-      {user && (
+      {/* Bottom User Summary */}
+      {user && !collapsed && (
         <div className="border-t pt-4 flex items-center gap-3">
           <Avatar>
             <AvatarImage

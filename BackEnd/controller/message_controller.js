@@ -9,8 +9,13 @@ export const sendMessage = async (req, res) => {
         const senderId = req.id;
         const receiverId = req.params.id;
         const { message } = req.body;
-        console.log(message);
-
+        if (!message || !senderId || !receiverId) {
+            return res.status(400).json({
+                success: false,
+                msg: "Invalid request data"
+            });
+        }
+        
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] }
         })
@@ -18,23 +23,32 @@ export const sendMessage = async (req, res) => {
             conversation = await Conversation.create({
                 participants: [senderId, receiverId]
             })
-
+            
         }
-        const newMessage = await Message.create({
+        const NEW_Message = await Message.create({
             senderId,
             receiverId,
             message,
             conversationId: conversation._id
         });
-
-        if (newMessage) conversation.messages.push(newMessage._id);
-
-        await Promise.all([conversation.save(), newMessage.save()]);
+        
+        if (NEW_Message) conversation.messages.push(NEW_Message._id);
+        
+        await Promise.all([conversation.save(), NEW_Message.save()]);
         const receiverSocketId = getReceiverSocketId(receiverId);
+        console.log(message , receiverSocketId, "receiver socket id");
+
+    await NEW_Message.populate('senderId', 'username profilePicture _id');
+await NEW_Message.populate('receiverId', 'username profilePicture _id');
+
+const newMessage = NEW_Message.toObject();
+
 
         if (receiverSocketId) {
+            console.log("RTM send");
             io.to(receiverSocketId).emit('newMessage', newMessage);
         }
+        
         return res.status(201).json({
             success: true,
             newMessage
@@ -53,7 +67,7 @@ export const getMessage = async (req, res) => {
         const receiverId = req.params.id;
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] }
-        }).populate("messages");;
+        }).populate("messages").lean();
 
         if (!conversation) return res.status(200).json({
             success: true,

@@ -15,19 +15,23 @@ const io =new Server(server , {
 })
 
 const userSocketMap = {};
-export const getReceiverSocketId =(receiverId) => userSocketMap[receiverId]; 
+export const getReceiverSocketId =(receiverId) => {
+    console.log(userSocketMap[receiverId] , "receiver Scoket id")
+
+    return userSocketMap[receiverId]; 
+}
 
 io.on('connection' , (socket) =>{
     const userId = socket.handshake.query.userId;
     if(userId){
         userSocketMap[userId] = socket.id;
-        // console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
+        console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
         io.emit('getOnlineUsers' , Object.keys(userSocketMap));
     }
     
     socket.on('disconnect' , ()=>{
         if(userId){
-            // console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
+            console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
             delete userSocketMap[userId];
         }
         io.emit('getOnlineUsers' , Object.keys(userSocketMap));
