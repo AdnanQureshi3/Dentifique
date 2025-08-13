@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { setAuthuser } from "./authSlice.js";
+
 import postSlice from './postSlice.js';
 import authSlice from './authSlice.js'
 import socketSlice from './socketSLice.js'

@@ -12,7 +12,6 @@ import {sendReportEmail} from '../utils/sendEmail.js'
 
 // import { populate } from "dotenv";
 export const addNewPost = async (req, res) => {
-
     try {
         const { caption } = req.body;
         const image = req.file;
@@ -234,6 +233,7 @@ export const makeComment = async (req, res) => {
 
 
         }
+        console.log("Comment Added Successfully");
 
         return res.status(201).json({
             msg: "Comment Added Successfully",

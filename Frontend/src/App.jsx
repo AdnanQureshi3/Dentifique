@@ -74,7 +74,7 @@ function App() {
       // on means “Listen for an event.”
       
       socketio.on('getOnlineUsers' , (Onlineusers) =>{
-        // console.log(Onlineusers)
+        console.log(Onlineusers , "YESH HSDFGHJKSDFGHJKLDFGHJK");
         dispatch(setOnlineUsers(Onlineusers));
       })
       socketio.on('notification', (data) => {

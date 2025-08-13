@@ -7,7 +7,8 @@ const chatSlice = createSlice({
         ChatMessages:[]
     },
     reducers:{
-        setOnlineUsers:(state , action)=>{
+        setOnlineUsers:(state , action )=>{
+            console.log("Online Users Updated" , action.payload)
             state.onlineUsers = action.payload;
         },
         setChatmessages:(state , action)=>{
