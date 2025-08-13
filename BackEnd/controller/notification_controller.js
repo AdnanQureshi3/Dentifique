@@ -4,6 +4,7 @@ export const createNotification = async (req, res) => {
     try {
         const { type, user, postId } = req.body;
         const receiverId = req.params.id;
+        
         const noti = await Notification.create({
             type,
             user: user._id,

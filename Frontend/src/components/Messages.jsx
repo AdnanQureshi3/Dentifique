@@ -20,7 +20,7 @@ function Messages({ isOnline, selectedUser }) {
     if (selectedUser?._id) {
       getAllMessages(selectedUser._id, dispatch);
     }
-  }, [selectedUser?._id, dispatch]);
+  }, [selectedUser?._id, dispatch ]);
 
   // Scroll to bottom on new messages
   useEffect(() => {

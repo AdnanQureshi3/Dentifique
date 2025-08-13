@@ -12,6 +12,7 @@ const chatSlice = createSlice({
             state.onlineUsers = action.payload;
         },
         setChatmessages:(state , action)=>{
+            console.log("Chat Messages Updated", action.payload);
             state.ChatMessages = action.payload;
         }
     }

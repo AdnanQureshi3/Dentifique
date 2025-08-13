@@ -4,16 +4,18 @@ import { useDispatch, useSelector } from 'react-redux'
 
 function useRTM() {
     const { ChatMessages } = useSelector(store => store.chat);
-    const { socket } = useSelector(store => store.socketio);
+    const {socket }= useSelector(store => store.socketio);
     const { user , selecteduser } = useSelector(store => store.auth);
 
     const dispatch = useDispatch();
 
     useEffect(()=>{
         socket?.on('newMessage' , (newMessage)=>{
-            console.log(newMessage, "new message received");
-            if(selecteduser && newMessage.senderId === selecteduser._id)  // Ignore messages sent by the current user
-               
+            // console.log(newMessage, "new message received");
+            const senderId = newMessage.senderId._id;
+            console.log(senderId ," =senderID " , selecteduser?._id , " selectedUSer" , senderId === selecteduser?._id);
+            
+            if(selecteduser && newMessage.senderId._id === selecteduser._id)  // Ignore messages sent by the current user
             dispatch(setChatmessages([...ChatMessages , newMessage]));
         })
 

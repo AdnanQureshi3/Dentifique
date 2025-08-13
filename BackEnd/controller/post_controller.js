@@ -162,6 +162,7 @@ export const LikeUnlikePost = async (req, res) => {
             }
             // console.log(notification)
             const postAuthorSocketId = getReceiverSocketId(post.author.toString());
+            
             io.to(postAuthorSocketId).emit('notification', notification);
 
             if (str === "Liked")
@@ -229,6 +230,7 @@ export const makeComment = async (req, res) => {
             }
             const postAuthorSocketId = getReceiverSocketId(post.author.toString());
             io.to(postAuthorSocketId).emit('notification', notification);
+
             await axios.post(`http://localhost:8000/api/user/noti/${post.author.toString()}`, notification);
 
 

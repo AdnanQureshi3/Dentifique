@@ -14,7 +14,7 @@ function Chatpage() {
     const isOnline = onlineUsers.includes(selecteduser?._id);
 
     const [text, settext] = useState("");
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     
     useEffect(() => {
         dispatch(setSelectedUser(null));

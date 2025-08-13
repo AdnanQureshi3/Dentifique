@@ -45,7 +45,8 @@ const newMessage = NEW_Message.toObject();
 
 
         if (receiverSocketId) {
-            console.log("RTM send");
+            console.log("RTM send" ,newMessage);
+
             io.to(receiverSocketId).emit('newMessage', newMessage);
         }
         

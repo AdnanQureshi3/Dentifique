@@ -12,6 +12,7 @@ import { useEffect } from 'react'
 import { setSocket } from './redux/socketSLice'
 import { setOnlineUsers } from './redux/chatSlice'
 import { setNotification } from './redux/notificationSlice.js'
+import { setChatmessages } from './redux/chatSlice'
 import { getAllNoti } from './Hooks/getAllNoti'
 import Protected_routes from './components/ui/protected_routes'
 import Verification from './components/Verification'
@@ -56,10 +57,13 @@ function App() {
   const {user} = useSelector(store => store.auth);
   const dispatch = useDispatch();
   const {notification }= useSelector(state => state.notification);
+  const { ChatMessages } = useSelector(store => store.chat);
   let socketio;
-
+  
+  
   useEffect(()=>{
-
+    
+    
     getAllNoti(dispatch);
     
     if(user){
@@ -77,6 +81,7 @@ function App() {
         console.log(Onlineusers , "YESH HSDFGHJKSDFGHJKLDFGHJK");
         dispatch(setOnlineUsers(Onlineusers));
       })
+
       socketio.on('notification', (data) => {
         // dispatch(setNotification([...noti , notification]))
         dispatch(setNotification(data))

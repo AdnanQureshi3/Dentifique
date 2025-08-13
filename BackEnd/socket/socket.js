@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io =new Server(server , {
 
     cors:{
-         origin: process.env.URL || 'https://upchain-tvvm.onrender.com' || 'http://localhost:5173',
+         origin: process.env.URL ||'http://localhost:5173' || 'https://upchain-tvvm.onrender.com',
          methods:['GET' , 'POST']
     }
 })
@@ -27,7 +27,7 @@ io.on('connection' , (socket) =>{
         userSocketMap[userId] = socket.id;
         console.log(`UserId = ${userId} , SocketId = ${socket.id}`);
         
-        io.emit('getOnlineUsers' , []);
+        io.emit('getOnlineUsers' ,Object.keys(userSocketMap) );
     }
     
     socket.on('disconnect' , ()=>{
