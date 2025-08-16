@@ -31,9 +31,9 @@ ${text}`
 
 else
   result = await model.generateContent(
-`Write a short article (max 500 characters) based on the given title.
+`Write a short article 1500 chars based on the given title.
 - Use **bold** and __underline__ for important words.
-- Add 2-3 relevant emojis.
+- Add  relevant emojis.
 - Make it engaging and concise.
 
 Title: ${title}`

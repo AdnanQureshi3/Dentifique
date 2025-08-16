@@ -66,6 +66,7 @@ export const getMessage = async (req, res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
+        
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] }
         }).populate("messages").lean();
@@ -79,6 +80,35 @@ export const getMessage = async (req, res) => {
 
     }
     catch (err) {
+        console.log(err);
+    }
+}
+
+export const deleteForMe = async(req , res) =>{
+    try{
+        const senderId = req.id;
+        const receiverId = req.params.id;
+        const conversation = await Conversation.findOne({
+            participants: { $all: [senderId, receiverId] }
+        });
+        const {messagesArray} = req.body;
+
+        if (!conversation) return res.status(404).json({
+            success: false,
+            msg: "Converstation not found"
+        });
+            await Message.updateMany(
+    { _id: { $in: messagesArray }},
+    { $push: { NotVisibleTo: senderId } }
+    );
+     return res.status(200).json({
+      success: true,
+      msg: "Messages deleted for you"
+    });
+
+
+    }
+    catch(err){
         console.log(err);
     }
 }

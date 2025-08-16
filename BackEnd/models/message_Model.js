@@ -8,9 +8,10 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    isRead: { type: Boolean, default: false }
+    isRead: { type: Boolean, default: false },
+    NotVisibleTo: []
 
-});
+}, {timestamps: true});
 
 
 const Message = mongoose.model('Message' , messageSchema);

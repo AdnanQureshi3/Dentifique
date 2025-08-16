@@ -40,7 +40,6 @@ function LeftSidebar({collapsed , setCollapsed}) {
       toast.error(err.response?.data?.msg || "Something went wrong");
     }
   };
-
   const handleSidebarClick = (type) => {
     if (type === "Logout") logoutHandler();
     else if (type === "Create") setOpen(true);
@@ -75,7 +74,7 @@ function LeftSidebar({collapsed , setCollapsed}) {
   const clearNotificationHandler = async () => {
     dispatch(clearNotification([]));
     try {
-      await axios.delete("https://upchain-tvvm.onrender.com/api/user/delete/noti", {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/user/noti/delete/`, {
         withCredentials: true,
       });
     } catch (err) {

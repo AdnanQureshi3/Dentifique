@@ -22,7 +22,7 @@ router.route('/noti/:id').post( createNotification);
 router.route('/noti/get').get( isAuthenticated, getAllReciverNoti);
 router.route('/noti/delete').delete(isAuthenticated ,deleteAllReceiverNoti)
 router.route('/noti/markRead').put( isAuthenticated,markAllReceiverNotiasRead);
-router.route('/noti/delete/:id').get(isAuthenticated , deleteAllReceiverNoti);
+router.route('/noti/delete').get(isAuthenticated , deleteAllReceiverNoti);
 
 
 router.route('/UpgradeToPremium').get(isAuthenticated , UpgradeToPremium );

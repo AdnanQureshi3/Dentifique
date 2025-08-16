@@ -4,7 +4,7 @@ export const createNotification = async (req, res) => {
     try {
         const { type, user, postId } = req.body;
         const receiverId = req.params.id;
-        
+
         const noti = await Notification.create({
             type,
             user: user._id,
@@ -57,8 +57,7 @@ export const deleteAllReceiverNoti = async (req, res) => {
         const receiverId = req.id;
         console.log(req.id);
         await Notification.deleteMany({ receiver: receiverId });
-        // console.log(req.id , "delet ho gai");
-        
+      
 
         res.status(200).json({ msg: "All notifications deleted", success: true });
     } catch (err) {
