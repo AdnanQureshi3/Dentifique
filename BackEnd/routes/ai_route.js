@@ -115,14 +115,20 @@ router.post('/reply', isAuthenticated, async (req, res) => {
     const parsedConversation  = await handleAiSelectedMessages(userId, messagesArray);
     console.log(parsedConversation , "PARSED CONVERSATION");
 
-    const result = await model.generateContent(
-      `Your task is to generate a concise and engaging reply with ${tone} to the following message.  
+  const result = await model.generateContent(
+  `You are an AI assistant. Your task is to generate a concise, engaging, and casual reply in a ${tone} tone to the following conversation.
+
 Messages:
-${ parsedConversation}
-And some additional discription from user ${description}
+${parsedConversation}
+
+Extra context from user:
+${description}
+Focus on tone , description and conversation and DONT USE * * ok, i repeat dont use astrick sign
+ ${description} ok 
 
 Reply:`
-    );
+);
+
     // console.log(result , "AI REPLY RESULT");
 
     res.json({ result });
