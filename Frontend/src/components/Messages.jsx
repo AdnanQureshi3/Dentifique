@@ -108,7 +108,7 @@ function Messages({ isOnline, selectedUser }) {
       { withCredentials: true } // 👈 move this here
     );
 
-      console.log("Ai replying" , res);
+      // console.log("Ai replying" , res);
 
       const reply = res.data.result.response.candidates[0].content.parts[0].text;
       setText(reply);
@@ -208,8 +208,9 @@ function Messages({ isOnline, selectedUser }) {
 
       setOpen(true)
     }}
-    className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition font-medium"
-  >
+ className=" flex items-center justify-center w-24 h-10 bg-gradient-to-tr from-green-300 to-green-700 
+             text-white rounded-lg shadow-2xl hover:scale-110 transition-transform duration-300 
+             ring-4 ring-green-300 "  >
     🤖 AI Reply
   </button>
 

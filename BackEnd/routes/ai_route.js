@@ -1,7 +1,8 @@
 import express from 'express'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import Message from "../models/message_Model.js";
-
+import { parse } from 'dotenv';
+import isAuthenticated from "../middleware/isAuth.js";
 
 const router = express.Router();
 
@@ -86,13 +87,16 @@ const handleAiSelectedMessages = async (userId , messagesArray) => {
     const messages = await Message.find({ _id: { $in: messagesArray } }).lean();
 
     // Parse messages into AI-friendly format
-    const parsedConversation = messages.map(msg => ({
-      role: msg.senderId.toString() === userId ? "user" : "other",
-      content: msg.message 
-    }));
+    let parsedMessages = "";
+    messages.map(msg => {
+    
+      let str = msg.senderId == userId ? "Me" : "other";
+      parsedMessages += `${str} : ${msg.message}\n`;
+    });
+    
 
 
-    return parsedConversation;
+    return parsedMessages;
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, msg: "Server error" });
@@ -101,13 +105,15 @@ const handleAiSelectedMessages = async (userId , messagesArray) => {
 
 
 
-router.post('/reply', async (req, res) => {
+router.post('/reply', isAuthenticated, async (req, res) => {
   const { tone , description , messagesArray } = req.body
+  const userId = req.id;
     // console.log(messagesArray , tone , description ,"YES I AM RECEIVING TEXT MESSAGES");
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-    const parsedConversation  = await handleAiSelectedMessages(req.id, messagesArray);
+    const parsedConversation  = await handleAiSelectedMessages(userId, messagesArray);
+    console.log(parsedConversation , "PARSED CONVERSATION");
 
     const result = await model.generateContent(
       `Your task is to generate a concise and engaging reply with ${tone} to the following message.  
@@ -117,7 +123,7 @@ And some additional discription from user ${description}
 
 Reply:`
     );
-    console.log(result , "AI REPLY RESULT");
+    // console.log(result , "AI REPLY RESULT");
 
     res.json({ result });
   } catch (err) {
