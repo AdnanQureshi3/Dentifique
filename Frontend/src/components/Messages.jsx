@@ -6,9 +6,12 @@ import { Trash2, Check, CheckCheck } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios';
 import { setChatmessages } from '@/redux/chatSlice';
+import AiReplyDialog from './AI_Reply_Dialog.jsx';
+import { toast } from 'sonner';
 
 function Messages({ isOnline, selectedUser }) {
   const [text, setText] = useState('');
+  const [open , setOpen ] = useState(false);
   const dispatch = useDispatch();
   const { ChatMessages } = useSelector(store => store.chat);
   const messagesEndRef = useRef(null);
@@ -91,6 +94,32 @@ function Messages({ isOnline, selectedUser }) {
       console.error(err);
     }
   };
+  const AiReplyHandler= async (tone , description) => {
+   
+    try {
+      console.log("Selected Messages: ", selectedMessages);
+      const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/ai/reply`,
+      { 
+        messagesArray: selectedMessages, 
+        tone, 
+        description 
+      },
+      { withCredentials: true } // 👈 move this here
+    );
+
+      console.log("Ai replying" , res);
+
+      const reply = res.data.result.response.candidates[0].content.parts[0].text;
+      setText(reply);
+      setTimeout(() => {
+        setOpen(false);
+         }, 1500);
+      
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Delete single message
   const deleteMessageHandler = async (messageId) => {
@@ -136,7 +165,6 @@ function Messages({ isOnline, selectedUser }) {
     });
   };
 
-  // Toggle message selection
   const toggleMessageSelection = (messageId) => {
     if (selectedMessages.includes(messageId)) {
       setSelectedMessages(selectedMessages.filter(id => id !== messageId));
@@ -165,48 +193,81 @@ function Messages({ isOnline, selectedUser }) {
           <span className={`w-3 h-3 rounded-full border-2 border-white absolute bottom-2 left-16 ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
         </div>
         {
-  selectedMessages.length > 0 && (
-    <div className="flex items-center gap-2">
-    
-      <button
-        title="AI Reply"
-        // onClick={deleteChatHandler}
-        className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-100 rounded-full transition"
-      >
-        AI Reply
-      </button>
-      <button
-        title="Delete conversation"
-        onClick={deleteChatHandler}
-        className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-100 rounded-full transition"
-      >
-        <Trash2 size={20} />
-      </button>
+  
+    <div className="flex flex-wrap items-center gap-3 bg-gray-50 p-3 rounded-xl shadow-sm border border-gray-200">
+  {/* AI Reply */}
+  <button
+    title="AI Reply"
+    onClick={() => {
+       if(selectedMessages.length === 0){
+      toast.error("Please select some messages to reply.", {
+                      className:'bg-red-500 text-white p-4 rounded-lg shadow-md',
+                  });
+      return; 
+    }
 
-    
-      <button
-        title="Cancel selection"
-        onClick={() => { setSelectedMessages([]);   
-          setIsSelectMode(false);    
-        }}
-        
-        className="px-3 py-1 text-sm hover:text-red-600 bg-gray-200 hover:bg-gray-300 rounded-lg transition"
-      >
-        Cancel
-      </button>
-      <button
-        title="Cancel selection"
-        onClick={() => { setSelectedMessages([]);
-          deleteformeHandler();
-          
-        }}
-        
-        className="px-3 py-1 text-sm hover:text-red-600 bg-gray-200 hover:bg-gray-300 rounded-lg transition"
-      >
-        Delete for me
-      </button>
-    </div>
-  )
+      setOpen(true)
+    }}
+    className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 transition font-medium"
+  >
+    🤖 AI Reply
+  </button>
+
+  {/* Delete Conversation */}
+  <button
+    title="Delete Selected Messages"
+    onClick={() => {
+       if(selectedMessages.length === 0){
+      toast.error("Please select some messages to delete.", {
+                      className:'bg-red-500 text-white p-4 rounded-lg shadow-md',
+                  });
+      return; 
+    }
+
+      deleteSelectedMessagesHandler();
+    }}
+    className="flex items-center gap-2 px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition font-medium"
+  >
+    🗑 Delete
+  </button>
+
+  
+  <button
+    title="Delete for me"
+    onClick={() => {
+      if(selectedMessages.length === 0){
+        toast.error("Please select some messages to delete for you.", {
+          className:'bg-red-500 text-white p-4 rounded-lg shadow-md',
+        });
+        return; 
+      }
+
+      setSelectedMessages([]);
+      deleteformeHandler();
+    }}
+    className="flex items-center gap-1 px-3 py-1 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-800 transition font-medium"
+  >
+    🛡 Delete for me
+  </button>
+
+  {selectedMessages.length > 0 && (
+  <button
+    title="Cancel selection"
+    onClick={() => {
+      setSelectedMessages([]);
+      setIsSelectMode(false);
+    }}
+    className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 hover:text-gray-900 transition font-medium"
+  >
+    ✖ Cancel
+  </button>
+  )}
+
+
+
+</div>
+
+  
 }
 
        
@@ -308,6 +369,7 @@ function Messages({ isOnline, selectedUser }) {
           </button>
         </div>
       )}
+     <AiReplyDialog open={open} setOpen={setOpen} AiReplyHandler={AiReplyHandler} />
 
       <footer className="sticky bottom-0 bg-white p-4 border-t flex items-center gap-3">
         <input
