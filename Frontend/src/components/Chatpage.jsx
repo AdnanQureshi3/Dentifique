@@ -5,24 +5,19 @@ import { MessageCircle, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import Messages from './Messages.jsx';
 import axios from 'axios';
+import useMessageUsers from '@/Hooks/getMessageUsers.jsx';
 import { setChatmessages } from '@/redux/chatSlice';
 
 function Chatpage() {
-    const { user, suggestedUser, selecteduser } = useSelector(store => store.auth);
+    const { user, suggestedUser, selecteduser , MessageUsers } = useSelector(store => store.auth);
     const dispatch = useDispatch();
+    useMessageUsers();
     const { onlineUsers, ChatMessages } = useSelector(store => store.chat);
     const isOnline = onlineUsers.includes(selecteduser?._id);
 
     const [text, settext] = useState("");
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
     
-    useEffect(() => {
-        dispatch(setSelectedUser(null));
-    }, []);
-    
- 
-    
- 
   
     
     const toggleSidebar = () => {
@@ -48,7 +43,7 @@ function Chatpage() {
                 <hr className="border-gray-200 mb-4" />
                 
                 <div className="overflow-y-auto pr-2 flex-grow">
-                    {suggestedUser.map((u) => {
+                    { MessageUsers?.map((u) => {
                         const isOnline = onlineUsers.includes(u._id);
                         return (
                             <div 

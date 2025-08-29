@@ -483,11 +483,27 @@ export const followorUnfollow = async (req, res) => {
     }
 
 }
-// export const logot = async(req,res)=>{
-//     try{
+export const getConversationUsers = async (req, res) => {
+    try{
+        const id = req.id;
+        const conversations = await Conversation.find({ participants: id });
+        // console.log(conversations);
+        const MessageUsers = await User.find(
+  { _id: { $in: conversations.map(c => c.participants).flat() } },
+  "username profilePicture name"
+);
+console.log(MessageUsers , "message users");
 
-//     }
-//     catch(err){
-//         console.log(err);
-//     }
-// }
+        return res.status(200).json({
+            success: true,
+            MessageUsers
+        });
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({
+            msg: "Internal Server Error",
+            success: false,
+        });
+    }
+}
