@@ -34,8 +34,8 @@ ${text}`
     else
       result = await model.generateContent(
         `Write a short article 1500 chars based on the given title.
-- Use **bold** and __underline__ for important words.
-- Add  relevant emojis.
+- Use bold and underline for important words.
+- Add relevant emojis.
 - Make it engaging and concise.
 
 Title: ${title}`

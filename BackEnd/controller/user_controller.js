@@ -489,7 +489,7 @@ export const getConversationUsers = async (req, res) => {
         const conversations = await Conversation.find({ participants: id });
         // console.log(conversations);
         const MessageUsers = await User.find(
-  { _id: { $in: conversations.map(c => c.participants).flat() } },
+  { _id: { $in: conversations.map(c => c.participants).flat() , $ne :id} },
   "username profilePicture name"
 );
 console.log(MessageUsers , "message users");

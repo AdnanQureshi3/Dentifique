@@ -492,6 +492,29 @@ export const ReportThePost = async (req,res)=>{
         console.log(err);
     }
 }
+import calculateTrendingScore from "../utils/trendingScore.js";
+export const getTop3TrendingPosts = async (req, res) => {
+  try {
+    const posts = await Post.find();
+
+    const scoredPosts = posts.map(post => ({
+      ...post.toObject(),
+      score: calculateTrendingScore(post)
+    }));
+
+    // sort and slice top 3
+    const top3 = scoredPosts.sort((a, b) => b.score - a.score).slice(0, 3);
+
+    return res.status(200).json({
+        msg: "Top 3 trending posts fetched successfully",
+        posts: top3,
+        success:true
+    })
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 
 

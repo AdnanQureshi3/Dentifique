@@ -49,7 +49,10 @@ function LeftSidebar({ collapsed, setCollapsed }) {
       dispatch(setSelectedUser(null));
       navigate("/chat");
     } 
-    else navigate("/home");
+    else if (type === "Projects") {
+      if(location.pathname  === '/projects' ) return;
+      navigate("/projects");
+    } else navigate("/home");
 
   };
 

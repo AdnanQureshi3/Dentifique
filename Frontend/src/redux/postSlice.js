@@ -5,6 +5,7 @@ const postSlice = createSlice({
   initialState: {
     posts: [],
     selectedPost:null,
+    trendingPosts:[]
   },
   reducers: {
     setPosts: (state, action) => {
@@ -12,9 +13,12 @@ const postSlice = createSlice({
     },
     setSelectedPost:(state, action) =>{
       state.selectedPost = action.payload;
-    } 
+    } ,
+    setTrendingPosts: (state, action) => {
+      state.trendingPosts = action.payload;
+    }
   },
 });
 
-export const { setPosts  , setSelectedPost} = postSlice.actions;
+export const { setPosts  , setSelectedPost , setTrendingPosts} = postSlice.actions;
 export default postSlice.reducer;
