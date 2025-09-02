@@ -104,12 +104,11 @@ function LeftSidebar({ collapsed, setCollapsed }) {
         {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </div>
 
-      {/* Top Brand */}
       <div className="flex justify-center mb-8">
         {!collapsed && <h1 className="text-lg font-bold text-blue-600">TaskFlow</h1>}
       </div>
 
-      {/* Navigation */}
+  
       <nav className="flex flex-col space-y-2">
         {sidebarItems.map((item, index) => {
           if (!item.show) return null;

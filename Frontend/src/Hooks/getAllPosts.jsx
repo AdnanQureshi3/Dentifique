@@ -9,6 +9,7 @@ const useGetAllPost =()=>{
         const fetchAllPost = async()=>{
             try{
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/allpost` ,{withCredentials:true} );
+                console.log("fetching all the posts");
                 if(res.data.success){
                     // console.log(res.data);
                     dispatch(setPosts(res.data.posts));
@@ -19,10 +20,10 @@ const useGetAllPost =()=>{
                 console.log(err);
             }
         }
-        fetchAllPost();
         const fetchTrendingPosts = async()=>{
             try{
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/trending` ,{withCredentials:true} );
+                console.log("trending posts",res.data);
                 if(res.data.success){
                     console.log(res.data);
                     dispatch(setTrendingPosts(res.data.posts));
@@ -33,6 +34,7 @@ const useGetAllPost =()=>{
                 console.log(err);
             }
         }
+        fetchAllPost();
         fetchTrendingPosts();
 
     },[])
