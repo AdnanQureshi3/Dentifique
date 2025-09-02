@@ -18,6 +18,7 @@ import { getAllNoti } from './Hooks/getAllNoti'
 import Protected_routes from './components/ui/protected_routes'
 import Verification from './components/Verification'
 
+
 const browserRouter = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +42,7 @@ const browserRouter = createBrowserRouter([
         path:'/projects',
         element:<Protected_routes><Projects/></Protected_routes> 
       }
+     
     ]
   },
   {

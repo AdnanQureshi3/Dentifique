@@ -12,6 +12,7 @@ import { setAuthuser, setSelectedUser } from "@/redux/authSlice";
 import { clearNotification } from "@/redux/notificationSlice";
 import { Button } from "./ui/button";
 import CreatePost from "./CreatePost.jsx";
+import SearchDialog from "./SearchPage";
 
 import {
   Popover,
@@ -25,6 +26,7 @@ function LeftSidebar({ collapsed, setCollapsed }) {
   const { user } = useSelector(store => store.auth);
   const { notifications } = useSelector(store => store.notification);
   const [Open, setOpen] = useState(false);
+  const [OpenSearch , setOpenSearch] = useState(false);
 
   const logoutHandler = async () => {
     try {
@@ -52,6 +54,10 @@ function LeftSidebar({ collapsed, setCollapsed }) {
     else if (type === "Projects") {
       if(location.pathname  === '/projects' ) return;
       navigate("/projects");
+    } 
+    else if (type === "Search") {
+      setOpenSearch(!OpenSearch);
+      
     } else navigate("/home");
 
   };
@@ -185,6 +191,7 @@ function LeftSidebar({ collapsed, setCollapsed }) {
         })}
       </nav>
 
+
       {user && !collapsed && (
         <div className="border-t pt-4 mt-6 flex items-center gap-3">
           <Avatar>
@@ -201,6 +208,8 @@ function LeftSidebar({ collapsed, setCollapsed }) {
       )}
 
       <CreatePost Open={Open} setOpen={setOpen} />
+      <SearchDialog open={OpenSearch} onOpenChange={setOpenSearch} />
+
     </aside>
   );
 }
