@@ -23,7 +23,7 @@ const useGetAllPost =()=>{
         const fetchTrendingPosts = async()=>{
             try{
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/post/trending` ,{withCredentials:true} );
-                console.log("trending posts",res.data);
+                // console.log("trending posts",res.data);
                 if(res.data.success){
                     console.log(res.data);
                     dispatch(setTrendingPosts(res.data.posts));
