@@ -1,5 +1,6 @@
 import express from "express";
-import { editProfile, followorUnfollow, getprofile, getSuggestedusers, login, logout, register, removePhoto, resendOtp, UpgradeToPremium, verifyOtp , getConversationUsers } from "../controller/user_controller.js";
+import { editProfile, followorUnfollow, getprofile,
+    searchUser, getSuggestedusers, login, logout, register, removePhoto, resendOtp, UpgradeToPremium, verifyOtp , getConversationUsers } from "../controller/user_controller.js";
 import isAuthenticated from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
 
@@ -27,6 +28,7 @@ router.route('/noti/delete').delete(isAuthenticated ,deleteAllReceiverNoti)
 router.route('/noti/markRead').put( isAuthenticated,markAllReceiverNotiasRead);
 router.route('/noti/delete').get(isAuthenticated , deleteAllReceiverNoti);
 
+router.get('/searchuser', searchUser);
 
 router.route('/UpgradeToPremium').get(isAuthenticated , UpgradeToPremium );
 

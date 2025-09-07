@@ -19,7 +19,7 @@ export default function SearchDialog({ open, onOpenChange }) {
     setError("")
     try {
       const url = searchQuery.trim()
-        ? `http://localhost:8000/api/user/searchuser?username=${searchQuery}`
+        ? `${import.meta.env.VITE_API_URL}/api/user/searchuser?username=${searchQuery}`
         : ``
       if(url === '') {
         setResults([]);

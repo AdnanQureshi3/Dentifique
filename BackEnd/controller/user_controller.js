@@ -365,30 +365,41 @@ export const UpgradeToPremium = async (req, res) => {
         console.log(err);
     }
 }
+/*
+ const users = await User.find(query).select("-password");
+ basic method for finding using query parameters if none exist we get empty array not CASE-SENSITIVE
 
-// export const searchUser = async (req, res) => {
-//     try {
-//         const { query } = req.body;
-//         if (!query) {
-//             return res.status(400).json({
-//                 msg: "Query is required",
-//                 success: false,
-//             });
-//         }
-//         const users = await User.find({
-//             $or: [
-//                 { username: { $regex: query, $options: "i" } },
-//                 { email: { $regex: query, $options: "i" } },
-//             ],
-//         }).select("-password");
-//         return res.status(200).json({
-//             success: true,
-//             users,
-//         });
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
+ 
+*/
+export const searchUser = async (req, res) => {
+    try {
+       
+        const query  = req.query
+        console.log(query);
+        const queryObject = {};
+        if (!query) {
+            return res.status(400).json({
+                msg: "Query is required",
+                success: false,
+            });
+        }
+        const { username, email } = query;
+        if (username) {
+            queryObject.username = { $regex: username, $options: "i" };
+        }
+        if (email) {
+            queryObject.email = { $regex: email, $options: "i" };
+        }
+
+        const users = await User.find(queryObject).select("_id username profilePicture");
+        return res.status(200).json({
+            success: true,
+            users,
+        });
+    } catch (err) {
+        console.log(err);
+    }
+};
         
 export const followorUnfollow = async (req, res) => {
     try {
