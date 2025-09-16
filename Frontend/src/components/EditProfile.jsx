@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { setAuthuser } from '@/redux/authSlice';
 import { readFileAsDataUri } from '@/lib/utils';
-
 function EditProfile() {
   const [Loading, setLoading] = useState(false);
   const { user } = useSelector(store => store.auth);
@@ -23,33 +22,30 @@ function EditProfile() {
 
   const [ImagePreview, setImagePreview] = useState("");
   const dispatch = useDispatch();
-  const fileChangeHandler = async(e) => {
 
+  const fileChangeHandler = async(e) => {
     const file = e.target.files?.[0];
     if (file) {
-      // console.log("file updted" , file)
-      
       const dataURI = await readFileAsDataUri(file);
-      setImagePreview(dataURI)
+      setImagePreview(dataURI);
       setInput({ ...input, profilePhoto: file });
     }
   }
+
   const genderChangeHandler = (value) => {
     setInput({ ...input, gender: value });
   }
 
   const editProfile = async () => {
-    console.log(input);
     try {
       setLoading(true);
       const formdata = new FormData();
       formdata.append("bio", input.bio);
       formdata.append("gender", input.gender);
-
+      console.log(formdata);
       if (input.profilePhoto) {
         formdata.append("profilePhoto", input.profilePhoto);
       }
-
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/user/profile/edit`,
         formdata,
@@ -62,101 +58,85 @@ function EditProfile() {
       );
       if (res.data.success) {
         toast.success(res.data.msg);
-        setInput({ ...input, bio: "" })
+        setInput({ ...input, bio: "" });
         dispatch(setAuthuser(res.data.user));
       }
-
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
-    }
-    finally {
+    } finally {
       setLoading(false);
-      setTimeout(() =>{
-           navigate(`/profile/${user._id}`)
-         },1000);
+      setTimeout(() => {
+        navigate(`/profile/${user._id}`);
+      }, 1000);
     }
   }
+
   return (
-    <div className='flex w-full pl-10 mx-auto justify-center'>
-      <section className='flex flex-col  gap-6 w-[70%] '>
-        <h1 className='text-xl font-bold'>Edit Profile</h1>
-        <div className='flex items-center justify-between bg-gray-100 w-f rounded-xl p-5 '>
+    <div className="flex justify-center p-6 bg-gray-50 min-h-screen">
+      <section className="bg-white w-full max-w-2xl p-6 rounded-xl shadow-md space-y-6">
+        <h1 className="text-2xl font-bold text-center">Edit Profile</h1>
 
-          <div className='flex items-center gap-3 '>
-
-            <Avatar className='w-[15%] aspect-square '>
-              <AvatarImage className='object-cover w-full border-2 border-green-700 h-full rounded-full' 
-             src={
-    user?.profilePicture === 'defaultPhoto.png'
-      ? '/defaultPhoto.png'
-      : user?.profilePicture
-  }
-              alt='user' />
-              <AvatarFallback>User</AvatarFallback>
-            </Avatar>
-
-            <div className='flex flex-col'>
-              <h1 className='font-semibold text-lg'>{user?.username}</h1>
-              <span className='font-light text-xs text-gray-500'>{user?.bio || 'I am a dev'}</span>
-            </div>
-          </div>
-          <input ref={imageRef} onChange={(e) => fileChangeHandler(e)} type="file" className='hidden' />
-          <Button onClick={() => { imageRef?.current.click() }} className={"bg-[#0095f6] h-8 hover:bg-[#0062f6] cursor-pointer "}>Change Photo</Button>
-        </div>
-        <div className='w-full flex justify-center  items-center'>
-          {
-          ImagePreview && (
-          <div className='w-[30%] aspect-square  flex items-center justify-center'>
-            <img
-              src={ImagePreview}
-              alt="preview"
-              className="object-cover w-full border-4 border-green-700 h-full rounded-full"
+        <div className="flex items-center gap-4 bg-gray-100 p-4 rounded-lg">
+          <Avatar className="w-20 h-20">
+            <AvatarImage
+              src={user?.profilePicture === 'defaultPhoto.png' ? '/defaultPhoto.png' : user?.profilePicture}
+              alt="user"
+              className="object-cover w-full h-full rounded-full border-2 border-blue-500"
             />
-          </div>)
-}
+            <AvatarFallback>User</AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-lg font-semibold">{user?.username}</h2>
+            <p className="text-sm text-gray-500">{user?.bio || "I am a dev"}</p>
+          </div>
+          <input ref={imageRef} onChange={fileChangeHandler} type="file" className="hidden" />
+          <Button onClick={() => imageRef.current.click()} className="ml-auto bg-blue-600 hover:bg-blue-700 text-white h-10">
+            Change Photo
+          </Button>
         </div>
-          
-        <div>
-          <h1 className='text-xl font-bold'>Bio</h1>
-          <Textarea value={input.bio}
 
+        {ImagePreview && (
+          <div className="flex justify-center">
+            <img src={ImagePreview} alt="preview" className="w-32 h-32 object-cover rounded-full border-4 border-blue-500" />
+          </div>
+        )}
+
+        <div>
+          <label className="block text-lg font-medium mb-2">Bio</label>
+          <Textarea
+            value={input.bio}
             onChange={(e) => setInput({ ...input, bio: e.target.value })}
-            className={"focus-visible:ring-transparent  "} name="bio" />
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            rows={4}
+            placeholder="Write something about yourself..."
+          />
         </div>
 
         <div>
-          <h1 className='text-xl font-bold'>Gender</h1>
-
-
+          <label className="block text-lg font-medium mb-2">Gender</label>
           <select
             name="gender"
+            value={input.gender}
             onChange={(e) => genderChangeHandler(e.target.value)}
-            className="p-2 rounded-md border border-gray-300 bg-gray-50 text-gray-700 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-
-
         </div>
 
-        <div className='flex justify-end'>
-          {
-            Loading ? (
-              <Button onClick={editProfile} className={"bg-[#0095f6] h-8 hover:bg-[#0062f6] cursor-pointer "}>Please wait</Button>
-
-            ) : (
-              <Button onClick={editProfile} className={"bg-[#0095f6] h-8 hover:bg-[#0062f6] cursor-pointer "}>Submit</Button>
-            )
-          }
-
+        <div className="flex justify-end">
+          <Button
+            onClick={editProfile}
+            className={`bg-blue-600 hover:bg-blue-700 text-white h-10 ${Loading ? "cursor-not-allowed opacity-50" : ""}`}
+            disabled={Loading}
+          >
+            {Loading ? "Please wait..." : "Submit"}
+          </Button>
         </div>
-
-
       </section>
     </div>
-  )
+  );
 }
 
-export default EditProfile
+export default EditProfile;

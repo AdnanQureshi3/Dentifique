@@ -1,0 +1,185 @@
+import Project from "../models/project_model.js";
+import User from "../models/user_Model.js";
+import cloudinary from "../utils/cloudinary.js";
+import sharp from "sharp";
+
+// Create Project
+export const addNewProject = async (req, res) => {
+  try {
+    const { title, description, repoLink, domain, demoLink, liveLink, tools } = req.body;
+    const thumbnail = req.file;
+    const authorId = req.id;
+
+    if (!title || !description || !repoLink || !domain) {
+      return res.status(400).json({ msg: "Title, Description, Repo Link and Domain are required", success: false });
+    }
+
+    let thumbnailUrl = "https://s3-ap-south-1.amazonaws.com/static.awfis.com/wp-content/uploads/2017/07/07184649/ProjectManagement.jpg"; // default image
+
+    if (thumbnail) {
+      const optimizedImageBuffer = await sharp(thumbnail.buffer)
+        .resize({ width: 800, height: 800, fit: "inside" })
+        .toBuffer();
+
+      const fileuri = `data:image/jpeg;base64,${optimizedImageBuffer.toString("base64")}`;
+      const cloudResponse = await cloudinary.uploader.upload(fileuri);
+      thumbnailUrl = cloudResponse.secure_url;
+    }
+
+    const project = await Project.create({
+      title,
+      description,
+      repoLink,
+      domain,
+      demoLink: demoLink || "",
+      LiveLink: liveLink || "",
+      Tools: tools ? tools.split(",") : [],
+      createdBy: authorId,
+      thumbnail: thumbnailUrl,
+    });
+
+    const user = await User.findById(authorId);
+    user.projects.push(project._id);
+    await user.save();
+
+    await project.populate({ path: "createdBy", select: "-password" });
+    res.status(201).json({ msg: "Project created", project, success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Something went wrong", success: false });
+  }
+};
+
+// Get All Projects
+export const getAllProjects = async (req, res) => {
+  try {
+    const projects = await Project.find().populate("createdBy", "-password").sort({ createdAt: -1 });
+    res.status(200).json({ projects, success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to fetch projects", success: false });
+  }
+};
+
+// Get User Projects
+export const getUserProjects = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const projects = await Project.find({ createdBy: userId }).populate("createdBy", "-password");
+    res.status(200).json({ projects, success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to fetch user projects", success: false });
+  }
+};
+
+// Get Project Details
+export const getProjectDetails = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId).populate("createdBy", "-password").populate("members", "-password");
+    if (!project) return res.status(404).json({ msg: "Project not found", success: false });
+    res.status(200).json({ project, success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to fetch project", success: false });
+  }
+};
+
+// Update Project
+export const updateProject = async (req, res) => {
+  try {
+    const { title, description, repoLink, domain, demoLink, liveLink, tools } = req.body;
+    const thumbnail = req.file;
+
+    const project = await Project.findById(req.params.projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found", success: false });
+
+    if (title) project.title = title;
+    if (description) project.description = description;
+    if (repoLink) project.repoLink = repoLink;
+    if (domain) project.domain = domain;
+    if (demoLink) project.demoLink = demoLink;
+    if (liveLink) project.LiveLink = liveLink;
+    if (tools) project.Tools = tools.split(",");
+
+    if (thumbnail) {
+      const optimizedImageBuffer = await sharp(thumbnail.buffer)
+        .resize({ width: 800, height: 800, fit: "inside" })
+        .toBuffer();
+
+      const fileuri = `data:image/jpeg;base64,${optimizedImageBuffer.toString("base64")}`;
+      const cloudResponse = await cloudinary.uploader.upload(fileuri);
+      project.thumbnail = cloudResponse.secure_url;
+    }
+
+    await project.save();
+    res.status(200).json({ msg: "Project updated", project, success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to update project", success: false });
+  }
+};
+
+// Delete Project
+export const deleteProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found", success: false });
+
+    await Project.findByIdAndDelete(req.params.projectId);
+
+    const user = await User.findById(project.createdBy);
+    user.projects = user.projects.filter(p => p.toString() !== req.params.projectId);
+    await user.save();
+
+    res.status(200).json({ msg: "Project deleted", success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to delete project", success: false });
+  }
+};
+
+// Like / Unlike Project
+export const likeUnlikeProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.projectId);
+    if (!project) return res.status(404).json({ msg: "Project not found", success: false });
+
+    if (project.likes.includes(req.id)) {
+      project.likes = project.likes.filter(id => id.toString() !== req.id);
+    } else {
+      project.likes.push(req.id);
+    }
+
+    await project.save();
+    res.status(200).json({ msg: "Toggled like", success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to like/unlike project", success: false });
+  }
+};
+
+// Save Project
+export const saveProject = async (req, res) => {
+  try {
+    const user = await User.findById(req.id);
+    if (!user) return res.status(404).json({ msg: "User not found", success: false });
+
+    if (user.savedProjects.includes(req.params.projectId)) {
+      user.savedProjects = user.savedProjects.filter(p => p.toString() !== req.params.projectId);
+    } else {
+      user.savedProjects.push(req.params.projectId);
+    }
+
+    await user.save();
+    res.status(200).json({ msg: "Toggled save", success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to save project", success: false });
+  }
+};
+
+
+
+// Get Top Trending Projects
+export const getTopTrendingProjects = async (req, res) => {
+  try {
+    const projects = await Project.find().sort({ likes: -1 }).limit(3).populate("createdBy", "-password");
+    res.status(200).json({ projects, success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Failed to fetch trending projects", success: false });
+  }
+};
