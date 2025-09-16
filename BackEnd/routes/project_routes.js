@@ -1,6 +1,7 @@
 import express from "express";
 import isAuthenticated from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
+
 import {
   addNewProject,
   getAllProjects,
@@ -9,13 +10,15 @@ import {
   updateProject,
   deleteProject,
   likeUnlikeProject,
+  checkUniqueProjectTitle,
  
   getTopTrendingProjects,
-} from "../controller/project_controller.js";
+} from "../controller/project_controllers.js";
 
 const router = express.Router();
 
 router.route("/addproject").post(isAuthenticated, upload.single("thumbnail"), addNewProject);
+router.route("/check-unique-title").post( checkUniqueProjectTitle);
 
 router.route("/all").get(isAuthenticated, getAllProjects);
 router.route("/user/:id").get(isAuthenticated, getUserProjects);

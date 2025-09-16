@@ -8,6 +8,7 @@ import connectDB from './utils/db.js';
  import PostRoute from "./routes/post_route.js"
  import MessageRoute from "./routes/message_route.js"
  import aiRoute from "./routes/ai_route.js"
+ import ProjectRoutes from "./routes/project_routes.js"
 import {app , server} from './socket/socket.js'
 import path from 'path';
 
@@ -39,6 +40,7 @@ app.use("/api/user" , UserRoute);
 app.use("/api/post" , PostRoute);
 app.use("/api/chats" , MessageRoute);
 app.use("/api/ai" , aiRoute);
+app.use("/api/projects" ,ProjectRoutes );
 
 app.use(express.static(path.join(__dirname, '/Frontend/dist')));
 

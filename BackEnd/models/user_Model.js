@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     profilePicture: { type: String, default: '/defaultPhoto.png' },
     bio: { type: String, default: '' },
     gender: { type: String, enum: ['male', 'female'] },
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],

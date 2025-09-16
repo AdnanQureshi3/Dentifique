@@ -3,19 +3,35 @@ import User from "../models/user_Model.js";
 import cloudinary from "../utils/cloudinary.js";
 import sharp from "sharp";
 
-// Create Project
 export const addNewProject = async (req, res) => {
+  console.log("Request Body:", req.body);
+
   try {
-    const { title, description, repoLink, domain, demoLink, liveLink, tools } = req.body;
+    const { title, description, repoLink, domain, demoLink, liveLink, tools , } = req.body;
     const thumbnail = req.file;
     const authorId = req.id;
 
+    // Validate
     if (!title || !description || !repoLink || !domain) {
       return res.status(400).json({ msg: "Title, Description, Repo Link and Domain are required", success: false });
     }
 
-    let thumbnailUrl = "https://s3-ap-south-1.amazonaws.com/static.awfis.com/wp-content/uploads/2017/07/07184649/ProjectManagement.jpg"; // default image
+    // Check if repoLink is already used
+    const existingRepo = await Project.findOne({ repoLink });
+    if (existingRepo) {
+      return res.status(400).json({ msg: "This repository link is already used in another project", success: false });
+    }
 
+    // Check if title is already used
+    const existingTitle = await Project.findOne({ title });
+    if (existingTitle) {
+      return res.status(400).json({ msg: "A project with this title already exists", success: false });
+    }
+
+    // Default thumbnail if not provided
+    let thumbnailUrl = "https://s3-ap-south-1.amazonaws.com/static.awfis.com/wp-content/uploads/2017/07/07184649/ProjectManagement.jpg";
+
+    // If thumbnail is uploaded, process and upload it
     if (thumbnail) {
       const optimizedImageBuffer = await sharp(thumbnail.buffer)
         .resize({ width: 800, height: 800, fit: "inside" })
@@ -26,6 +42,7 @@ export const addNewProject = async (req, res) => {
       thumbnailUrl = cloudResponse.secure_url;
     }
 
+    // Create the project
     const project = await Project.create({
       title,
       description,
@@ -38,14 +55,34 @@ export const addNewProject = async (req, res) => {
       thumbnail: thumbnailUrl,
     });
 
+    // Link project to user
     const user = await User.findById(authorId);
-    user.projects.push(project._id);
+    user?.projects?.push(project._id);
     await user.save();
 
+    // Populate and send response
     await project.populate({ path: "createdBy", select: "-password" });
-    res.status(201).json({ msg: "Project created", project, success: true });
+    res.status(201).json({ msg: "Project created successfully", project, success: true });
+
   } catch (err) {
     console.log(err);
+    res.status(500).json({ msg: "Something went wrong", success: false });
+  }
+};
+
+export const checkUniqueProjectTitle = async (req, res) => {
+  try {
+    console.log("Checking unique title:", req.body);
+    const { title } = req.body;
+    if (!title) {
+      return res.status(400).json({ msg: "Project title is required", success: false });
+    }
+    const existingProject = await Project.findOne({ title });
+    if (existingProject) {
+      return res.status(200).json({ msg: "Project title already exists", success: false });
+    }
+    else return res.status(200).json({ msg: "Project title is unique", success: true });
+  } catch (err) {
     res.status(500).json({ msg: "Something went wrong", success: false });
   }
 };
