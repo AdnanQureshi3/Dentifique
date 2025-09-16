@@ -6,7 +6,7 @@ import Home  from './components/Home'
 import Profile from './components/Profile'
 import EditProfile from './components/EditProfile'
 import Chatpage from './components/Chatpage'
-import Projects from './components/Projects'
+import Projects from './components/Project_Page'
 import { useDispatch, useSelector } from 'react-redux'
 import { io } from "socket.io-client";
 import { useEffect } from 'react'

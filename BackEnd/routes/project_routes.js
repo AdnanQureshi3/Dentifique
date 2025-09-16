@@ -22,9 +22,9 @@ router.route("/addproject").post(isAuthenticated, upload.single("thumbnail"), ad
 router.route("/check-unique-title").post( checkUniqueProjectTitle);
 router.route("/check-unique-repo").post( checkUniqueProjectRepoLink);
 
-router.route("/all").get(isAuthenticated, getAllProjects);
-router.route("/user/:id").get(isAuthenticated, getUserProjects);
-router.route("/:projectId").get(isAuthenticated, getProjectDetails);
+router.route("/all").get( getAllProjects);
+router.route("/user/:id").get( getUserProjects);
+router.route("/:projectId").get( getProjectDetails);
 
 router.route("/update/:projectId").put(isAuthenticated, upload.single("thumbnail"), updateProject);
 router.route("/delete/:projectId").delete(isAuthenticated, deleteProject);

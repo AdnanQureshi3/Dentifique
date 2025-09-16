@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { X, UploadCloud } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
+import ToolsSelector from "./ToolsSelector";
 
 function CreateProject({ onClose }) {
   const [formData, setFormData] = useState({
- 
     title: "",
     description: "",
     repoLink: "",
@@ -13,7 +13,9 @@ function CreateProject({ onClose }) {
     demoLink: "",
     liveLink: "",
     thumbnail: null,
+    
   });
+  const [ selectedTools, setSelectedTools ] = useState([]);
   const [preview, setPreview] = useState(null);
   const [titleError, setTitleError] = useState({error:false , msg:"No title exist already"});
   const [RepoError, setRepoError] = useState({error:false , msg:"No repo link exist already"});
@@ -73,16 +75,20 @@ function CreateProject({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+ 
 
     try {
       const data = new FormData();
       Object.keys(formData).forEach((key) => {
         if (formData[key]) data.append(key, formData[key]);
       });
+      data.append("tools", selectedTools);
+    //   console.log(data);
 
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/project/addproject`,
         data,
+       
         {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
@@ -157,6 +163,7 @@ function CreateProject({ onClose }) {
               rows="5"
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
+            <ToolsSelector selectedTools={selectedTools} setSelectedTools={setSelectedTools} />
           </div>
 
           {/* Right side */}

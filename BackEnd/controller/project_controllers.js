@@ -7,10 +7,12 @@ export const addNewProject = async (req, res) => {
   console.log("Request Body:", req.body);
 
   try {
-    const { title, description, repoLink, domain, demoLink, liveLink, tools , } = req.body;
+    const { title, description, repoLink, domain, demoLink, liveLink, tools  } = req.body;
     const thumbnail = req.file;
     const authorId = req.id;
-
+    const toolsArray = tools ? tools.split(",") : [];
+    // console.log(toolsArray);
+    // return;
     // Validate
     if (!title || !description || !repoLink || !domain) {
       return res.status(400).json({ msg: "Title, Description, Repo Link and Domain are required", success: false });
@@ -49,8 +51,8 @@ export const addNewProject = async (req, res) => {
       repoLink,
       domain,
       demoLink: demoLink || "",
-      LiveLink: liveLink || "",
-      Tools: tools ? tools.split(",") : [],
+      liveLink: liveLink || "",
+      tools:toolsArray,
       createdBy: authorId,
       thumbnail: thumbnailUrl,
     });
@@ -106,12 +108,31 @@ export const checkUniqueProjectRepoLink = async (req, res) => {
 // Get All Projects
 export const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find().populate("createdBy", "-password").sort({ createdAt: -1 });
-    res.status(200).json({ projects, success: true });
+    const { page = 1, limit = 5 } = req.query; // get page and limit from query params
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+
+    const total = await Project.countDocuments(); // total number of projects
+
+    const projects = await Project.find()
+      .populate("createdBy", "username _id")
+      .sort({ createdAt: -1 })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+
+    res.status(200).json({
+      projects,
+      success: true,
+      total,
+      page: pageNumber,
+      pages: Math.ceil(total / limitNumber),
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ msg: "Failed to fetch projects", success: false });
   }
 };
+
 
 // Get User Projects
 export const getUserProjects = async (req, res) => {

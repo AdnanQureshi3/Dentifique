@@ -1,29 +1,33 @@
 import { setProjects } from "../redux/projectSlice.js";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect , useState } from "react";
 import { useDispatch } from "react-redux";
 
-const useGetAllProject =()=>{
-    const dispatch = useDispatch();
-    useEffect(()=>{
-        const fetchAllProject = async()=>{
-            try{
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/project/all` ,{withCredentials:true} );
-                console.log("fetching all the projects");
-                console.log(res.data);
-                if(res.data.success){
-                    dispatch(setProjects(res.data.projects));
-                }
-            }
-            
-            catch(err){
-                console.log(err);
-            }
-        }
-   
-        fetchAllProject();
-      
+// Hook
+const useGetAllProject = ({ page, limit, filter }) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
-    },[])
+  useEffect(() => {
+    const fetchAllProject = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/project/all`,
+          { params: { page, limit, ...filter }, withCredentials: true }
+        );
+        if (res.data.success) dispatch(setProjects(res.data.projects));
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllProject();
+  }, [dispatch, page, limit, JSON.stringify(filter)]); // runs again if page/filter changes
+
+  return { loading };
 };
+
 export default useGetAllProject;
