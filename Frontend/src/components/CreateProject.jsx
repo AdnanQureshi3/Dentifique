@@ -16,6 +16,7 @@ function CreateProject({ onClose }) {
   });
   const [preview, setPreview] = useState(null);
   const [titleError, setTitleError] = useState({error:false , msg:"No title exist already"});
+  const [RepoError, setRepoError] = useState({error:false , msg:"No repo link exist already"});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +25,7 @@ function CreateProject({ onClose }) {
     try {
         // console.log("response.da");
         const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/api/projects/check-unique-title`,
+            `${import.meta.env.VITE_API_URL}/api/project/check-unique-title`,
             { title: formData.title },
             { withCredentials: true }
         );
@@ -39,7 +40,25 @@ function CreateProject({ onClose }) {
       setTitleError({error:true , msg:"Try different title"});
     }
   };
-
+  const handleUniqueRepoCheck = async () => {
+    try {
+        // console.log("response.da");
+        const response = await axios.post(
+            `${import.meta.env.VITE_API_URL}/api/project/check-unique-repo`,
+            { repoLink: formData.repoLink },
+            { withCredentials: true }
+        );
+        console.log(response.data);
+      if (response.data.success) {
+        setRepoError({error:false , msg:""});
+      }
+      else{
+        setRepoError({error:true , msg:"Try different repo link"});
+      }
+    } catch (error) {
+      setRepoError({error:true , msg:"Try different repo link"});
+    }
+  };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData({ ...formData, thumbnail: file });
@@ -62,7 +81,7 @@ function CreateProject({ onClose }) {
       });
 
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/projects/addproject`,
+        `${import.meta.env.VITE_API_URL}/api/project/addproject`,
         data,
         {
           withCredentials: true,
@@ -82,9 +101,12 @@ function CreateProject({ onClose }) {
     if(formData.title.length >0){
       handleUniqueTitleCheck();
     }
+    if(formData.repoLink.length >0){
+      handleUniqueRepoCheck();
+    }
     // console.log(titleError , formData.title)
 
-  }, [formData.title])
+  }, [formData.title , formData.repoLink])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[85vh] bg-gray-50 px-10">
@@ -148,6 +170,16 @@ function CreateProject({ onClose }) {
               required
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
+                  {formData.repoLink.length > 0 && (
+  <div className="flex items-center space-x-2 text-sm">
+    <span className={`w-3 h-3 rounded-full ${
+      RepoError.error ? 'bg-red-500' : 'bg-green-500'
+    }`}></span>
+    <p className={RepoError.error ? 'text-red-600' : 'text-green-600'}>
+      {RepoError.msg || (RepoError.error ? "Repo link already exists" : "Repo link is available")}
+    </p>
+  </div>
+)}
             <input
               type="text"
               name="domain"

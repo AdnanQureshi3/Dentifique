@@ -5,6 +5,7 @@ import authSlice from './authSlice.js'
 import socketSlice from './socketSLice.js'
 import chatSlice from './chatSlice.js'
 import notificationSlice from './notificationSlice.js'
+import projectSlice from './projectSlice.js'
 
 import {
 
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
     post:postSlice,
     socketio:socketSlice,
     chat:chatSlice,
-    notification:notificationSlice
+    notification:notificationSlice,
+    project:projectSlice
 
 
 })

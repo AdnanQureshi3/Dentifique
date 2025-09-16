@@ -86,6 +86,22 @@ export const checkUniqueProjectTitle = async (req, res) => {
     res.status(500).json({ msg: "Something went wrong", success: false });
   }
 };
+export const checkUniqueProjectRepoLink = async (req, res) => {
+  try {
+    // console.log("Checking unique title:", req.body);
+    const { repoLink } = req.body;
+    if (!repoLink) {
+      return res.status(400).json({ msg: "Project repository link is required", success: false });
+    }
+    const existingProject = await Project.findOne({ repoLink });
+    if (existingProject) {
+      return res.status(200).json({ msg: "Project repository link already exists", success: false });
+    }
+    else return res.status(200).json({ msg: "Project repository link is unique", success: true });
+  } catch (err) {
+    res.status(500).json({ msg: "Something went wrong", success: false });
+  }
+};
 
 // Get All Projects
 export const getAllProjects = async (req, res) => {

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Clock, Rocket, PlusCircle } from "lucide-react";
 import CreateProject from "./CreateProject";
+import useGetAllProject from "../Hooks/getProject.jsx";
+import { useSelector } from "react-redux";
 
 function Projects() {
-  const [projects, setProjects] = useState([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  useGetAllProject();
+  const { projects } = useSelector((store) => store.project);
 
-  useEffect(() => {
-    // later replace with API call
-    setProjects([]);
-  }, []);
+ 
 
   if (showCreateForm) {
     return <CreateProject onClose={() => setShowCreateForm(false)} />;
@@ -17,7 +17,7 @@ function Projects() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] text-center bg-gradient-to-br from-gray-50 to-gray-100 px-6">
-      <div className="bg-white shadow-xl rounded-2xl p-10 max-w-lg w-full border border-gray-200">
+      <div className="bg-white shadow-xl rounded-2xl p-10 max-w-3xl w-full border border-gray-200">
         {projects.length === 0 ? (
           <>
             <div className="flex justify-center mb-6">
@@ -29,8 +29,9 @@ function Projects() {
               🚧 No Projects Yet
             </h1>
             <p className="text-gray-600 mb-6">
-              Be the first one to <span className="font-semibold text-indigo-600">contribute</span> to the society.  
-              Share your project and inspire others!
+              Be the first one to{" "}
+              <span className="font-semibold text-indigo-600">contribute</span>{" "}
+              to the society. Share your project and inspire others!
             </p>
             <button
               onClick={() => setShowCreateForm(true)}
@@ -42,9 +43,26 @@ function Projects() {
           </>
         ) : (
           <>
-            {/* Placeholder: later map projects into cards */}
-            <div className="mb-6 text-gray-700">
-              Projects will be displayed here as cards.
+            <h1 className="text-2xl font-bold text-gray-800 mb-6">
+              🚀 Community Projects
+            </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {projects.map((project, index) => (
+                <div
+                  key={index}
+                  className="p-5 border border-gray-200 rounded-xl shadow hover:shadow-md transition bg-gray-50 text-left"
+                >
+                  <h2 className="text-lg font-semibold text-indigo-700 mb-2">
+                    {project.title}
+                  </h2>
+                  <p className="text-gray-600 text-sm mb-3">
+                    {project.description || "No description available."}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    👤 By {project.owner || "Anonymous"}
+                  </p>
+                </div>
+              ))}
             </div>
             <button
               onClick={() => setShowCreateForm(true)}

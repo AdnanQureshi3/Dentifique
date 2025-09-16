@@ -11,6 +11,7 @@ import {
   deleteProject,
   likeUnlikeProject,
   checkUniqueProjectTitle,
+  checkUniqueProjectRepoLink,
  
   getTopTrendingProjects,
 } from "../controller/project_controllers.js";
@@ -19,6 +20,7 @@ const router = express.Router();
 
 router.route("/addproject").post(isAuthenticated, upload.single("thumbnail"), addNewProject);
 router.route("/check-unique-title").post( checkUniqueProjectTitle);
+router.route("/check-unique-repo").post( checkUniqueProjectRepoLink);
 
 router.route("/all").get(isAuthenticated, getAllProjects);
 router.route("/user/:id").get(isAuthenticated, getUserProjects);

@@ -40,7 +40,7 @@ app.use("/api/user" , UserRoute);
 app.use("/api/post" , PostRoute);
 app.use("/api/chats" , MessageRoute);
 app.use("/api/ai" , aiRoute);
-app.use("/api/projects" ,ProjectRoutes );
+app.use("/api/project" ,ProjectRoutes );
 
 app.use(express.static(path.join(__dirname, '/Frontend/dist')));
 
