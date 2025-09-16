@@ -147,6 +147,10 @@ export default function SearchDialog({ open, onOpenChange }) {
                     {results.map((user, idx) => (
                       <motion.div
                         key={user._id || idx}
+                        onClick={() => {
+                          window.location.href = `/profile/${user._id}`
+                          onOpenChange(false)
+                        }}
                         layout
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}

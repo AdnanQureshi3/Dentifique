@@ -228,11 +228,11 @@ function Profile() {
   <div className="absolute bottom-2 right-2 flex items-center space-x-4 bg-black/60 text-white text-xs px-3 py-1.5 rounded-full">
     <div className="flex items-center gap-1">
       <Heart size={14} />
-      <span>{post?.likes.length}</span>
+      <span>{post?.likes?.length}</span>
     </div>
     <div className="flex items-center gap-1">
       <MessageCircle size={14} />
-      <span>{post?.comments.length}</span>
+      <span>{post?.comments?.length}</span>
     </div>
   </div>
 </div>
