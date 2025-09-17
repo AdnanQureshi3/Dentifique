@@ -4,7 +4,7 @@ import { useEffect , useState } from "react";
 import { useDispatch } from "react-redux";
 
 // Hook
-const useGetAllProject = ({ page, limit, filter }) => {
+const useGetAllProject = ({ page, limit, title }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +14,7 @@ const useGetAllProject = ({ page, limit, filter }) => {
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/project/all`,
-          { params: { page, limit, ...filter }, withCredentials: true }
+          { params: { page, limit, title }, withCredentials: true }
         );
         if (res.data.success) dispatch(setProjects(res.data.projects));
       } catch (err) {
@@ -25,7 +25,7 @@ const useGetAllProject = ({ page, limit, filter }) => {
     };
 
     fetchAllProject();
-  }, [dispatch, page, limit, JSON.stringify(filter)]); // runs again if page/filter changes
+  }, [dispatch, page, limit, title]); // runs again if page/filter changes
 
   return { loading };
 };

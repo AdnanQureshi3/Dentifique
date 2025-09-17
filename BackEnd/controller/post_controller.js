@@ -46,7 +46,7 @@ export const addNewPost = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(500).json({ msg: "Something  kh nwent wrong", success: false });
+        res.status(500).json({ msg: "Something went wrong", success: false });
     }
 }
 export const addNewArticle = async (req, res) => {

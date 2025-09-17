@@ -9,7 +9,8 @@ function Projects() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  useGetAllProject({ page, limit });
+  const [title , settitle ] = useState('');
+  useGetAllProject({ page, limit  , title});
   const { projects } = useSelector((store) => store.project);
 
   if (showCreateForm) {
@@ -29,6 +30,8 @@ function Projects() {
               type="text"
               placeholder="Search projects..."
               className="px-3 py-2 border rounded-md w-full md:w-64"
+              onChange={(e) => {settitle(e.target.value)}}
+              value={title}
             />
             <select className="px-3 py-2 border rounded-md">
               <option value="">Filter</option>

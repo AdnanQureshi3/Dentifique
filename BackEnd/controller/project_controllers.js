@@ -29,6 +29,7 @@ export const addNewProject = async (req, res) => {
     if (existingTitle) {
       return res.status(400).json({ msg: "A project with this title already exists", success: false });
     }
+    const user  = await User.findById(authorId);
 
     // Default thumbnail if not provided
     let thumbnailUrl = "https://s3-ap-south-1.amazonaws.com/static.awfis.com/wp-content/uploads/2017/07/07184649/ProjectManagement.jpg";
@@ -50,15 +51,17 @@ export const addNewProject = async (req, res) => {
       description,
       repoLink,
       domain,
+      creatorname:user?.username || "",
       demoLink: demoLink || "",
       liveLink: liveLink || "",
       tools:toolsArray,
       createdBy: authorId,
+
       thumbnail: thumbnailUrl,
     });
 
     // Link project to user
-    const user = await User.findById(authorId);
+    
     user?.projects?.push(project._id);
     await user.save();
 
@@ -108,17 +111,23 @@ export const checkUniqueProjectRepoLink = async (req, res) => {
 // Get All Projects
 export const getAllProjects = async (req, res) => {
   try {
-    const { page = 1, limit = 5 } = req.query; // get page and limit from query params
+    const { page = 1, limit = 5,  title } = req.query;
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
+    const filter = {};
+if (title) filter.title = { $regex: title, $options: "i" };
+if (title) filter.domain = { $regex: title, $options: "i" };
+if (title) filter.creatorname = { $regex: title, $options: "i" };
 
-    const total = await Project.countDocuments(); // total number of projects
+   
+    const total = await Project.countDocuments(filter); // total number of projects
 
-    const projects = await Project.find()
+    const projects = await Project.find(filter)
       .populate("createdBy", "username _id")
       .sort({ createdAt: -1 })
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber);
+      
 
       console.log(projects);
 

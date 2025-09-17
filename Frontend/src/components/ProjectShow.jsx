@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams , Link } from "react-router-dom";
 import axios from "axios";
+import {useGitHubRepo } from '../Hooks/getGithubData'
 
 function ProjectShow() {
   const { projectname } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     async function getProject() {
@@ -23,6 +25,8 @@ function ProjectShow() {
     }
     getProject();
   }, [projectname]);
+
+  const { repoData, contributors, commits, error } = useGitHubRepo(project?.repoLink);
 
   function convertYouTubeLink(link) {
     const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/;
@@ -138,7 +142,7 @@ function ProjectShow() {
       </span>
     )}
     <button
-      onClick={() => navigator.clipboard.writeText(project.repoLink)}
+      onClick={() => navigator.clipboard.writeText(project?.repoLink)}
       className={`px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition ${
         !project?.repoLink ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
       }`}
@@ -216,6 +220,13 @@ function ProjectShow() {
           <h2 className="text-lg font-semibold text-gray-800 mb-2">Description</h2>
           <p className="text-gray-600">{project.description || "No description available"}</p>
         </div>
+         <div>
+      <h1>{project?.title}</h1>
+      <p>Stars: {repoData?.stargazers_count}</p>
+      <p>Forks: {repoData?.forks_count}</p>
+      <p>Contributors: {contributors?.length}</p>
+      <p>Commits: {commits?.length}</p>
+    </div>
       </div>
 
       <link

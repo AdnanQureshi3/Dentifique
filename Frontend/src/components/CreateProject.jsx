@@ -199,7 +199,7 @@ function CreateProject({ onClose }) {
             <input
               type="url"
               name="demoLink"
-              placeholder="Demo Link (optional)"
+              placeholder="Youtube Demo video Link"
               value={formData.demoLink}
               onChange={handleChange}
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -207,14 +207,14 @@ function CreateProject({ onClose }) {
             <input
               type="url"
               name="liveLink"
-              placeholder="Live Link (optional)"
+              placeholder="Live working Link (optional)"
               value={formData.liveLink}
               onChange={handleChange}
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
             />
 
             {/* Thumbnail Upload with Preview */}
-            <div className="flex flex-col items-center justify-center gap-3 border border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:bg-gray-50 transition">
+            <label   className="flex flex-col items-center justify-center gap-3 border border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:bg-gray-50 transition">
               {preview ? (
                 <img
                   src={preview}
@@ -224,20 +224,21 @@ function CreateProject({ onClose }) {
               ) : (
                 <UploadCloud className="w-10 h-10 text-indigo-600" />
               )}
-              <label className="text-gray-700 cursor-pointer">
+              <div className="text-gray-700 cursor-pointer">
                 <span className="text-sm">
                   {formData.thumbnail
                     ? formData.thumbnail.name
-                    : "Upload Thumbnail (optional)"}
+                    : "Upload Thumbnail Image (optional) "}
                 </span>
+
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
                 />
-              </label>
-            </div>
+              </div>
+            </label>
           </div>
 
           {/* Submit button full width */}

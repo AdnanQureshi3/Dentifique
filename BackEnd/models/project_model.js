@@ -8,11 +8,10 @@ const projectSchema = new mongoose.Schema(
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     repoLink: { type: String, required: true , unique: true },
     domain: { type: String, required: true },
-
+    creatorname:{type:String },
     demoLink: { type: String, default: "" },
     liveLink: { type: String, default: "" },
     tools: { type: [String], default: [] },
-    members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     thumbnail: { type: String, default: "https://placehold.co/600x400?text=Project" },
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
