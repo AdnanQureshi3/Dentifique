@@ -120,6 +120,8 @@ export const getAllProjects = async (req, res) => {
       .skip((pageNumber - 1) * limitNumber)
       .limit(limitNumber);
 
+      console.log(projects);
+
     res.status(200).json({
       projects,
       success: true,
@@ -147,12 +149,18 @@ export const getUserProjects = async (req, res) => {
 
 // Get Project Details
 export const getProjectDetails = async (req, res) => {
-  try {
-    const project = await Project.findById(req.params.projectId).populate("createdBy", "-password").populate("members", "-password");
+    try {
+      console.log("we  are fetching" , req.params.projectname);
+    const project = await Project.findOne({
+  title: { $regex: `^${req.params.projectname}$`, $options: "i" }
+})
+    .populate("createdBy", "username _id ")
     if (!project) return res.status(404).json({ msg: "Project not found", success: false });
-    res.status(200).json({ project, success: true });
+    console.log(project , "its my projects")
+        
+   return res.status(200).json({ project, success: true });
   } catch (err) {
-    res.status(500).json({ msg: "Failed to fetch project", success: false });
+   return res.status(500).json({ msg: "Failed to fetch project", success: false });
   }
 };
 

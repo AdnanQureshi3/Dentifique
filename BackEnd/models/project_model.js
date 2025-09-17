@@ -16,13 +16,7 @@ const projectSchema = new mongoose.Schema(
     thumbnail: { type: String, default: "https://placehold.co/600x400?text=Project" },
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    comments: [
-      {
-        author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        text: String,
-        createdAt: { type: Date, default: Date.now },
-      },
-    ],
+   
   },
   { timestamps: true }
 );
