@@ -154,7 +154,7 @@ export const getProjectDetails = async (req, res) => {
     const project = await Project.findOne({
   title: { $regex: `^${req.params.projectname}$`, $options: "i" }
 })
-    .populate("createdBy", "username _id ")
+    .populate("createdBy", "username _id profilePicture ")
     if (!project) return res.status(404).json({ msg: "Project not found", success: false });
     console.log(project , "its my projects")
         

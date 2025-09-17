@@ -48,7 +48,7 @@ function ProjectShow() {
           <div className="flex items-center gap-2">
             <span>Created by</span>
             <img
-              src={project.createdBy?.profilePicture || "https://placehold.co/40x40"}
+              src={project.createdBy?.profilePicture }
               alt="User"
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -58,9 +58,9 @@ function ProjectShow() {
             <button className="flex items-center gap-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
               <i className="fas fa-star"></i> {project.likes.length}
             </button>
-            <button className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+            <a href={project.repoLink} className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               <i className="fas fa-user-plus"></i> Contribute
-            </button>
+            </a>
           </div>
         </div>
 
@@ -91,9 +91,11 @@ function ProjectShow() {
           
 
           {/* Right - Links */}
-        <div className="flex flex-col gap-4 w-[25%] ">
- 
-    <div className="flex gap-2">
+<div className="flex flex-col gap-4 w-[25%]">
+
+  {/* Live */}
+  <div className="flex gap-2">
+    {project.liveLink ? (
       <a
         href={project.liveLink}
         target="_blank"
@@ -102,18 +104,26 @@ function ProjectShow() {
       >
         <i className="fas fa-globe"></i> Live
       </a>
-      <button
-        onClick={() => navigator.clipboard.writeText(project.liveLink)}
-        className="px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-        title="Copy Live Link"
-        disabled = {project.liveLink }
-      >
-        <i className="fas fa-copy"></i>
-      </button>
-    </div>
-  
- 
-    <div className="flex gap-2">
+    ) : (
+      <span className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-400 text-white rounded cursor-not-allowed">
+        <i className="fas fa-globe"></i> Live
+      </span>
+    )}
+    <button
+      onClick={() => navigator.clipboard.writeText(project.liveLink)}
+      className={`px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition ${
+        !project?.liveLink ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      }`}
+      title="Copy Live Link"
+      disabled={!project?.liveLink}
+    >
+      <i className="fas fa-copy"></i>
+    </button>
+  </div>
+
+  {/* Repo */}
+  <div className="flex gap-2">
+    {project.repoLink ? (
       <a
         href={project.repoLink}
         target="_blank"
@@ -122,18 +132,26 @@ function ProjectShow() {
       >
         <i className="fab fa-github"></i> Repo
       </a>
-      <button
-        onClick={() => navigator.clipboard.writeText(project.repoLink)}
-        className="px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-        title="Copy Repo Link"
-        disabled = {true}
-      >
-        <i className="fas fa-copy"></i>
-      </button>
-    </div>
-  
-  
-    <div className="flex gap-2">
+    ) : (
+      <span className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-400 text-white rounded cursor-not-allowed">
+        <i className="fab fa-github"></i> Repo
+      </span>
+    )}
+    <button
+      onClick={() => navigator.clipboard.writeText(project.repoLink)}
+      className={`px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition ${
+        !project?.repoLink ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      }`}
+      title="Copy Repo Link"
+      disabled={!project?.repoLink}
+    >
+      <i className="fas fa-copy"></i>
+    </button>
+  </div>
+
+  {/* Demo */}
+  <div className="flex gap-2">
+    {project.demoLink ? (
       <a
         href={project.demoLink}
         target="_blank"
@@ -142,17 +160,25 @@ function ProjectShow() {
       >
         <i className="fab fa-youtube"></i> Demo
       </a>
-      <button
-        onClick={() => navigator.clipboard.writeText(project.demoLink)}
-        className="px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
-        title="Copy Demo Link"
-        disabled = {project?.demoLink}
-      >
-        <i className="fas fa-copy"></i>
-      </button>
-    </div>
-  
+    ) : (
+      <span className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-400 text-white rounded cursor-not-allowed">
+        <i className="fab fa-youtube"></i> Demo
+      </span>
+    )}
+    <button
+      onClick={() => navigator.clipboard.writeText(project.demoLink)}
+      className={`px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition ${
+        !project?.demoLink ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+      }`}
+      title="Copy Demo Link"
+      disabled={!project?.demoLink}
+    >
+      <i className="fas fa-copy"></i>
+    </button>
+  </div>
+
 </div>
+
 
         </div>
 

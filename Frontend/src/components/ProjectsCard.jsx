@@ -1,9 +1,12 @@
 import React from "react";
 import { Star, Github, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function ProjectsCard({ project }) {
+  const navigate = useNavigate(); 
   return (
-    <div className="w-100 bg-white shadow-md rounded-xl overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-xl">
+    <div onClick={() => navigate(`/projects/${project.title}`)}
+     className="w-100 bg-white cursor-pointer shadow-md rounded-xl overflow-hidden flex flex-col transition-transform hover:scale-105 hover:shadow-xl">
 
       <div className="h-28 w-full overflow-hidden">
         <img

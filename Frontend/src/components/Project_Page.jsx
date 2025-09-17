@@ -71,7 +71,7 @@ function Projects() {
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {projects.map((project, index) => (
-                <ProjectsCard key={index} project={project} />
+                <ProjectsCard onClick={() => naviga} key={index} project={project} />
               ))}
             </div>
           </>
