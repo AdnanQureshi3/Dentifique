@@ -1,6 +1,6 @@
 import express from "express";
 import { editProfile, followorUnfollow, getprofile,
-    searchUser, getSuggestedusers, login, logout, register, removePhoto,  verifyOtp , getConversationUsers } from "../controller/user_controller.js";
+    searchUser, getSuggestedusers, login, logout, resetPassword , isEmailExist, register, removePhoto,  verifyOtp , getConversationUsers } from "../controller/user_controller.js";
 import isAuthenticated from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
 
@@ -22,6 +22,8 @@ router.route('/conversationUsers').get(isAuthenticated , getConversationUsers);
 router.route('/verifyOTP').post( verifyOtp);
 router.route('/resendotpVerification').post( sendOtpForVerification);
 router.route('/resendotpReset').post(  sendOtpForResetPassword);
+router.route('/isEmailExist').post( isEmailExist);
+router.route('/resetpassword').post( resetPassword);
 
 router.route('/noti/:id').post( createNotification);
 router.route('/noti/get').get( isAuthenticated, getAllReciverNoti);

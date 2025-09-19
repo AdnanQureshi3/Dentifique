@@ -43,7 +43,7 @@ function Chatpage() {
                 <hr className="border-gray-200 mb-4" />
                 
                 <div className="overflow-y-auto pr-2 flex-grow">
-                    { MessageUsers?.map((u) => {
+                    { MessageUsers ? (MessageUsers?.map((u) => {
                         const isOnline = onlineUsers.includes(u._id);
                         return (
                             <div 
@@ -85,7 +85,12 @@ function Chatpage() {
                                 )}
                             </div>
                         )
-                    })}
+                    })) :(
+                        <div>
+
+                            No body to talk
+                        </div>
+                    )}
                 </div>
                 
                 {!isSidebarCollapsed && (

@@ -174,7 +174,66 @@ export const logout = async (req, res) => {
         console.log(err);
     }
 };
+export const resetPassword = async(req , res) =>{
+    console.log("reseting password");
+    try{
+      
+         const { email, password } = req.body;
+         console.log(email , password);
+        const user = await User.findOne({ email });
 
+        if(!user){
+            return res.status(404).json({
+                message:"User not found",
+                success:false
+            })
+        }
+        const hashedpassword = await bcrypt.hash(password, 10);
+        user.password = hashedpassword;
+
+        await user.save();
+
+        return res.status(200).json({
+            message:"Password reset Successfully",
+            success:true
+        })
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+export const isEmailExist = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "No account found with this email",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Email exists",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
+  }
+};
 export const getprofile = async (req, res) => {
     try {
         const userId = req.params.id;
