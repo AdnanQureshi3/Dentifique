@@ -10,14 +10,10 @@ export const FollowHandlerFunc = async (id , dispatch ) => {
     if (res.data.success) {
       toast.success(res.data.msg)
       dispatch(setAuthuser(res.data.user));
-      const sugUsers = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/suggested` ,{withCredentials:true} );
-      if(sugUsers.data.success){
-        
-          dispatch(setSuggestedUser(sugUsers.data.users));
-          console.log("user updated and sugg users")
-          
-        }
       
+      return true;
+      
+
     }
   } catch (err) {
     toast.error(err.response?.data?.msg || "Something went wrong")

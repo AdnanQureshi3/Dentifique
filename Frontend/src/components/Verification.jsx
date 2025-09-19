@@ -23,7 +23,7 @@ function Verification() {
       setLoadingResend(true);
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/user/resendotpVerification`,
+          `${import.meta.env.VITE_API_URL}/api/user/resendotpVerification`,
           { email },
           { withCredentials: true }
         );
@@ -65,7 +65,7 @@ function Verification() {
     setLoading(true);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/user/verifyOTP`,
+        `${import.meta.env.VITE_API_URL}/api/user/verifyOTP`,
         { email, otp },
         { withCredentials: true }
       );
@@ -89,7 +89,7 @@ function Verification() {
     try {
       setLoadingResend(true);
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/user/resendotpVerification`,
+        `${import.meta.env.VITE_API_URL}/api/user/resendotpVerification`,
         { email },
         { withCredentials: true }
       );

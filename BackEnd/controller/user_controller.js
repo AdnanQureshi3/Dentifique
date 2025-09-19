@@ -349,7 +349,7 @@ export const getSuggestedusers = async (req, res) => {
         // const excludeIds = [...loggedInUser.following, req.id];
         const excludeIds = [req.id];
 
-        const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password");
+        const Suggestedusers = await User.find({ _id: { $nin: excludeIds } }).select("-password").limit(5);
 
         if (!Suggestedusers) {
             return res.status(400).json({
@@ -524,7 +524,8 @@ export const followorUnfollow = async (req, res) => {
             return res.status(200).json({
                 msg: "Unfollowed Successfully",
                 success: true,
-                user: loggedInUser
+                user: loggedInUser,
+             
             })
 
         }
@@ -552,7 +553,8 @@ export const followorUnfollow = async (req, res) => {
             return res.status(200).json({
                 msg: "Followed Successfully",
                 success: true,
-                user: loggedInUser
+                user: loggedInUser,
+             
             })
         }
 

@@ -11,6 +11,7 @@ import useSuggestedUser from '@/Hooks/getAllSuggestedUser.jsx'
 function SuggestedUser() {
   const { suggestedUser, user } = useSelector(store => store.auth)
   const dispatch = useDispatch();
+  
 
   return (
     <div className='w-full p-4 bg-white rounded-md mt-2 shadow-md border space-y-6'>

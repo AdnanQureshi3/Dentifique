@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
-const useProfileUser =(id)=>{
+const useProfileUser =({id , refresh})=>{
     
     const dispatch = useDispatch();
     useEffect(()=>{
@@ -26,6 +26,6 @@ const useProfileUser =(id)=>{
         }
         fetchProfileuser();
 
-    },[id])
+    },[id , refresh])
 };
 export default useProfileUser;

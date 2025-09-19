@@ -53,7 +53,7 @@ function Login() {
       return;
     }
     localStorage.setItem("email", input.email);
-    navigate("/forgotPassword");
+    navigate("/resetPassword");
   };
 
   return (

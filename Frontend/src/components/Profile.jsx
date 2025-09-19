@@ -13,17 +13,18 @@ import { setAuthuser, setProfileUser } from '@/redux/authSlice'
 import { FollowHandlerFunc } from '../Hooks/useFollownUnfollow.js'
 import { useNavigate } from 'react-router-dom'
 import { setSelectedUser } from '@/redux/authSlice'
+import { set } from 'zod'
 
 function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState(false);
-  useProfileUser(id, refresh);
+  useProfileUser({ id, refresh });
   const commonBTNCSS = "px-4 py-2 font-medium rounded-md transition-all duration-300 cursor-pointer flex items-center gap-2";
   const { userprofile, user } = useSelector(state => state.auth)
   const isLoggedInUser = (user?._id === userprofile?._id);
-  const isFollowing = userprofile?.followers?.includes(user?._id);
+  let isFollowing = userprofile?.followers?.includes(user?._id);
 
   const [Open, setOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -38,6 +39,17 @@ function Profile() {
       setDisplayItem(userprofile?.posts);
     else setDisplayItem(userprofile?.saved);
   }
+  
+  const FollowUpdatedHandlerFunc = async () => {
+    const success = await FollowHandlerFunc(userprofile?._id, dispatch);
+    if(!success) return; 
+
+    setRefresh((prev) => !prev); 
+     isFollowing = userprofile?.followers?.includes(user?._id);
+     console.log(isFollowing, "isFollowing is here");
+  };
+  
+
   
   const RemovePhotoHandler = async () => {
     try {
@@ -124,7 +136,9 @@ function Profile() {
                   ) : (
                     isFollowing ? (
                       <>
-                        <button onClick={() => FollowHandlerFunc(userprofile?._id, dispatch)} className={btnClass('bg-red-100 text-red-700 hover:bg-red-200 shadow-sm')}>
+                        <button onClick={FollowUpdatedHandlerFunc}
+                        
+                      className={btnClass('bg-red-100 text-red-700 hover:bg-red-200 shadow-sm')}>
                           Unfollow
                         </button>
                         <button onClick={()=>{
@@ -140,7 +154,7 @@ function Profile() {
                       </>
                     ) : (
                       <>
-                        <button onClick={() => FollowHandlerFunc(userprofile?._id, dispatch)} className={btnClass('bg-indigo-600 text-white hover:bg-indigo-700 shadow-md')}>
+                        <button onClick={FollowUpdatedHandlerFunc} className={btnClass('bg-indigo-600 text-white hover:bg-indigo-700 shadow-md')}>
                           Follow
                         </button>
                       </>

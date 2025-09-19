@@ -33,17 +33,12 @@ function Signup() {
         navigate("/verify");
         localStorage.setItem("email", input.email);
         toast.success(res.data.msg);
-        // setInput({ username: "", email: "", password: "" });
+        setInput({ username: "", email: "", password: "" });
       }
     } catch (err) {
       toast.error(err.response?.data?.msg || "Something went wrong");
     } finally {
-        console.log("email store" , input);
-        localStorage.setItem("email", input.email);
-        console.log("email store" , input);
-        navigate("/verify");
-       
-        // toast.success(res.data.msg);
+ 
       setLoading(false);
     }
   }

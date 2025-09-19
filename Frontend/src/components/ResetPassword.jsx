@@ -59,7 +59,7 @@ function ResetPassword() {
     setCanResend(false);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/user/resendotpVerification`,
+        `${import.meta.env.VITE_API_URL}/api/user/resendotpVerification`,
         { email },
         { withCredentials: true }
       );
