@@ -18,6 +18,7 @@ import { getAllNoti } from './Hooks/getAllNoti'
 import Protected_routes from './components/ui/protected_routes'
 import Verification from './components/Verification'
 import ProjectShow from './components/ProjectShow'
+import ResetPassword from './components/ResetPassword'
 
 
 const browserRouter = createBrowserRouter([
@@ -62,6 +63,10 @@ const browserRouter = createBrowserRouter([
   {
     path: '/verify',
     element: <Verification />
+  },
+  {
+    path: '/resetPassword',
+    element: <ResetPassword />
   }
 ])
 

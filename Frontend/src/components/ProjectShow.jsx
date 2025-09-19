@@ -60,7 +60,7 @@ function ProjectShow() {
           </div>
           <div className="flex items-center gap-4 ml-auto">
             <button className="flex items-center gap-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
-              <i className="fas fa-star"></i> {project.likes.length}
+              <i className="fas fa-star"></i> {project?.likes?.length}
             </button>
             <a href={project.repoLink} className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               <i className="fas fa-user-plus"></i> Contribute
@@ -191,7 +191,7 @@ function ProjectShow() {
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <i className="fas fa-tools text-blue-500"></i> Tools & Tech
           </h2>
-          <p className="text-gray-600">{project.tools.length > 0 ? project.tools.join(", ") : "N/A"}</p>
+          <p className="text-gray-600">{project.tools?.length > 0 ? project.tools.join(", ") : "N/A"}</p>
         </div>
 
         {/* Contributors */}
@@ -200,7 +200,7 @@ function ProjectShow() {
             <i className="fas fa-users text-blue-500"></i> Contributors
           </h2>
           <div className="flex flex-wrap gap-2">
-            {project.members.length > 0 ? (
+            {project.members?.length > 0 ? (
               project.members.map((m) => (
                 <div key={m._id} className="flex items-center bg-gray-100 px-3 py-1 rounded-full gap-2">
                   <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-blue-700 font-semibold">

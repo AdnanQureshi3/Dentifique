@@ -10,21 +10,16 @@ export const addNewProject = async (req, res) => {
     const { title, description, repoLink, domain, demoLink, liveLink, tools  } = req.body;
     const thumbnail = req.file;
     const authorId = req.id;
-    const toolsArray = tools ? tools.split(",") : [];
-    // console.log(toolsArray);
-    // return;
-    // Validate
+
     if (!title || !description || !repoLink || !domain) {
       return res.status(400).json({ msg: "Title, Description, Repo Link and Domain are required", success: false });
     }
 
-    // Check if repoLink is already used
     const existingRepo = await Project.findOne({ repoLink });
     if (existingRepo) {
       return res.status(400).json({ msg: "This repository link is already used in another project", success: false });
     }
 
-    // Check if title is already used
     const existingTitle = await Project.findOne({ title });
     if (existingTitle) {
       return res.status(400).json({ msg: "A project with this title already exists", success: false });
@@ -34,7 +29,7 @@ export const addNewProject = async (req, res) => {
     // Default thumbnail if not provided
     let thumbnailUrl = "https://s3-ap-south-1.amazonaws.com/static.awfis.com/wp-content/uploads/2017/07/07184649/ProjectManagement.jpg";
 
-    // If thumbnail is uploaded, process and upload it
+    
     if (thumbnail) {
       const optimizedImageBuffer = await sharp(thumbnail.buffer)
         .resize({ width: 800, height: 800, fit: "inside" })
@@ -54,7 +49,7 @@ export const addNewProject = async (req, res) => {
       creatorname:user?.username || "",
       demoLink: demoLink || "",
       liveLink: liveLink || "",
-      tools:toolsArray,
+      tools,
       createdBy: authorId,
 
       thumbnail: thumbnailUrl,
@@ -112,12 +107,19 @@ export const checkUniqueProjectRepoLink = async (req, res) => {
 export const getAllProjects = async (req, res) => {
   try {
     const { page = 1, limit = 5,  title } = req.query;
+    const search = title ? title : "";
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
-    const filter = {};
-if (title) filter.title = { $regex: title, $options: "i" };
-if (title) filter.domain = { $regex: title, $options: "i" };
-if (title) filter.creatorname = { $regex: title, $options: "i" };
+     let filter = {};
+     if(title)
+filter = {
+  $or: [
+    { title: { $regex: search, $options: "i" } },
+    { domain: { $regex: search, $options: "i" } },
+    { creatorName: { $regex: search, $options: "i" } },
+    { tools: { $regex: search, $options: "i" } },
+  ],
+};
 
    
     const total = await Project.countDocuments(filter); // total number of projects

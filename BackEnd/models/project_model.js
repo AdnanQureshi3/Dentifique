@@ -11,7 +11,7 @@ const projectSchema = new mongoose.Schema(
     creatorname:{type:String },
     demoLink: { type: String, default: "" },
     liveLink: { type: String, default: "" },
-    tools: { type: [String], default: [] },
+    tools: { type: String, default: "" },
     thumbnail: { type: String, default: "https://placehold.co/600x400?text=Project" },
 
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

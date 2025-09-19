@@ -52,8 +52,9 @@ export const register = async (req, res) => {
 }
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
+  console.log(email  , otp );
 
-  const user = await User.findOne({ email });
+  let user = await User.findOne({ email });
   if (!user || user.otp !== otp || Date.now() > user.otpExpiry)
     return res.status(400).json({ msg: 'Invalid or expired OTP' });
 
@@ -61,26 +62,38 @@ export const verifyOtp = async (req, res) => {
   user.otp = null;
   user.otpExpiry = null;
   await user.save();
+  const token = jwt.sign({ userId: user._id }, process.env.Secret_key, { expiresIn: '10d' });
+        const populatedPost = await Promise.all(
+            user.posts.map(async (postId) => {
+                const post = await Post.findById(postId);
+                return post;
+            })
+        )
 
-  res.json({ success: true, msg: 'Email verified' });
+        user = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture,
+            bio: user.bio,
+            followers: user.followers,
+            following: user.following,
+            posts: populatedPost,
+            isPremium: user.isPremium,
+            isVerified: user.isVerified,
+            isPremiumExpiry: user.isPremiumExpiry,
+        }
+
+        res.cookie('token', token, { httpOnly: true, secure:true , sameSite: 'none', maxAge: 1 * 24 * 60 * 60 * 1000 }).json({
+            msg: `Welcome back ${user.username}`,
+            success: true,
+            user,
+            token
+        });
+
+  
 };
 
-export const resendOtp = async (req, res) => {
-  const id = req.id;
-
-  const user = await User.findById(id);
-  if (!user) return res.status(404).json({ msg: 'User not found' });
-
-  const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-  user.otp = newOtp;
-  user.otpExpiry = Date.now() + 10 * 60 * 1000;
-  await user.save();
-  console.log(`New OTP for ${user.email}: ${newOtp}`);
-
-  await sendVerificationEmail(user.email, user.username, newOtp);
-
-  res.json({ success: true, msg: 'New OTP sent' });
-};
 
 export const login = async (req, res) => {
     try {
@@ -114,7 +127,7 @@ export const login = async (req, res) => {
 
 
 
-        const token = jwt.sign({ userId: user._id }, process.env.Secret_key, { expiresIn: '1d' });
+        const token = jwt.sign({ userId: user._id }, process.env.Secret_key, { expiresIn: '10d' });
         const populatedPost = await Promise.all(
             user.posts.map(async (postId) => {
                 const post = await Post.findById(postId);

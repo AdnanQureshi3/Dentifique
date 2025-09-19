@@ -1,11 +1,11 @@
 import express from "express";
 import { editProfile, followorUnfollow, getprofile,
-    searchUser, getSuggestedusers, login, logout, register, removePhoto, resendOtp, UpgradeToPremium, verifyOtp , getConversationUsers } from "../controller/user_controller.js";
+    searchUser, getSuggestedusers, login, logout, register, removePhoto,  verifyOtp , getConversationUsers } from "../controller/user_controller.js";
 import isAuthenticated from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
 
 import { createNotification, deleteAllReceiverNoti, getAllReciverNoti, markAllReceiverNotiasRead } from "../controller/notification_controller.js";
-
+import { sendOtpForResetPassword , sendOtpForVerification } from "../controller/emailController.js";
 const router = express.Router();
 
 router.route('/register').post(register)
@@ -19,8 +19,9 @@ router.route('/profile/removephoto').get( isAuthenticated , removePhoto);
 
 router.route('/conversationUsers').get(isAuthenticated , getConversationUsers);
 
-router.route('/verify').get( isAuthenticated , verifyOtp);
-router.route('/verify/resend').get( isAuthenticated , resendOtp);
+router.route('/verifyOTP').post( verifyOtp);
+router.route('/resendotpVerification').post( sendOtpForVerification);
+router.route('/resendotpReset').post(  sendOtpForResetPassword);
 
 router.route('/noti/:id').post( createNotification);
 router.route('/noti/get').get( isAuthenticated, getAllReciverNoti);
@@ -29,8 +30,6 @@ router.route('/noti/markRead').put( isAuthenticated,markAllReceiverNotiasRead);
 router.route('/noti/delete').get(isAuthenticated , deleteAllReceiverNoti);
 
 router.get('/searchuser', searchUser);
-
-router.route('/UpgradeToPremium').get(isAuthenticated , UpgradeToPremium );
 
 
 export default router;
