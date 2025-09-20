@@ -20,7 +20,9 @@ export const addNewProject = async (req, res) => {
       return res.status(400).json({ msg: "This repository link is already used in another project", success: false });
     }
 
-    const existingTitle = await Project.findOne({ title });
+    const existingTitle = await Project.findOne({
+  title: { $regex: `^${title}$`, $options: "i" }
+});
     if (existingTitle) {
       return res.status(400).json({ msg: "A project with this title already exists", success: false });
     }
@@ -77,7 +79,7 @@ export const checkUniqueProjectTitle = async (req, res) => {
     if (!title) {
       return res.status(400).json({ msg: "Project title is required", success: false });
     }
-    const existingProject = await Project.findOne({ title });
+    const existingProject = await Project.findOne({ title: { $regex: `^${title}$`, $options: "i" } });
     if (existingProject) {
       return res.status(200).json({ msg: "Project title already exists", success: false });
     }
@@ -231,15 +233,19 @@ export const deleteProject = async (req, res) => {
 export const likeUnlikeProject = async (req, res) => {
   try {
     const project = await Project.findById(req.params.projectId);
+    const userId = req.id;
     if (!project) return res.status(404).json({ msg: "Project not found", success: false });
+    console.log("Liking/Unliking project:", req.params.projectId, "by user:", req.id);  
 
-    if (project.likes.includes(req.id)) {
-      project.likes = project.likes.filter(id => id.toString() !== req.id);
+    if (project.likes.includes(userId)) {
+      //unlike
+      await Project.updateOne({ _id: project._id }, { $pull: { likes: userId } });
     } else {
-      project.likes.push(req.id);
+      //like
+      await Project.updateOne({ _id: project._id }, { $addToSet: { likes: userId } });
     }
 
-    await project.save();
+    
     res.status(200).json({ msg: "Toggled like", success: true });
   } catch (err) {
     res.status(500).json({ msg: "Failed to like/unlike project", success: false });

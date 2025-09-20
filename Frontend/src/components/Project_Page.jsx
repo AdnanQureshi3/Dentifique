@@ -20,12 +20,13 @@ function Projects() {
   return (
     <div className="flex my-6 flex-col items-center justify-center min-h-[80vh] text-center bg-gradient-to-br from-gray-50 to-gray-100 px-6">
       <div className="bg-white shadow-xl rounded-2xl p-10 max-w-6xl w-full border border-gray-200">
+
         
-        {/* Top Controls Section */}
+ 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-          {/* Placeholder for Search & Filters */}
+       
           <div className="flex gap-2 w-full md:w-auto">
-            {/* Example placeholders */}
+    
             <input
               type="text"
               placeholder="Search by title, domain, creator..."
@@ -33,14 +34,11 @@ function Projects() {
               onChange={(e) => {settitle(e.target.value)}}
               value={title}
             />
-            <select className="px-3 py-2 border rounded-md">
-              <option value="">Filter</option>
-              <option value="latest">Latest</option>
-              <option value="popular">Popular</option>
-            </select>
+       
           </div>
+      
 
-          {/* Create Project Button */}
+         
         <button
   onClick={() => setShowCreateForm(true)}
   className="flex items-center gap-2 bg-indigo-600 text-white font-medium px-6 py-3 rounded-lg shadow-sm hover:bg-indigo-700 hover:shadow-md active:bg-indigo-800 active:scale-95 transition-all duration-150"

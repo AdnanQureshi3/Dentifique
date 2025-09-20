@@ -16,7 +16,7 @@ function ResetPassword() {
   const [loadingOtp, setLoadingOtp] = useState(false);
   const [loadingResend, setLoadingResend] = useState(false);
 
-  const email = localStorage.getItem("resetEmail");
+  const email = localStorage.getItem("email");
   const navigate = useNavigate();
 
   // Timer for resend OTP

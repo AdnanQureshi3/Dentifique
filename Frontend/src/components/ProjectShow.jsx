@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams , Link } from "react-router-dom";
+import React, { use, useEffect, useState } from "react";
+import { useParams , Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "sonner";
 import {useGitHubRepo } from '../Hooks/getGithubData'
+import { useSelector } from "react-redux";
+import { Delete } from "lucide-react";
+import { Trash2 } from "lucide-react";
+
 
 function ProjectShow() {
   const { projectname } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  const {user} = useSelector((state)=>state.auth);
+  const navigate = useNavigate();
+  
   
 
   useEffect(() => {
@@ -17,6 +25,7 @@ function ProjectShow() {
           { withCredentials: true }
         );
         if (res.data.success) setProject(res.data.project);
+        console.log(res.data.project);
       } catch (err) {
         console.error("Error fetching project:", err);
       } finally {
@@ -25,6 +34,37 @@ function ProjectShow() {
     }
     getProject();
   }, [projectname]);
+  const LikeHandler = async (like) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/project/like/${project?._id}`, { withCredentials: true }); 
+      if (res.data.success) {
+        // Update the project state with the new like count
+        if (like) {
+          setProject((prev) => ({ ...prev, likes: prev.likes + 1 }));
+          toast.success("Project liked!");
+        } else {
+          setProject((prev) => ({ ...prev, likes: prev.likes - 1 }));
+          toast.success("Project unliked!");
+        }
+      }
+    } catch (err) {
+      console.error("Error liking project:", err);
+      toast.error(err.response?.data?.msg );
+    }
+  };
+  const DeleteHandler = async()=>{
+    try {
+      const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/project/delete/${project?._id}`, { withCredentials: true });
+      if (res.data.success) {
+        toast.success("Project deleted successfully");
+        // Redirect or update UI after deletion
+        navigate(-1);
+      }
+    }catch(err){
+      console.error("Error deleting project:", err);
+      toast.error(err.response?.data?.msg);
+    }
+  };
 
   const { repoData, contributors, commits, error } = useGitHubRepo(project?.repoLink);
 
@@ -39,28 +79,63 @@ function ProjectShow() {
   if (loading)
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   if (!project)
-    return <div className="flex h-screen items-center justify-center">Project not found</div>;
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+      <div className="rounded-xl bg-white px-8 py-6 shadow-lg border border-gray-200 text-center max-w-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          No such project found
+        </h2>
+        <p className="text-gray-600 mb-4">
+          The project you’re looking for might have been deleted, moved, or never existed.
+        </p>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium rounded-lg transition"
+        >
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-5xl mx-auto bg-white shadow rounded-lg p-6 space-y-6">
         {/* Title */}
-        <h1 className="text-3xl font-bold text-gray-800 border-b pb-2">{project.title}</h1>
+        <div className="text-3xl font-bold flex justify-between text-gray-800 border-b pb-2">
+        <h1 className="">{project.title}</h1>
+        {
+          project.createdBy._id === user._id &&
+        <button 
+  onClick={DeleteHandler} 
+  className="p-2 rounded cursor-pointer hover:bg-red-100 text-red-600"
+>
+  <Trash2 size={24} />
+</button>
+
+        }
+        </div>
 
         {/* Creator, Likes, Contribute */}
         <div className="flex flex-wrap items-center gap-4 text-gray-600">
           <div className="flex items-center gap-2">
             <span>Created by</span>
             <img
-              src={project.createdBy?.profilePicture }
-              alt="User"
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <span className="font-medium">{project.createdBy?.username || "Anonymous"}</span>
+  onClick={() => navigate(`/profile/${project.createdBy?._id}`)}
+  src={project.createdBy?.profilePicture}
+  alt="User"
+  className="w-12 h-12 rounded-full cursor-pointer border-2 border-green-600 object-cover hover:w-14 hover:h-14 transition-all duration-200"
+/>
+
+            <span onClick={() => navigate(`/profile/${project.createdBy?._id}`)}
+             className="font-medium hover:underline cursor-pointer hover:text-xl transition-all">{project.createdBy?.username || "Anonymous"}</span>
           </div>
           <div className="flex items-center gap-4 ml-auto">
-            <button className="flex items-center gap-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
-              <i className="fas fa-star"></i> {project?.likes?.length}
+            <button onClick={()=>LikeHandler(true)}
+            className="flex items-center gap-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
+              <i className="fas fa-star"></i> {project?.likes?.length || 0} Stars
             </button>
             <a href={project.repoLink} className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               <i className="fas fa-user-plus"></i> Contribute
@@ -68,7 +143,7 @@ function ProjectShow() {
           </div>
         </div>
 
-        {/* Domain */}
+      
         <div className="text-gray-700">
           <span className="font-semibold">Domain: </span>
           <span>{project.domain || "N/A"}</span>
@@ -191,28 +266,46 @@ function ProjectShow() {
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
             <i className="fas fa-tools text-blue-500"></i> Tools & Tech
           </h2>
-          <p className="text-gray-600">{project.tools?.length > 0 ? project.tools.join(", ") : "N/A"}</p>
+          <p className="text-gray-600">{project.tools?.length > 0 ? project.tools.split(",").map((t)=>(
+            <span> #{t}</span>
+          )) : "N/A"}</p>
         </div>
 
         {/* Contributors */}
         <div className="bg-white p-4 rounded-lg shadow space-y-2">
           <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <i className="fas fa-users text-blue-500"></i> Contributors
+            <i className="fas fa-users text-blue-500"></i> Contributors (GitHub)
           </h2>
-          <div className="flex flex-wrap gap-2">
-            {project.members?.length > 0 ? (
-              project.members.map((m) => (
-                <div key={m._id} className="flex items-center bg-gray-100 px-3 py-1 rounded-full gap-2">
-                  <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-blue-700 font-semibold">
-                    {m.username.charAt(0).toUpperCase()}
-                  </div>
-                  <span>{m.username}</span>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No contributors</p>
-            )}
-          </div>
+        <div className="flex flex-wrap gap-2">
+  {contributors?.length > 0 ? (
+    contributors.map((c) => (
+      <div
+        key={c?.url}
+        className="relative cursor-pointer group flex items-center bg-gray-100 px-3 py-1 rounded-full gap-2 hover:shadow-md hover:-translate-y-1 transition-all duration-200"
+      >
+        <div className="w-8 h-8 bg-blue-200 text-blue-700 font-semibold rounded-full flex items-center justify-center uppercase">
+          {c?.name.charAt(0)}
+        </div>
+        <span className="text-gray-900 text-sm">{c?.name}</span>
+        <img src={c?.avatar} alt={c?.name} className="w-6 h-6 rounded-full object-cover" />
+
+        {/* Hover link */}
+        <a
+          href={c?.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap"
+        >
+          View GitHub
+        </a>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-500 text-sm">No contributors</p>
+  )}
+</div>
+
+
         </div>
 
         {/* Description */}
@@ -220,13 +313,8 @@ function ProjectShow() {
           <h2 className="text-lg font-semibold text-gray-800 mb-2">Description</h2>
           <p className="text-gray-600">{project.description || "No description available"}</p>
         </div>
-         <div>
-      <h1>{project?.title}</h1>
-      <p>Stars: {repoData?.stargazers_count}</p>
-      <p>Forks: {repoData?.forks_count}</p>
-      <p>Contributors: {contributors?.length}</p>
-      <p>Commits: {commits?.length}</p>
-    </div>
+        
+
       </div>
 
       <link

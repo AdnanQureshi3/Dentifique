@@ -29,7 +29,7 @@ router.route("/:projectname").get( getProjectDetails);
 router.route("/update/:projectId").put(isAuthenticated, upload.single("thumbnail"), updateProject);
 router.route("/delete/:projectId").delete(isAuthenticated, deleteProject);
 
-router.route("/like/:projectId").post(isAuthenticated, likeUnlikeProject);
+router.route("/like/:projectId").get(isAuthenticated, likeUnlikeProject);
 
 
 router.route("/trending").get(getTopTrendingProjects);

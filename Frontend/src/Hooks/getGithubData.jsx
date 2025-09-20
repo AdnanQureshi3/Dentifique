@@ -4,7 +4,7 @@ export const useGitHubRepo = (repoLink) => {
   const [data, setData] = useState({
     loading: true,
     repoData: null,
-    contributors: null,
+    contributors: [],
     commits: null,
     error: null,
   });
@@ -18,15 +18,20 @@ export const useGitHubRepo = (repoLink) => {
       try {
         const [owner, repo] = repoLink.replace("https://github.com/", "").split("/");
 
-        // Repo details (stars, forks, watchers)
+        // Repo details
         const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
         const repoData = await repoRes.json();
 
-        // Contributors
+        // Contributors (map only needed fields)
         const contribRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors`);
-        const contributors = await contribRes.json();
+        const contribRaw = await contribRes.json();
+        const contributors = contribRaw.map(c => ({
+          name: c.login,
+          url: c.html_url,
+          avatar: c.avatar_url,
+        }));
 
-        // Commits (first page, for full count handle pagination)
+        // Commits
         const commitsRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits`);
         const commits = await commitsRes.json();
 
@@ -41,7 +46,7 @@ export const useGitHubRepo = (repoLink) => {
         setData({
           loading: false,
           repoData: null,
-          contributors: null,
+          contributors: [],
           commits: null,
           error: err,
         });

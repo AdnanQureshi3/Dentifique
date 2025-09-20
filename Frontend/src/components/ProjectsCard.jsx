@@ -41,9 +41,10 @@ function ProjectsCard({ project }) {
         <div className="flex flex-wrap mt-2 text-xs text-gray-400">
           {project.domain && <span className="mr-2">#{project.domain}</span>}
           <br />
-          {project.tools?.map((tool, idx) => (
-            <span key={idx} className="mr-2">#{tool}</span>
-          ))}
+          
+          <p className="text-gray-600">{project.tools?.length > 0 ? project.tools.split(",").map((t)=>(
+            <span> #{t}</span>
+          )) : "N/A"}</p>
         </div>
       </div>
 

@@ -166,7 +166,7 @@ export const LikeUnlikePost = async (req, res) => {
             io.to(postAuthorSocketId).emit('notification', notification);
 
             if (str === "Liked")
-                await axios.post(`http://localhost:8000/api/user/noti/${post.author.toString()}`, notification);
+                await axios.post(`${process.env.BACKEND_URL}/api/user/noti/${post.author.toString()}`, notification);
             else {
                 await Notification.deleteOne({
                     receiver: post.author.toString(),
