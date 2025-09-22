@@ -10,6 +10,12 @@ const postSlice = createSlice({
   reducers: {
     setPosts: (state, action) => {
       state.posts = action.payload;
+      console.log("EMPTY")
+    },
+     addPosts: (state, action) => {
+       const existingIds = new Set(state.posts.map(p => p._id));
+  const newPosts = action.payload.filter(p => !existingIds.has(p._id));
+  state.posts = [...state.posts, ...newPosts];
     },
     setSelectedPost:(state, action) =>{
       state.selectedPost = action.payload;
@@ -20,5 +26,5 @@ const postSlice = createSlice({
   },
 });
 
-export const { setPosts  , setSelectedPost , setTrendingPosts} = postSlice.actions;
+export const { setPosts , addPosts  , setSelectedPost , setTrendingPosts} = postSlice.actions;
 export default postSlice.reducer;

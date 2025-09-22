@@ -29,8 +29,8 @@ function Projects() {
     
             <input
               type="text"
-              placeholder="Search by title, domain, creator..."
-              className="px-3 py-2 border rounded-md w-full md:w-80"
+              placeholder="Search by title, domain, creator and tools..."
+              className="px-3 py-2 border rounded-md w-full md:w-120"
               onChange={(e) => {settitle(e.target.value)}}
               value={title}
             />

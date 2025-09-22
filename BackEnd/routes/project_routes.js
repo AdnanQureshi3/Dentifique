@@ -25,6 +25,7 @@ router.route("/check-unique-repo").post( checkUniqueProjectRepoLink);
 router.route("/all").get( getAllProjects);
 router.route("/user/:id").get( getUserProjects);
 router.route("/:projectname").get( getProjectDetails);
+router.route("/public/:projectname").get( getProjectDetails);
 
 router.route("/update/:projectId").put(isAuthenticated, upload.single("thumbnail"), updateProject);
 router.route("/delete/:projectId").delete(isAuthenticated, deleteProject);

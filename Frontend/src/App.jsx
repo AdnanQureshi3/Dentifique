@@ -20,7 +20,6 @@ import Verification from './components/Verification'
 import ProjectShow from './components/ProjectShow'
 import ResetPassword from './components/ResetPassword'
 
-
 const browserRouter = createBrowserRouter([
   {
     path: "/",
@@ -45,7 +44,7 @@ const browserRouter = createBrowserRouter([
         element:<Protected_routes><Projects/></Protected_routes> 
       }
       ,{
-    path:`/projects/:projectname`,
+    path:`/project/:projectname`,
     element:<ProjectShow/>
 
   }
@@ -67,6 +66,10 @@ const browserRouter = createBrowserRouter([
   {
     path: '/resetPassword',
     element: <ResetPassword />
+  },
+  {
+    path: '/project/public/:projectname',
+    element: <ProjectShow />
   }
 ])
 

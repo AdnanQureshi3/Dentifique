@@ -6,6 +6,7 @@ import {useGitHubRepo } from '../Hooks/getGithubData'
 import { useSelector } from "react-redux";
 import { Delete } from "lucide-react";
 import { Trash2 } from "lucide-react";
+import { Share2, Send, ExternalLink } from "lucide-react";
 
 
 function ProjectShow() {
@@ -251,6 +252,25 @@ function ProjectShow() {
       }`}
       title="Copy Demo Link"
       disabled={!project?.demoLink}
+    >
+      <i className="fas fa-copy"></i>
+    </button>
+    
+  </div>
+  <div className="flex gap-2">
+    
+      <span
+        onClick={()=>{navigate(`/project/public/${project.title.replace(/\s+/g, '-').toLowerCase()}`)}}
+        className="flex-1 cursor-pointer flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white rounded hover:bg-gray-900 transition"
+      >
+        <Share2 size={20} /> Share
+      </span>
+
+      <button
+        onClick={() => navigator.clipboard.writeText(`${import.meta.env.VITE_API_URL}/project/public/${project.title.replace(/\s+/g, '-').toLowerCase()}`)}
+      className={`px-3 py-3 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition cursor-pointer`}
+      title="Copy Project Link"
+      
     >
       <i className="fas fa-copy"></i>
     </button>

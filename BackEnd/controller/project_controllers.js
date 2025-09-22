@@ -118,7 +118,7 @@ filter = {
   $or: [
     { title: { $regex: search, $options: "i" } },
     { domain: { $regex: search, $options: "i" } },
-    { creatorName: { $regex: search, $options: "i" } },
+    { creatorname: { $regex: search, $options: "i" } },
     { tools: { $regex: search, $options: "i" } },
   ],
 };
