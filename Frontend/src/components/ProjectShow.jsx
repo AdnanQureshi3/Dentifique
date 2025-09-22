@@ -108,7 +108,7 @@ function ProjectShow() {
         <div className="text-3xl font-bold flex justify-between text-gray-800 border-b pb-2">
         <h1 className="">{project.title}</h1>
         {
-          project.createdBy._id === user._id &&
+          project.createdBy._id === user?._id &&
         <button 
   onClick={DeleteHandler} 
   className="p-2 rounded cursor-pointer hover:bg-red-100 text-red-600"

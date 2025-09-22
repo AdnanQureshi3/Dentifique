@@ -16,8 +16,11 @@ function EditProfile() {
   const [input, setInput] = useState({
     profilePhoto: user?.profilePicture,
     bio: user?.bio,
-    gender: user?.gender
+    gender: user?.gender,
+    
   });
+  const [links , setLinks] = useState(user?.links ? user?.links.split(',') : []);
+  const [newLink , setNewLink] = useState('');
   const navigate = useNavigate();
 
   const [ImagePreview, setImagePreview] = useState("");
@@ -42,6 +45,7 @@ function EditProfile() {
       const formdata = new FormData();
       formdata.append("bio", input.bio);
       formdata.append("gender", input.gender);
+      formdata.append("links", links);
       console.log(formdata);
       if (input.profilePhoto) {
         formdata.append("profilePhoto", input.profilePhoto);
@@ -111,6 +115,73 @@ function EditProfile() {
             placeholder="Write something about yourself..."
           />
         </div>
+       <div className="space-y-4">
+  <label className="block text-lg font-semibold text-gray-700">
+    Links (max 3)
+  </label>
+
+  {links.length > 0 && (
+    <div className="space-y-2">
+      {links.map((link, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+        >
+          <a
+            href={link.startsWith("http") ? link : `https://${link}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline break-all text-sm"
+          >
+            {link}
+          </a>
+          <button
+            onClick={() => {
+              setLinks(links.filter((l, i) => i !== index));
+            }}
+            className="ml-3 text-red-500 hover:text-red-700 font-bold px-2"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div className="flex gap-2">
+    <input
+      type="text"
+      value={newLink}
+      onChange={(e) => setNewLink(e.target.value)}
+      placeholder="Enter a link..."
+      className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+      
+    />
+    <button
+      onClick={() => {
+        if (newLink.trim() && links.length < 3) {
+          setLinks([...links, newLink.trim()]);
+          setNewLink("");
+        }
+      }}
+      disabled={links.length >= 3}
+      className={`px-4 py-2 rounded-lg text-white text-sm font-medium shadow-sm ${
+        links.length >= 3
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-blue-600 hover:bg-blue-700"
+      }`}
+    >
+      Add
+    </button>
+  </div>
+
+  {links.length >= 3 && (
+    <p className="text-red-500 text-sm font-medium">
+      You can only add up to 3 links.
+    </p>
+  )}
+</div>
+
 
         <div>
           <label className="block text-lg font-medium mb-2">Gender</label>
@@ -120,6 +191,7 @@ function EditProfile() {
             onChange={(e) => genderChangeHandler(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           >
+           
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
@@ -128,7 +200,7 @@ function EditProfile() {
         <div className="flex justify-end">
           <Button
             onClick={editProfile}
-            className={`bg-blue-600 hover:bg-blue-700 text-white h-10 ${Loading ? "cursor-not-allowed opacity-50" : ""}`}
+            className={`bg-blue-600 cursor-pointer hover:bg-blue-700 text-white h-10 ${Loading ? "cursor-not-allowed opacity-50" : ""}`}
             disabled={Loading}
           >
             {Loading ? "Please wait..." : "Submit"}

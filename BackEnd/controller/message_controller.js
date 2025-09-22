@@ -112,6 +112,47 @@ export const deleteForMe = async(req , res) =>{
         console.log(err);
     }
 }
+export const deleteMessages = async (req, res) => {
+  try {
+    const senderId = req.id;
+    const receiverId = req.params.id;
+    const { messagesArray } = req.body;
+    console.log(messagesArray , "we arrtfykgjhlk")
+
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] }
+    });
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        msg: "Conversation not found"
+      });
+    }
+
+    // Delete messages from DB (irrespective of sender)
+    await Message.deleteMany({ _id: { $in: messagesArray } });
+
+    // Remove message references from conversation
+    conversation.messages = conversation.messages.filter(
+      (msgId) => !messagesArray.includes(msgId.toString())
+    );
+    await conversation.save();
+
+    return res.status(200).json({
+      success: true,
+      msg: "Messages permanently deleted"
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      msg: "Server error"
+    });
+  }
+};
+
 export const deleteConversation = async (req, res) => {
     try {
         const senderId = req.id;

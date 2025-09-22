@@ -303,7 +303,8 @@ export const removePhoto = async(req, res) => {
  export const editProfile = async (req, res) => {
     try {
         const userId = req.id;
-        const { gender, bio } = req.body;
+        const { gender, bio , links } = req.body;
+        console.log(links , "not array");
 
         const profilepic = req.file || null;
 
@@ -325,6 +326,7 @@ export const removePhoto = async(req, res) => {
         if (profilepic) {
             user.profilePicture = cloudResponse.secure_url;
         }
+        if(links) user.links = links;
 
         await user.save();
         const { password, email, ...safeUser } = user.toObject();

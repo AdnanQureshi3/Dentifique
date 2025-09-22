@@ -6,14 +6,15 @@ import { Link, useParams } from 'react-router-dom'
 import { Heart, MessageCircle, Bookmark, Settings, Edit3, Mail, Camera } from 'lucide-react'
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog'
 import Post from './Post'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
 import CommentDialog from './CommentDialog'
 import axios from 'axios'
 import { setAuthuser, setProfileUser } from '@/redux/authSlice'
 import { FollowHandlerFunc } from '../Hooks/useFollownUnfollow.js'
 import { useNavigate } from 'react-router-dom'
 import { setSelectedUser } from '@/redux/authSlice'
-import { set } from 'zod'
+
+
 
 function Profile() {
   const { id } = useParams();
@@ -25,6 +26,7 @@ function Profile() {
   const { userprofile, user } = useSelector(state => state.auth)
   const isLoggedInUser = (user?._id === userprofile?._id);
   let isFollowing = userprofile?.followers?.includes(user?._id);
+  const links = userprofile?.links ? userprofile.links.split(',') : [];
 
   const [Open, setOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -182,6 +184,35 @@ function Profile() {
             <div className="mb-4">
               <p className="text-gray-700">{userprofile.bio || "This user hasn't added a bio yet."}</p>
             </div>
+         <div className="space-y-2">
+  {links.length > 0 ? (
+    links.map((link, index) => (
+      <p
+        key={index}
+        className="w-auto truncate hover:border-blue-300 transition"
+      >
+        <a
+          href={link.startsWith("http") ? link : `https://${link}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 text-sm hover:text-blue-700 hover:underline font-medium break-all"
+        >
+          {link}
+        </a>
+      </p>
+    ))
+  ) : (
+    <p className="text-gray-500 italic">No links added yet</p>
+  )}
+
+  <button
+    onClick={() => navigate("/account/edit")}
+    className="mt-2 px-4 py-1 rounded-lg bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-medium transition"
+  >
+    Edit Links
+  </button>
+</div>
+
           </div>
         </div>
       </div>

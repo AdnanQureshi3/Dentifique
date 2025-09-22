@@ -17,7 +17,7 @@ function ProjectsCard({ project }) {
       </div>
 
       <div className="p-3 flex flex-col flex-1">
-        <h2 className="text-md font-semibold text-indigo-700 truncate">{project.title}</h2>
+        <h2 className="text-md font-semibold text-indigo-700 truncate">{project?.title}</h2>
         <p className="text-md text-gray-500 mt-1 truncate">By: {project.createdBy.username || "Anonymous"}</p>
 
         {/* Links */}
@@ -42,7 +42,7 @@ function ProjectsCard({ project }) {
           {project.domain && <span className="mr-2">#{project.domain}</span>}
           <br />
           
-          <p className="text-gray-600">{project.tools?.length > 0 ? project.tools.split(",").map((t)=>(
+          <p className="text-gray-600">{project?.tools?.length > 0 ? project?.tools?.split(",").map((t)=>(
             <span> #{t}</span>
           )) : "N/A"}</p>
         </div>

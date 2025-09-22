@@ -77,11 +77,11 @@ function Messages({ isOnline, selectedUser }) {
       console.error(err);
     }
   };
-  const deleteformeHandler= async () => {
+  const deleteHandler= async (type) => {
     try {
-      console.log("deleting for me...");
+      // console.log("deleting for me...");
       const res = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/chats/deleteforme/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_URL}/api/chats/${type}/${selectedUser._id}`,
         { data: { messagesArray: selectedMessages },
         withCredentials: true }
       );
@@ -131,23 +131,6 @@ function Messages({ isOnline, selectedUser }) {
       if (res.data.success) {
         dispatch(setChatmessages(ChatMessages.filter(msg => msg._id !== messageId)));
         setSelectedMessages(selectedMessages.filter(id => id !== messageId));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Delete selected messages
-  const deleteSelectedMessagesHandler = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/messages/delete-multiple`,
-        { messageIds: selectedMessages },
-        { withCredentials: true }
-      );
-      if (res.data.success) {
-        dispatch(setChatmessages(ChatMessages.filter(msg => !selectedMessages.includes(msg._id))));
-        setSelectedMessages([]);
       }
     } catch (err) {
       console.error(err);
@@ -225,7 +208,7 @@ function Messages({ isOnline, selectedUser }) {
       return; 
     }
 
-      deleteSelectedMessagesHandler();
+      deleteHandler("delete-messages");
     }}
     className="flex items-center gap-2 px-3 py-1 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition font-medium"
   >
@@ -244,7 +227,7 @@ function Messages({ isOnline, selectedUser }) {
       }
 
       setSelectedMessages([]);
-      deleteformeHandler();
+     deleteHandler("deleteforme");
     }}
     className="flex items-center gap-1 px-3 py-1 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-800 transition font-medium"
   >
@@ -361,7 +344,11 @@ function Messages({ isOnline, selectedUser }) {
           </button>
           <button 
             onClick={() => {
-              deleteMessageHandler(contextMenu.message._id);
+              setSelectedMessages([contextMenu.message._id]);
+              deleteHandler("delete-messages");
+              //  deleteHandler("delete-messages");
+              // setSelectedMessages([]);
+              
               setContextMenu({ ...contextMenu, visible: false });
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"

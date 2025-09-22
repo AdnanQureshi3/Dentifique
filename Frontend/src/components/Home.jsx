@@ -15,7 +15,7 @@ function Home() {
     useSuggestedUser();
 
      useEffect(() => {
-    dispatch(setPosts([]));
+    // dispatch(setPosts([]));
     fetchPosts();
 
   }, []);
@@ -26,6 +26,7 @@ function Home() {
       <div className='flex justify-between  w-full max-w-6xl'>
         <div className='w-full max-w-2xl'>
           <Feed />
+          <div>load</div>
           <Outlet />
         </div>
         <div className='w-[30%] '>
