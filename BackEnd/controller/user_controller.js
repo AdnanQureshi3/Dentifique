@@ -7,7 +7,6 @@ import { Post } from '../models/posts_model.js';
 import axios from 'axios'
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import Notification from "../models/notification_Model.js";
-import { sendVerificationEmail } from '../utils/sendEmail.js';
 import Conversation from '../models/conversation_Model.js';
 
 export const register = async (req, res) => {
@@ -93,7 +92,6 @@ export const verifyOtp = async (req, res) => {
 
   
 };
-
 
 export const login = async (req, res) => {
     try {

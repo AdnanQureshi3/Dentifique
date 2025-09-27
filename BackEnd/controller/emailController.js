@@ -1,10 +1,15 @@
 import nodemailer from "nodemailer";
 import User from "../models/user_Model.js";
-
+ const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 export const sendOtpForVerification = async (req , res) => {
     try{
    
-      console.log("sending otp");
       console.log(req.body);
         const savedUser = await User.findOne({ email: req.body.email });
         if (!savedUser) {
@@ -14,13 +19,6 @@ export const sendOtpForVerification = async (req , res) => {
         const email = savedUser.email;
         const otp = Math.floor(100000 + Math.random() * 900000);
 
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
         console.log("email send opt send")
         
        savedUser.otp = otp.toString();
@@ -205,3 +203,104 @@ export const sendOtpForResetPassword = async (req , res) => {
 //         res.status(500).json({ message: "Internal server error" , success:false });
 //     }
 // }
+export async function sendReportEmail(user, description, postId, type, reason, author) {
+  try {
+
+ 
+        
+    await transporter.sendMail({
+      from: `"UpChain" <${process.env.EMAIL_USER}>`,
+     to: process.env.EMAIL_USER,
+      subject: '🚨 New Report Submitted on UpChain',
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.6; padding: 20px; background: #f5f5f5;">
+          <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+            <h2 style="color: #dc3545;">⚠️ Content Report Notification</h2>
+            <p><strong>${user}</strong> has reported a <strong>${type}</strong> on the platform.</p>
+            <p><strong>Reason for Report:</strong> ${reason}</p>
+            <p><strong>Additional Description:</strong> ${description || 'N/A'}</p>
+            <hr />
+            <p><strong>Post ID:</strong> ${postId}</p>
+            <p><strong>Author of Reported Post:</strong> ${author}</p>
+            <p style="margin-top: 30px;">Please review this report and take necessary action if required.</p>
+            <p style="color: #6c757d; font-size: 0.9em;">This is an automated message from the UpChain Report System.</p>
+          </div>
+        </div>
+      `
+    });
+
+    console.log('Report email sent successfully');
+  } catch (err) {
+    throw new Error('Email send failed');
+  }
+}
+
+export async function notifyAuthorAboutReport(authorEmail, post, description , username) {
+  try {
+ 
+
+    const postId = post._id;
+    const type = post.type;
+    const contentTitle = type === "article" ? post.title : post.caption;
+    const createdAt = new Date(post.createdAt).toLocaleString();
+
+    await transporter.sendMail({
+      from: `"UpChain" <${process.env.EMAIL_USER}>`,
+      to: authorEmail,
+      subject: `⚠️ Report Received on Your ${type.charAt(0).toUpperCase() + type.slice(1)}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.6; padding: 20px; background: #f9f9f9;">
+          <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+            <h2 style="color: #dc3545; margin-bottom: 10px;">⚠️ Report Notification</h2>
+            <p>Hello <strong>${username}</strong>,</p>
+            <p>Your <strong>${type}</strong> has received a report from a user on our platform. Details are below:</p>
+            <ul>
+              <li><strong>ID:</strong> ${postId}</li>
+              <li><strong>${type === "article" ? "Title" : "Caption"}:</strong> ${contentTitle}</li>
+              <li><strong>Posted On:</strong> ${createdAt}</li>
+              <li><strong>Report Details:</strong> ${description || "No additional details provided."}</li>
+            </ul>
+            <p>Please review your content. If another valid report is received, we may have to remove it to maintain community standards.</p>
+            <p>We encourage you to ensure all your content complies with UpChain's guidelines.</p>
+            <hr />
+            <p style="color: #6c757d; font-size: 0.9em;">This is an automated message. Reporter identity is kept anonymous.</p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log("Author notified about report successfully");
+  } catch (err) {
+    throw new Error("Failed to send report notification to author");
+  }
+}
+
+export async function notifyReporterAboutReport(email, username) {
+  try {
+   
+    console.log(username  ,email)
+
+    await transporter.sendMail({
+      from: `"UpChain" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `✅ Your report has been received`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #222; line-height: 1.6; padding: 20px; background: #f9f9f9;">
+          <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+            <h2 style="color: #28a745; margin-bottom: 10px;">✅ Report Received</h2>
+            <p>Hello <strong>${username}</strong>,</p>
+            <p>Thank you for submitting a report on our platform. Our moderation team will review it carefully.</p>
+            <p>We appreciate your help in keeping the UpChain community safe and high-quality. Rest assured, your identity is kept anonymous.</p>
+            <hr />
+            <p style="color: #6c757d; font-size: 0.9em;">This is an automated message from the UpChain moderation system.</p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log("Reporter notified successfully");
+  } catch (err) {
+    throw new Error("Failed to send notification to reporter");
+  }
+}
+

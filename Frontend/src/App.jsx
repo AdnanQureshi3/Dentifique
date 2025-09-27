@@ -19,6 +19,8 @@ import Protected_routes from './components/ui/protected_routes'
 import Verification from './components/Verification'
 import ProjectShow from './components/ProjectShow'
 import ResetPassword from './components/ResetPassword'
+import Article from './components/Article'
+import CommentDialog from './components/CommentDialog'
 
 const browserRouter = createBrowserRouter([
   {
@@ -70,6 +72,10 @@ const browserRouter = createBrowserRouter([
   {
     path: '/project/public/:projectname',
     element: <ProjectShow />
+  },
+  {
+    path:'/article/:id',
+    element:<CommentDialog/>
   }
 ])
 

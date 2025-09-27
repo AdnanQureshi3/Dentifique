@@ -6,7 +6,7 @@ import Comments from '../models/comment_Model.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
 import axios from 'axios'
 import Notification from "../models/notification_Model.js";
-import {sendReportEmail} from '../utils/sendEmail.js'
+import { notifyAuthorAboutReport, notifyReporterAboutReport, sendReportEmail } from "./emailController.js";
 
 
 
@@ -132,6 +132,30 @@ export const getUserPost = async (req, res) => {
         return res.status(200).json({
             success: true,
             posts
+        })
+
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+export const getPost = async (req, res) => {
+    try {
+      
+        const Id = req.params.id;
+        const post = await Post.findById(Id)
+          .populate({ path: 'author', select: 'username profilePicture' })
+      .populate({
+        path: 'comments',
+        options: { sort: { createdAt: -1 } },
+        populate: { path: 'author', select: 'username profilePicture' }
+      });
+      console.log(post);
+
+        return res.status(200).json({
+            success: true,
+            post
         })
 
     }
@@ -483,13 +507,18 @@ export const saveThePost = async (req, res) => {
 
 export const ReportThePost = async (req,res)=>{
     try{
-        
+        const reporterID = req.id;
         const {user, reason, author, description , type } = req.body;
         const postId = req.params.id;
-        // console.log(req.params);
-    
-        
+        const post = await Post.findById(postId);
         await sendReportEmail(user, description , postId, type , reason , author );
+        const Author = await User.findById(post.author._id)
+        const Reporter = await User.findById(reporterID);
+       
+        const title = post.caption || post.title;
+
+       await notifyAuthorAboutReport(Author.email, post, description , Author.username );
+       await notifyReporterAboutReport(Reporter.email , Reporter.username);
         
 
         return res.status(200).json({

@@ -110,8 +110,8 @@ function LeftSidebar({ collapsed, setCollapsed }) {
         {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </div>
 
-      <div className="flex justify-center mb-8">
-        {!collapsed && <h1 className="text-lg font-bold text-blue-600">TaskFlow</h1>}
+      <div className="flex justify-center mb-2">
+        {!collapsed && <h1 className="text-lg font-bold text-blue-600">Task Bar</h1>}
       </div>
 
   

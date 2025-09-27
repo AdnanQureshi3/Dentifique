@@ -183,7 +183,7 @@ function Article({ post }) {
                                 </>
                             )}
                         </Button>
-                        {user && user._id === post.author._id && (
+                        {user && user._id === post.author?._id && (
                             <Button
                                 onClick={deletePostHandler}
                                 className="w-full py-3 text-red-600 bg-white hover:bg-red-50 rounded-none border-b border-gray-100 flex items-center justify-start gap-2"
@@ -194,7 +194,7 @@ function Article({ post }) {
                                 <span>Delete</span>
                             </Button>
                         )}
-                        {user && user._id === post.author._id && (
+                        {user && user?._id !== post?.author?._id && (
                             <Button
                                 onClick={() =>{setShowReport(true)}}
                                 className="w-full py-3 text-red-600 bg-white hover:bg-red-50 rounded-none border-b border-gray-100 flex items-center justify-start gap-2"
