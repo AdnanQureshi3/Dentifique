@@ -59,8 +59,10 @@ function Tiptap({ setTitle, title, setContent, handleSubmit, content }) {
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/enhancedText`, { text: content , title },
                 { withCredentials: true });
-            const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
-            console.log(enhancedText);
+                const enhancedText = res.data.result.response.candidates[0].content.parts[0].text;
+                console.log(enhancedText)
+        
+           
 
             if (contentEditor && contentEditor.commands) {
                 contentEditor.chain().clearContent().insertContent(enhancedText).run();

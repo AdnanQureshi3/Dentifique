@@ -40,7 +40,7 @@ const browserRouter = createBrowserRouter([
         element:<Protected_routes><Chatpage/></Protected_routes> 
       }
       ,{
-        path:'/projects',
+        path:'/project',
         element:<Protected_routes><Projects/></Protected_routes> 
       }
       ,{

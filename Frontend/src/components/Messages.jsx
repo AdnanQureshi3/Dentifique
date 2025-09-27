@@ -125,12 +125,13 @@ function Messages({ isOnline, selectedUser }) {
   const deleteMessageHandler = async (messageId) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/api/messages/${messageId}`,
-        { withCredentials: true }
+        `${import.meta.env.VITE_API_URL}/api/chats/delete-messages/${selectedUser._id}`,
+        { data: { messagesArray: [messageId] },
+        withCredentials: true }
       );
       if (res.data.success) {
         dispatch(setChatmessages(ChatMessages.filter(msg => msg._id !== messageId)));
-        setSelectedMessages(selectedMessages.filter(id => id !== messageId));
+       
       }
     } catch (err) {
       console.error(err);
@@ -239,7 +240,7 @@ function Messages({ isOnline, selectedUser }) {
     title="Cancel selection"
     onClick={() => {
       setSelectedMessages([]);
-      setIsSelectMode(false);
+      // setIsSelectMode(false);
     }}
     className="flex items-center gap-1 px-3 py-1 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 hover:text-gray-900 transition font-medium"
   >
@@ -344,12 +345,11 @@ function Messages({ isOnline, selectedUser }) {
           </button>
           <button 
             onClick={() => {
-              setSelectedMessages([contextMenu.message._id]);
-              deleteHandler("delete-messages");
-              //  deleteHandler("delete-messages");
-              // setSelectedMessages([]);
+              // setSelectedMessages([contextMenu.message._id]);
               
-              setContextMenu({ ...contextMenu, visible: false });
+              deleteMessageHandler(contextMenu.message._id);
+    
+                setContextMenu({ ...contextMenu, visible: false });
             }}
             className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
           >

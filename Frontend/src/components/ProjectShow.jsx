@@ -77,23 +77,32 @@ function ProjectShow() {
       : link;
   }
 
-  if (loading)
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  if (!project)
+ if (loading)
+  return (
+    <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="rounded-xl bg-white px-8 py-6 shadow-md border border-gray-200 text-center">
+        <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-gray-800">Loading... ⏳</h2>
+        <p className="text-gray-600 mt-2 text-sm">Please be patient champ — great projects take a little time to shine 🚀”</p>
+      </div>
+    </div>
+  );
+
+if (!project)
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50">
       <div className="rounded-xl bg-white px-8 py-6 shadow-lg border border-gray-200 text-center max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          No such project found
+          No such project found ❌
         </h2>
-        <p className="text-gray-600 mb-4">
-          The project you’re looking for might have been deleted, moved, or never existed.
+        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+         Oops! The project you’re looking for doesn’t exist or might have been moved 🧐
         </p>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium rounded-lg transition"
+          className="px-5 py-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-medium rounded-lg shadow transition"
         >
-          Go Back
+          🔙 Go Back
         </button>
       </div>
     </div>

@@ -10,52 +10,65 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY)
 
 
 router.post('/enhancedText', async (req, res) => {
-  const { text, title } = req.body
-  //   console.log(text , "YES I AM RECEIVING TEXT MESSAGES");
-
-  try {
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-    let result = '';
-    if (text.length > 10)
-      result = await model.generateContent(
-        `Your task is to enhance the grammar, clarity, and tone of the following text without changing its original meaning.
+    const { text, title } = req.body;
+    console.log(text , title , "enhancing")
+  
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    let prompt = '';
+    
+    try {
+               if (text && text.length > 10) {
+            prompt = `Your task is to enhance the grammar, clarity, and tone of the following text without changing its original meaning.
 
 Rules:
+- Write in a natural, casual, and human-like voice, avoiding overly formal or verbose language.
+- Ensure the flow and rhythm of the sentences are conversational.
 - Do NOT add or remove any content.
 - Preserve all HTML tags exactly as they are.
 - Keep any emojis unchanged.
-- Return only the improved version.
+- Return ONLY the improved version.
 
 Text:
-${text}`
-      );
+${text}`;
+        } else if (title) {
+            prompt = `Write a short article (max 500 words) based on the given title.
 
-    else
-      result = await model.generateContent(
-        `Write a short article 1500 chars based on the given title.
+Style Guidelines:
+- Adopt a natural, informal, and engaging human tone.
+- Use a mix of short, punchy sentences and slightly longer, descriptive sentences.
+- Avoid overly academic or repetitive phrasing (like "embarking on a journey").
+
+Formatting:
 - Use bold and underline for important words.
 - Add relevant emojis.
 - Make it engaging and concise.
 
-Title: ${title}`
-      );
+Title: ${title}`;
+        } else {
+            return res.status(400).json({ error: 'Missing required text or title for AI generation.' });
+        }
 
+        const result = await model.generateContent(prompt);
+       
 
+        res.json({  result });
+        
+    } catch (err) {
+     
+        console.error("--- AI Generation Error ---");
+        console.error(err); 
+        console.error("---------------------------");
 
-    res.json({ result });
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Failed to enhance text or Genrate text' })
-  }
-})
+        res.status(500).json({ error: 'Failed to process request with AI model.' });
+    }
+});
 
 router.post('/title', async (req, res) => {
   const { text } = req.body
   //   console.log(text , "YES I AM RECEIVING TEXT MESSAGES");
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
     const result = await model.generateContent(
       `Your task is to generate a catchy, accurate, and concise title (max 40 characters) for the following article text.
 
@@ -111,7 +124,7 @@ router.post('/reply', isAuthenticated, async (req, res) => {
     // console.log(messagesArray , tone , description ,"YES I AM RECEIVING TEXT MESSAGES");
 
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
     const parsedConversation  = await handleAiSelectedMessages(userId, messagesArray);
     console.log(parsedConversation , "PARSED CONVERSATION");
 

@@ -7,6 +7,7 @@ import Messages from './Messages.jsx';
 import axios from 'axios';
 import useMessageUsers from '@/Hooks/getMessageUsers.jsx';
 import { setChatmessages } from '@/redux/chatSlice';
+import SearchDialog from './SearchPage.jsx';
 
 function Chatpage() {
     const { user, suggestedUser, selecteduser , MessageUsers } = useSelector(store => store.auth);
@@ -16,7 +17,8 @@ function Chatpage() {
     const isOnline = onlineUsers.includes(selecteduser?._id);
 
     const [text, settext] = useState("");
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+    const [OpenSearch , SetOpenSearch]  =useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     
   
     
@@ -43,7 +45,9 @@ function Chatpage() {
                 <hr className="border-gray-200 mb-4" />
                 
                 <div className="overflow-y-auto pr-2 flex-grow">
-                    { MessageUsers ? (MessageUsers?.map((u) => {
+                    
+                    { MessageUsers.length ? 
+                    (MessageUsers?.map((u) => {
                         const isOnline = onlineUsers.includes(u._id);
                         return (
                             <div 
@@ -85,13 +89,35 @@ function Chatpage() {
                                 )}
                             </div>
                         )
-                    })) :(
-                        <div>
+                    }))
+                     :(
+                       <div className="flex flex-col items-center justify-center h-[90%] p-1 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300 shadow-inner mt-4 mx-2">
+    
+    <span className="text-6xl mb-2">
+        🤫
+    </span>
+    
+    <h3 className="text-xl font-extrabold text-gray-800 mb-2">
+        Silence Detected!
+    </h3>
+    
+    <p className="text-base text-gray-600  leading-relaxed">
+        It looks like you're an introvert! Time to go extrovert mode! 🚀
+        <br />
+        <button
+       className='p-2 rounded-lg bg-gray-200 border-2 border-gray-400 cursor-pointer hover:bg-gray-500 hover:text-white'
+        onClick={() => SetOpenSearch((prev)=> !prev)}
+        >Search Users</button>
+        <br />
+        
+        Find people, connect with them, and talk to them.
+    </p>
+    
 
-                            No body to talk
-                        </div>
+</div>
                     )}
                 </div>
+                    <SearchDialog  open={OpenSearch} onOpenChange={SetOpenSearch} />
                 
                 {!isSidebarCollapsed && (
                     <div className="mt-auto pt-4 border-t border-gray-200">
@@ -138,8 +164,9 @@ function Chatpage() {
                         Select a conversation or start a new chat. Your messages will appear here.
                     </p>
                     <button 
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
-                        onClick={() => dispatch(setSelectedUser(suggestedUser[0]))}
+                    disabled={MessageUsers.length === 0}
+                        className={`${MessageUsers.length === 0? 'cursor-not-allowed bg-indigo-400' : 'cursor-pointer bg-indigo-600 hover:bg-indigo-700'}   text-white font-medium py-2 px-6 rounded-lg transition-colors`} 
+                        onClick={() => dispatch(setSelectedUser(MessageUsers[0]))}
                     >
                         Start New Chat
                     </button>

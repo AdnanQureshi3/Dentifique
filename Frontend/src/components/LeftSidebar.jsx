@@ -53,7 +53,7 @@ function LeftSidebar({ collapsed, setCollapsed }) {
     } 
     else if (type === "Projects") {
       if(location.pathname  === '/projects' ) return;
-      navigate("/projects");
+      navigate("/project");
     } 
     else if (type === "Search") {
       setOpenSearch(!OpenSearch);
