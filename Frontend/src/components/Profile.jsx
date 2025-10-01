@@ -202,15 +202,18 @@ function Profile() {
       </p>
     ))
   ) : (
-    <p className="text-gray-500 italic">No links added yet</p>
+    
+    <p className="text-gray-500 italic">No profile links added yet</p>
   )}
-
+{
+isLoggedInUser &&
   <button
-    onClick={() => navigate("/account/edit")}
-    className="mt-2 px-4 py-1 rounded-lg bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-medium transition"
+  onClick={() => navigate("/account/edit")}
+  className="mt-2 px-4 py-1 rounded-lg bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-medium transition"
   >
     Edit Links
   </button>
+  }
 </div>
 
           </div>
