@@ -27,6 +27,14 @@ function ReportHandler({ post, user, onClose, type  }) {
       console.log(post);
       const postId = post._id;
       setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        toast.success("Thank you for reporting");
+          setOpen(false);
+      if (onClose) onClose();
+
+        
+      }, 2*1000);
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/post/${postId}/report`,
         {
@@ -40,15 +48,10 @@ function ReportHandler({ post, user, onClose, type  }) {
       );
 
       if (res.data.success) {
-        toast.success(res.data.msg, {
-          className: 'bg-green-500 text-white p-4 rounded-lg shadow-md',
-        });
-        setOpen(false);
-      if (onClose) onClose();
+        console.log("Reported successfully");
+      
       }
 
-
-      
     } catch (err) {
       console.error('Error reporting post:', err);
 

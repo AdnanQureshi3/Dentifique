@@ -83,17 +83,17 @@ export const addNewArticle = async (req, res) => {
 }
 export const getAllPost = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;  // number of posts per request
-    const cursor = req.query.cursor;                // last post's _id from previous fetch
+    // const limit = parseInt(req.query.limit) || 10;  // number of posts per request
+    // const cursor = req.query.cursor;                // last post's _id from previous fetch
 
-    let query = {};
-    if (cursor) {
-      query._id = { $lt: cursor };                 // fetch older posts only
-    }
+    // let query = {};
+    // if (cursor) {
+    //   query._id = { $lt: cursor };                 // fetch older posts only
+    // }
 
-    const posts = await Post.find(query)
+    const posts = await Post.find()
       .sort({ createdAt: -1 })                     // newest first
-      .limit(limit)
+    //   .limit(limit)
       .populate({ path: 'author', select: 'username profilePicture' })
       .populate({
         path: 'comments',
@@ -101,13 +101,18 @@ export const getAllPost = async (req, res) => {
         populate: { path: 'author', select: 'username profilePicture' }
       });
 
-    const nextCursor = posts.length > 0 ? posts[posts.length - 1]._id : null;
+    // const nextCursor = posts.length > 0 ? posts[posts.length - 1]._id : null;
 
+    // return res.status(200).json({
+    //   success: true,
+    //   posts,
+    //   nextCursor,
+    //   hasMore: posts.length === limit
+    // });
     return res.status(200).json({
       success: true,
       posts,
-      nextCursor,
-      hasMore: posts.length === limit
+        
     });
   } catch (err) {
     console.log(err);

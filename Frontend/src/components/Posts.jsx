@@ -10,7 +10,7 @@ import { setPosts } from "@/redux/postSlice";
 
 function Posts() {
   const { posts } = useSelector((store) => store.post);
-  const { fetchPosts, hasMore , loading } = useGetAllPost();
+  const { fetchPosts} = useGetAllPost();
 
   return (
     <div>
@@ -25,23 +25,23 @@ function Posts() {
       })}
 
       {/* Load More button */}
-  {hasMore && (
+  {/* {hasMore && (
   <button
     disabled={loading}
     onClick={fetchPosts}
     className={`w-full py-3 mt-6 rounded-xl font-medium transition-all 
     ${loading ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 text-white shadow-md"}`}
-  >
-    {loading ? (
+  > */}
+    {/* {loading ? (
       <div className="flex items-center justify-center gap-2">
         <Loader2 className="h-5 w-5 animate-spin" />
         Loading...
       </div>
     ) : (
       "Load More"
-    )}
-  </button>
-)}
+    )} */}
+  {/* </button>
+)} */}
 
     </div>
   );

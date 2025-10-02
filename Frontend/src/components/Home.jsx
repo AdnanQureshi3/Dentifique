@@ -8,7 +8,7 @@ import {useDispatch} from "react-redux";
 import { setPosts } from '@/redux/postSlice';
 
 function Home() {
-  const { fetchPosts, hasMore  } = useGetAllPost();
+  const { fetchPosts  } = useGetAllPost();
    const dispatch = useDispatch();
  
 
