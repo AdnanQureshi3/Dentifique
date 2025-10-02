@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 
 const useMessageUsers =()=>{
     
-    const dipatch = useDispatch();
+    const dispatch = useDispatch();
     useEffect(()=>{
 
         const fetchAllusers = async()=>{
@@ -14,7 +14,7 @@ const useMessageUsers =()=>{
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/conversationUsers` ,{withCredentials:true} );
                 if(res.data.success){
                     console.log(res.data.MessageUsers , "message users");
-                    dipatch(setMessageUsers(res.data.MessageUsers));
+                    dispatch(setMessageUsers(res.data.MessageUsers));
                 }
             }
 
@@ -24,6 +24,6 @@ const useMessageUsers =()=>{
         }
         fetchAllusers();
 
-    },[])
+    },[dispatch])
 };
 export default useMessageUsers;

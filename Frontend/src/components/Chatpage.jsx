@@ -164,8 +164,8 @@ function Chatpage() {
                         Select a conversation or start a new chat. Your messages will appear here.
                     </p>
                     <button 
-                    disabled={MessageUsers.length === 0}
-                        className={`${MessageUsers.length === 0? 'cursor-not-allowed bg-indigo-400' : 'cursor-pointer bg-indigo-600 hover:bg-indigo-700'}   text-white font-medium py-2 px-6 rounded-lg transition-colors`} 
+                    disabled={MessageUsers?.length === 0}
+                        className={`${MessageUsers?.length === 0? 'cursor-not-allowed bg-indigo-400' : 'cursor-pointer bg-indigo-600 hover:bg-indigo-700'}   text-white font-medium py-2 px-6 rounded-lg transition-colors`} 
                         onClick={() => dispatch(setSelectedUser(MessageUsers[0]))}
                     >
                         Start New Chat

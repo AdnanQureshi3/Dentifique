@@ -21,7 +21,7 @@ router.route('/conversationUsers').get(isAuthenticated , getConversationUsers);
 
 router.route('/verifyOTP').post( verifyOtp);
 router.route('/resendotpVerification').post( sendOtpForVerification);
-router.route('/resendotpReset').post(  sendOtpForResetPassword);
+router.route('/resendotpReset').post(sendOtpForResetPassword);
 router.route('/isEmailExist').post( isEmailExist);
 router.route('/resetpassword').post( resetPassword);
 

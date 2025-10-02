@@ -125,6 +125,7 @@ export const login = async (req, res) => {
 
 
 
+        console.log(process.env.SECRET_KEY , "secret key");
         const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '10d' });
         const populatedPost = await Promise.all(
             user.posts.map(async (postId) => {
