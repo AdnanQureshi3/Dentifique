@@ -13,6 +13,9 @@ import { clearNotification } from "@/redux/notificationSlice";
 import { Button } from "./ui/button";
 import CreatePost from "./CreatePost.jsx";
 import SearchDialog from "./SearchPage";
+import { setProjects } from "@/redux/projectSlice";
+
+import { setMessageUsers } from "@/redux/authSlice";
 
 import {
   Popover,
@@ -33,6 +36,8 @@ function LeftSidebar({ collapsed, setCollapsed }) {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/logout`, { withCredentials: true });
       if (res.data.success) {
         dispatch(setAuthuser(null));
+        dispatch(setProjects([]));
+        dispatch(setMessageUsers([]));
         navigate('/login');
         toast.success(res.data.msg);
       }

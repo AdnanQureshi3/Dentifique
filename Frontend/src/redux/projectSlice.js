@@ -5,7 +5,7 @@ const projectSlice = createSlice({
   initialState: {
     projects: [],
     selectedProject:null,
-    trendingProjects:[]
+
   },
   reducers: {
     setProjects: (state, action) => {
@@ -14,11 +14,9 @@ const projectSlice = createSlice({
     setSelectedProject:(state, action) =>{
       state.selectedProject = action.payload;
     } ,
-    setTrendingProjects: (state, action) => {
-      state.trendingProjects = action.payload;
-    }
+
   },
 });
 
-export const { setProjects  , setSelectedProject , setTrendingProjects} = projectSlice.actions;
+export const { setProjects  , setSelectedProject } = projectSlice.actions;
 export default projectSlice.reducer;

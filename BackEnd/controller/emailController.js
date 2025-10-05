@@ -1,13 +1,23 @@
 import nodemailer from "nodemailer";
 import User from "../models/user_Model.js";
+// const transporter = nodemailer.createTransport({ 
+//only work for local as render bloack it
+  
+//   host: "smtp.gmail.com",
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: 'smtp.sendgrid.net',
+  port: 587,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+    user: 'apikey', // literally 'apikey'
+    pass: process.env.SENDGRID_API_KEY
+  }
 });
 
 export const sendOtpForVerification = async (req , res) => {
