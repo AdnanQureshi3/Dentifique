@@ -64,11 +64,13 @@ function EditProfile() {
         toast.success(res.data.msg);
         setInput({ ...input, bio: "" });
         dispatch(setAuthuser(res.data.user));
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);
     } finally {
       setLoading(false);
+
       setTimeout(() => {
         navigate(`/profile/${user._id}`);
       }, 1000);

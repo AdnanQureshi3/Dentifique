@@ -175,6 +175,9 @@ function ResetPassword() {
             ) : (
               <p className="text-gray-500">
                 Resend OTP in <span className="font-semibold">{formatTime(timeLeft)}</span>
+                  <p className="text-xs text-red-500 mt-1 font-medium">
+        Didn't receive OTP? Please check your <b> Spam or Junk</b> folder.
+    </p>
               </p>
             )}
           </div>

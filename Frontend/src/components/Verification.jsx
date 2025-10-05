@@ -153,11 +153,13 @@ function Verification() {
             </button>
           ) : (
             <span>Resend available in {timer}s</span>
+
           )}
         </div>
+    
 
         <p className="text-xs text-gray-400 mt-2">
-          Check spam/promotions folder if you don't see it.
+          Check <b> spam/promotions </b>folder if you don't see it.
         </p>
       </div>
     </div>

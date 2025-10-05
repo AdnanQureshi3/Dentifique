@@ -12,14 +12,15 @@ import User from "../models/user_Model.js";
 //   },
 // });
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587, // <--- CHANGE to 587
-  secure: false, // <--- CHANGE to false (means use STARTTLS)
+  host: "smtp.sendgrid.net", // <--- SendGrid's Server (Different from Gmail)
+  port: 587, 
+  secure: false, 
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Use the new App Password here
+    // The username is always the literal string 'apikey' for SendGrid SMTP
+    user: 'apikey', 
+    // The password is your SendGrid API Key (stored in your Render ENV)
+    pass: process.env.SENDGRID_API_KEY, 
   },
-  // Add this option to explicitly state you want to upgrade to a secure connection
   requireTLS: true 
 });
 
@@ -42,7 +43,9 @@ export const sendOtpForVerification = async (req , res) => {
         savedUser.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
         await savedUser.save();
 
-        // Send OTP email                       
+       
+        console.log( process.env.SENDGRID_API_KEY , "here is key");      
+                  
         await transporter.sendMail({
     from: `"UpChain" <${process.env.EMAIL_USER}>`,
     to: email,
