@@ -12,12 +12,15 @@ import User from "../models/user_Model.js";
 //   },
 // });
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 587,
+  host: "smtp.gmail.com",
+  port: 587, // <--- CHANGE to 587
+  secure: false, // <--- CHANGE to false (means use STARTTLS)
   auth: {
-    user: 'apikey', // literally 'apikey'
-    pass: process.env.SENDGRID_API_KEY
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // Use the new App Password here
+  },
+  // Add this option to explicitly state you want to upgrade to a secure connection
+  requireTLS: true 
 });
 
 export const sendOtpForVerification = async (req , res) => {
