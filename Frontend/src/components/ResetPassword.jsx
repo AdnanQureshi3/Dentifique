@@ -72,7 +72,7 @@ function ResetPassword() {
     try {
       // The API call is now correctly placed here
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/user/resendotpVerification`,
+        `${import.meta.env.VITE_API_URL}/api/user/resendotpReset`,
         { email },
         { withCredentials: true }
       );

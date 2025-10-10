@@ -16,32 +16,7 @@ function Verification() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Send OTP automatically when page loads
-  useEffect(() => {
-    async function sendInitialOtp() {
-      if (!email) return;
-      setLoadingResend(true);
-      try {
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/user/resendotpVerification`,
-          { email },
-          { withCredentials: true }
-        );
-        if (res.data?.success) {
-          toast.success("OTP sent to your email");
-          setTimer(30);
-        } else {
-          toast.error(res.data?.msg || "Could not send OTP");
-        }
-      } catch (err) {
-        toast.error(err.response?.data?.msg || "Failed to send OTP");
-      } finally {
-        setLoadingResend(false);
-      }
-    }
 
-    sendInitialOtp();
-  }, [email]);
 
   // Timer countdown
   useEffect(() => {
@@ -94,11 +69,10 @@ function Verification() {
         { withCredentials: true }
       );
       if (res.data?.success) {
-        toast.success("OTP resent");
-        
-      setTimer(30);
+        toast.success("OTP sent Successfully");
+        setTimer(30);
       } else {
-        toast.error(res.data?.msg || "Could not resend OTP");
+        toast.error(res.data?.msg || "Could not send OTP");
       }
     } catch (err) {
       toast.error(err.response?.data?.msg || "Resend failed");

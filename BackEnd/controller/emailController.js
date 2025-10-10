@@ -1,33 +1,20 @@
 import nodemailer from "nodemailer";
 import User from "../models/user_Model.js";
-// const transporter = nodemailer.createTransport({ 
-//only work for local as render bloack it
-  
-//   host: "smtp.gmail.com",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-const transporter = nodemailer.createTransport({
-  host: "smtp.sendgrid.net", // <--- SendGrid's Server (Different from Gmail)
-  port: 587, 
-  secure: false, 
+        const transporter = nodemailer.createTransport({ 
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    // The username is always the literal string 'apikey' for SendGrid SMTP
-    user: 'apikey', 
-    // The password is your SendGrid API Key (stored in your Render ENV)
-    pass: process.env.SENDGRID_API_KEY, 
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
-  requireTLS: true 
 });
+
 
 export const sendOtpForVerification = async (req , res) => {
     try{
    
-      console.log(req.body);
+      console.log(req.body , "verification otp send");
         const savedUser = await User.findOne({ email: req.body.email });
         if (!savedUser) {
             return res.status(404).json({ message: "User not found" , success:false });
@@ -39,13 +26,14 @@ export const sendOtpForVerification = async (req , res) => {
         console.log("email send opt send")
         
        savedUser.otp = otp.toString();
+       console.log(otp , "otp to string");
 
         savedUser.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
         await savedUser.save();
+      
 
-       
-        console.log( process.env.SENDGRID_API_KEY , "here is key");      
-                  
+        console.log( process.env.SENDGRID_API_KEY , "here is key");
+
         await transporter.sendMail({
     from: `"UpChain" <${process.env.EMAIL_USER}>`,
     to: email,
@@ -93,7 +81,7 @@ export const sendOtpForResetPassword = async (req , res) => {
     try{
       
         const {email } = req.body;
-        console.log("sending otp" , email);
+        console.log("sending otp for reseyt" , email);
       const savedUser = await User.findOne({email});
       console.log(savedUser , email)
       if (!savedUser) {
@@ -103,20 +91,13 @@ export const sendOtpForResetPassword = async (req , res) => {
         
         const otp = Math.floor(100000 + Math.random() * 900000);
 
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
-        console.log("email send opt send")
+        
+        console.log("email send opt send for resety")
         
        savedUser.otp = otp.toString();
 
         savedUser.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
         await savedUser.save();
-
                   
         await transporter.sendMail({
     from: `"UpChain" <${process.env.EMAIL_USER}>`,
