@@ -35,24 +35,7 @@ function ProjectShow() {
     }
     getProject();
   }, [projectname]);
-  const LikeHandler = async (like) => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/project/like/${project?._id}`, { withCredentials: true }); 
-      if (res.data.success) {
-        // Update the project state with the new like count
-        if (like) {
-          setProject((prev) => ({ ...prev, likes: prev.likes + 1 }));
-          toast.success("Project liked!");
-        } else {
-          setProject((prev) => ({ ...prev, likes: prev.likes - 1 }));
-          toast.success("Project unliked!");
-        }
-      }
-    } catch (err) {
-      console.error("Error liking project:", err);
-      toast.error(err.response?.data?.msg );
-    }
-  };
+ 
   const DeleteHandler = async()=>{
     try {
       const res = await axios.delete(`${import.meta.env.VITE_API_URL}/api/project/delete/${project?._id}`, { withCredentials: true });
@@ -143,10 +126,10 @@ if (!project)
              className="font-medium hover:underline cursor-pointer hover:text-xl transition-all">{project.createdBy?.username || "Anonymous"}</span>
           </div>
           <div className="flex items-center gap-4 ml-auto">
-            <button onClick={()=>LikeHandler(true)}
+            <div
             className="flex items-center gap-1 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
-              <i className="fas fa-star"></i> {project?.likes?.length || 0} Stars
-            </button>
+              <i className="fas fa-star"></i> { repoData?.stargazers_count || 0} Stars
+            </div>
             <a href={project.repoLink} className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
               <i className="fas fa-user-plus"></i> Contribute
             </a>

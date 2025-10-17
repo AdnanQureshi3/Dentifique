@@ -1,14 +1,5 @@
 import nodemailer from "nodemailer";
 import User from "../models/user_Model.js";
-        const transporter = nodemailer.createTransport({ 
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
 
 export const sendOtpForVerification = async (req , res) => {
@@ -30,7 +21,16 @@ export const sendOtpForVerification = async (req , res) => {
 
         savedUser.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
         await savedUser.save();
-      
+
+  //       const transporter = nodemailer.createTransport({ 
+  // host: "smtp.gmail.com",
+  // port: 465,
+  // secure: true,
+  // auth: {
+  //   user: process.env.EMAIL_USER,
+  //   pass: process.env.EMAIL_PASS,
+  // },
+// });
 
         console.log( process.env.SENDGRID_API_KEY , "here is key");
 
@@ -98,6 +98,16 @@ export const sendOtpForResetPassword = async (req , res) => {
 
         savedUser.otpExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes expiry
         await savedUser.save();
+        const transporter = nodemailer.createTransport({ 
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
                   
         await transporter.sendMail({
     from: `"UpChain" <${process.env.EMAIL_USER}>`,

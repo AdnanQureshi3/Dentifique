@@ -114,6 +114,15 @@ function Verification() {
           {loading ? <Loader2 className="animate-spin" /> : null}
           {loading ? "Verifying..." : "Verify & Continue"}
         </button>
+        <button
+          onClick={() => navigate("/login")}
+          
+          className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 cursor-pointer to-indigo-500 text-white py-1 rounded-lg text-lg font-medium transition
+          }`}
+        >
+        Skip
+        </button>
+  
 
         <div className="text-gray-600 text-sm">
           Didn’t get the code?{" "}
